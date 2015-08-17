@@ -1,22 +1,22 @@
-package org.md2k.datakitapi.status;
+package org.md2k.datakitapi.source;
 
-import java.io.Serializable;
+import java.util.HashMap;
 
 /**
  * Copyright (c) 2015, The University of Memphis, MD2K Center
  * - Syed Monowar Hossain <monowar.hossain@gmail.com>
  * All rights reserved.
- *
+ * <p/>
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- *
+ * <p/>
  * * Redistributions of source code must retain the above copyright notice, this
  * list of conditions and the following disclaimer.
- *
+ * <p/>
  * * Redistributions in binary form must reproduce the above copyright notice,
  * this list of conditions and the following disclaimer in the documentation
  * and/or other materials provided with the distribution.
- *
+ * <p/>
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -28,25 +28,13 @@ import java.io.Serializable;
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-public class Status extends Object implements Serializable {
-    int statusCode;
-    String statusMessage;
-
-    public Status(int statusCode, String statusMessage) {
-        this.statusCode = statusCode;
-        this.statusMessage = statusMessage;
-    }
-    public Status(int statusCode){
-        this.statusCode=statusCode;
-        this.statusMessage= StatusCodes.getStatusCodeString(statusCode);
-    }
-    public String getStatusMessage(){
-        return statusMessage;
-    }
-    public Status getStatus(){
-        return this;
-    }
-    public int getStatusCode() {
-        return statusCode;
-    }
+public abstract class AbstractObjectBuilder {
+    protected String type=null;
+    protected String id=null;
+    protected String description=null;
+    protected HashMap<String,String> metadata=new HashMap<>();
+    public AbstractObjectBuilder setType(String type){this.type = type; return this; }
+    public AbstractObjectBuilder setId(String id){this.id = id; return this; }
+    public AbstractObjectBuilder setDescription(String description){this.description = description; return this; }
+    public AbstractObjectBuilder setMetadata(String key, String value){this.metadata.put(key,value); return this; }
 }

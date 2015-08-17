@@ -1,4 +1,6 @@
-package org.md2k.datakitapi.status;
+package org.md2k.datakitapi.source.datasource;
+
+import org.md2k.datakitapi.status.Status;
 
 import java.io.Serializable;
 
@@ -28,25 +30,26 @@ import java.io.Serializable;
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-public class Status extends Object implements Serializable {
-    int statusCode;
-    String statusMessage;
+public class DataSourceClient extends Object implements Serializable {
+    private int ds_id;
+    DataSource dataSource;
+    private Status status;
 
-    public Status(int statusCode, String statusMessage) {
-        this.statusCode = statusCode;
-        this.statusMessage = statusMessage;
+    public DataSourceClient(int ds_id, DataSource dataSource, Status status) {
+        this.ds_id = ds_id;
+        this.dataSource = dataSource;
+        this.status = status;
     }
-    public Status(int statusCode){
-        this.statusCode=statusCode;
-        this.statusMessage= StatusCodes.getStatusCodeString(statusCode);
+
+    public int getDs_id() {
+        return ds_id;
     }
-    public String getStatusMessage(){
-        return statusMessage;
+
+    public Status getStatus() {
+        return status;
     }
-    public Status getStatus(){
-        return this;
-    }
-    public int getStatusCode() {
-        return statusCode;
+
+    public DataSource getDataSource() {
+        return dataSource;
     }
 }

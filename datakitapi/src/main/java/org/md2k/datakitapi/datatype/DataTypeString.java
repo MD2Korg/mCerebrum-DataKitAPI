@@ -1,4 +1,4 @@
-package org.md2k.datakitapi.status;
+package org.md2k.datakitapi.datatype;
 
 import java.io.Serializable;
 
@@ -28,25 +28,11 @@ import java.io.Serializable;
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-public class Status extends Object implements Serializable {
-    int statusCode;
-    String statusMessage;
+public class DataTypeString extends  DataType implements Serializable{
+    String sample;
 
-    public Status(int statusCode, String statusMessage) {
-        this.statusCode = statusCode;
-        this.statusMessage = statusMessage;
-    }
-    public Status(int statusCode){
-        this.statusCode=statusCode;
-        this.statusMessage= StatusCodes.getStatusCodeString(statusCode);
-    }
-    public String getStatusMessage(){
-        return statusMessage;
-    }
-    public Status getStatus(){
-        return this;
-    }
-    public int getStatusCode() {
-        return statusCode;
+    public DataTypeString(long timestamp, String sample) {
+        super(timestamp);
+        this.sample=sample;
     }
 }

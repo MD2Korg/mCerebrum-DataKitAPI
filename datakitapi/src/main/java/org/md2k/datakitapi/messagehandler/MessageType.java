@@ -1,6 +1,4 @@
-package org.md2k.datakitapi.status;
-
-import java.io.Serializable;
+package org.md2k.datakitapi.messagehandler;
 
 /**
  * Copyright (c) 2015, The University of Memphis, MD2K Center
@@ -28,25 +26,14 @@ import java.io.Serializable;
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-public class Status extends Object implements Serializable {
-    int statusCode;
-    String statusMessage;
-
-    public Status(int statusCode, String statusMessage) {
-        this.statusCode = statusCode;
-        this.statusMessage = statusMessage;
-    }
-    public Status(int statusCode){
-        this.statusCode=statusCode;
-        this.statusMessage= StatusCodes.getStatusCodeString(statusCode);
-    }
-    public String getStatusMessage(){
-        return statusMessage;
-    }
-    public Status getStatus(){
-        return this;
-    }
-    public int getStatusCode() {
-        return statusCode;
-    }
+public class MessageType {
+    public static final int CONNECT = 1;
+    public static final int DISCONNECT=2;
+    public static final int REGISTER = 3;
+    public static final int UNREGISTER = 4;
+    public static final int SUBSCRIBE = 5;
+    public static final int UNSUBSCRIBE = 6;
+    public static final int INSERT = 7;
+    public static final int QUERY = 8;
+    public static final int FIND =9;
 }

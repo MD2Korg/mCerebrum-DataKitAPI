@@ -5,33 +5,39 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Created by smhssain on 4/20/2015.
+ * Copyright (c) 2015, The University of Memphis, MD2K Center
+ * - Syed Monowar Hossain <monowar.hossain@gmail.com>
+ * All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
+ *
+ * * Redistributions of source code must retain the above copyright notice, this
+ * list of conditions and the following disclaimer.
+ *
+ * * Redistributions in binary form must reproduce the above copyright notice,
+ * this list of conditions and the following disclaimer in the documentation
+ * and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
+ * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+ * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+ * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+ * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+ * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 public class StatusCodes{
     public static final int SUCCESS = 0;
-    public static final int EXISTS = 1;
-    public static final int NOT_FOUND = 2;
-    public static final int MULTIPLE_EXISTS = 3;
+
+    public static final int DATASOURCE_EXISTS = 1;
+    public static final int DATASOURCE_NOT_FOUND = 2;
     public static final int INVALID_ENTRY=4;
     public static final int FAILED=5;
-/*    public static final int SERVICE_VERSION_UPDATE_REQUIRED = 2;
-    public static final int SERVICE_DISABLED = 3;
-    public static final int SIGN_IN_REQUIRED = 4;
-    public static final int INVALID_ACCOUNT = 5;
-    public static final int RESOLUTION_REQUIRED = 6;
-    public static final int NETWORK_ERROR = 7;
-    public static final int INTERNAL_ERROR = 8;
-    public static final int SERVICE_INVALID = 9;
-    public static final int DEVELOPER_ERROR = 10;
-    public static final int LICENSE_CHECK_FAILED = 11;
-    public static final int ERROR = 13;
-    public static final int INTERRUPTED = 14;
-    public static final int TIMEOUT = 15;
-    public static final int CANCELED = 16;
-    public static final int INVALID_DATA=18;
-    public static final int INVALID_DATASOURCE=19;
-    public static final int DATABASE_ERROR=20;
-*/
+
     private static Map<Integer, String> constantNames = null;
 
     public static String generateStatusString(int statusCode) {

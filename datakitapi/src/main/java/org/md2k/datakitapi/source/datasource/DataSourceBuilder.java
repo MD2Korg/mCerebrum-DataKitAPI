@@ -1,6 +1,9 @@
-package org.md2k.datakitapi.status;
+package org.md2k.datakitapi.source.datasource;
 
-import java.io.Serializable;
+import org.md2k.datakitapi.source.application.Application;
+import org.md2k.datakitapi.source.platform.Platform;
+import org.md2k.datakitapi.source.platformapp.PlatformApp;
+import org.md2k.datakitapi.source.AbstractObjectBuilder;
 
 /**
  * Copyright (c) 2015, The University of Memphis, MD2K Center
@@ -28,25 +31,20 @@ import java.io.Serializable;
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-public class Status extends Object implements Serializable {
-    int statusCode;
-    String statusMessage;
-
-    public Status(int statusCode, String statusMessage) {
-        this.statusCode = statusCode;
-        this.statusMessage = statusMessage;
-    }
-    public Status(int statusCode){
-        this.statusCode=statusCode;
-        this.statusMessage= StatusCodes.getStatusCodeString(statusCode);
-    }
-    public String getStatusMessage(){
-        return statusMessage;
-    }
-    public Status getStatus(){
-        return this;
-    }
-    public int getStatusCode() {
-        return statusCode;
-    }
+public class DataSourceBuilder extends AbstractObjectBuilder {
+        public DataSource[] lineage=null;
+        public String dataType=null;
+        public Platform platform=null;
+        public PlatformApp platformApp=null;
+        public Application application=null;
+        public boolean persistent=true;
+        public DataSourceBuilder setLineage(DataSource[] lineage){this.lineage = lineage; return this; }
+        public DataSourceBuilder setDataType(String dataType){this.dataType = dataType; return this; }
+        public DataSourceBuilder setPlatform(Platform platform){this.platform = platform; return this; }
+        public DataSourceBuilder setPlatformApp(PlatformApp platformApp){this.platformApp = platformApp; return this; }
+        public DataSourceBuilder setApplication(Application application){this.application = application; return this; }
+        public DataSourceBuilder setPersistent(boolean persistent){this.persistent = persistent; return this; }
+        public DataSource build() {
+            return new DataSource(this);
+        }
 }
