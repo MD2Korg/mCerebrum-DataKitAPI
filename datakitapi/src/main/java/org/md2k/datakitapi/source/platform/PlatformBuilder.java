@@ -29,6 +29,10 @@ import org.md2k.datakitapi.source.AbstractObjectBuilder;
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 public class PlatformBuilder extends AbstractObjectBuilder {
+    public PlatformBuilder setType(String type){super.setType(type); return this; }
+    public PlatformBuilder setId(String id){super.setId(id); return this; }
+    public PlatformBuilder setDescription(String description){super.setDescription(description); return this; }
+    public PlatformBuilder setMetadata(String key, String value){super.setMetadata(key,value); return this; }
         public Platform build() {
             return new Platform(this);
         }

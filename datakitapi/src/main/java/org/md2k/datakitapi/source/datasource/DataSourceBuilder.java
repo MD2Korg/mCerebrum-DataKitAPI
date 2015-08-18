@@ -38,6 +38,11 @@ public class DataSourceBuilder extends AbstractObjectBuilder {
         public PlatformApp platformApp=null;
         public Application application=null;
         public boolean persistent=true;
+        public DataSourceBuilder setType(String type){super.setType(type); return this; }
+        public DataSourceBuilder setId(String id){super.setId(id); return this; }
+        public DataSourceBuilder setDescription(String description){super.setDescription(description); return this; }
+        public DataSourceBuilder setMetadata(String key, String value){super.setMetadata(key,value); return this; }
+
         public DataSourceBuilder setLineage(DataSource[] lineage){this.lineage = lineage; return this; }
         public DataSourceBuilder setDataType(String dataType){this.dataType = dataType; return this; }
         public DataSourceBuilder setPlatform(Platform platform){this.platform = platform; return this; }
