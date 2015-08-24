@@ -12,7 +12,9 @@ import android.os.Looper;
 import android.os.Message;
 import android.os.Messenger;
 import android.os.RemoteException;
+import android.util.Log;
 
+import org.md2k.datakitapi.messagehandler.OnReceiveListener;
 import org.md2k.datakitapi.source.datasource.DataSource;
 import org.md2k.datakitapi.source.datasource.DataSourceClient;
 import org.md2k.datakitapi.messagehandler.MessageType;
@@ -20,7 +22,6 @@ import org.md2k.datakitapi.datatype.DataType;
 import org.md2k.datakitapi.messagehandler.OnConnectionListener;
 import org.md2k.datakitapi.messagehandler.OnRegistrationListener;
 import org.md2k.datakitapi.messagehandler.PendingResult;
-import org.md2k.datakitapi.messagehandler.ReceiveCallback;
 import org.md2k.datakitapi.messagehandler.ResultCallback;
 import org.md2k.datakitapi.status.Status;
 import java.util.ArrayList;
@@ -61,11 +62,13 @@ public class DataKitApi {
     private OnConnectionListener mListener;
     private OnRegistrationListener onRegistrationListener;
     Intent intent;
-    Object lock = new Object();
+    final Object lock = new Object();
     DataSourceClient dataSourceClient = null;
     ArrayList<DataSourceClient> dataSourceClients;
     ArrayList<DataType> dataTypes;
+    DataType dataType;
     Status status;
+    OnReceiveListener onReceiveListener;
 
     public DataKitApi(Context context) {
         this.context = context;
@@ -139,20 +142,21 @@ public class DataKitApi {
         return pendingResult;
     }
     public PendingResult<Status> unsubscribe(final DataSourceClient dataSourceClient) {
-        return unregister_subscribe_unsubscribe(dataSourceClient, MessageType.UNSUBSCRIBE);
-    }
-    public void subscribe(final DataSourceClient dataSourceClient, ReceiveCallback<Integer> receiveCallback) {
-//        return unregister_subscribe_unsubscribe(dataSourceClient,MessageType.SUBSCRIBE);
+        return unregister_unsubscribe(dataSourceClient, MessageType.UNSUBSCRIBE);
     }
 
-    public PendingResult<Status> subscribe(final DataSourceClient dataSourceClient) {
-        return unregister_subscribe_unsubscribe(dataSourceClient,MessageType.SUBSCRIBE);
+    public boolean subscribe(final DataSourceClient dataSourceClient, OnReceiveListener onReceiveListener) {
+        this.onReceiveListener=onReceiveListener;
+//        onReceiveListener.onReceived()
+        Bundle bundle = new Bundle();
+        bundle.putInt("ds_id", dataSourceClient.getDs_id());
+        return prepareAndSend(bundle,MessageType.SUBSCRIBE);
     }
     public PendingResult<Status> unregister(final DataSourceClient dataSourceClient) {
-        return unregister_subscribe_unsubscribe(dataSourceClient,MessageType.UNREGISTER);
+        return unregister_unsubscribe(dataSourceClient, MessageType.UNREGISTER);
     }
 
-    private PendingResult<Status> unregister_subscribe_unsubscribe(final DataSourceClient dataSourceClient, final int messageType) {
+    private PendingResult<Status> unregister_unsubscribe(final DataSourceClient dataSourceClient, final int messageType) {
         PendingResult<Status> pendingResult = new PendingResult<Status>() {
             @Override
             public Status await() {
@@ -176,7 +180,7 @@ public class DataKitApi {
             }
             @Override
             public void setResultCallback(ResultCallback<Status> callback) {
-
+                callback.onResult(status);
             }
         };
         return pendingResult;
@@ -214,7 +218,7 @@ public class DataKitApi {
         return pendingResult;
     }
     public PendingResult<ArrayList<DataType>> query(final DataSourceClient dataSourceClient, final long starttimestamp, final long endtimestamp) {
-        final PendingResult<ArrayList<DataType>> pendingResult = new PendingResult<ArrayList<DataType>>() {
+        return new PendingResult<ArrayList<DataType>>() {
             @Override
             public ArrayList<DataType> await() {
                 Thread t = new Thread(new Runnable() {
@@ -244,7 +248,6 @@ public class DataKitApi {
 
             }
         };
-        return pendingResult;
     }
 
     public void insert(DataSourceClient dataSourceClient, DataType dataType) {
@@ -284,6 +287,9 @@ public class DataKitApi {
                     dataSourceClients = (ArrayList<DataSourceClient>) msg.getData().getSerializable(DataSourceClient.class.getSimpleName());
                     break;
                 case MessageType.SUBSCRIBE:
+                    Log.d(TAG,"DataKitApi->subscribe");
+                    msg.getData().getSerializable(DataType.class.getSimpleName());
+                    break;
                 case MessageType.UNSUBSCRIBE:
                 case MessageType.UNREGISTER:
                     status = (Status) msg.getData().getSerializable(Status.class.getSimpleName());
@@ -293,6 +299,11 @@ public class DataKitApi {
                     break;
                 case MessageType.INSERT:
                     // no incoming message for INSERT
+                    break;
+                case MessageType.SUBSCRIBED_DATA:
+                    Log.d(TAG, "DataKitApi->subscribed_data");
+                    dataType = (DataType) msg.getData().getSerializable(DataType.class.getSimpleName());
+                    onReceiveListener.onReceived(dataType);
                     break;
             }
             synchronized (lock) {
