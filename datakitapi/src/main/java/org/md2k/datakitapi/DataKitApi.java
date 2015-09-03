@@ -228,7 +228,7 @@ public class DataKitApi {
                         bundle.putInt("ds_id", dataSourceClient.getDs_id());
                         bundle.putLong("starttimestamp", starttimestamp);
                         bundle.putLong("endtimestamp", endtimestamp);
-                        prepareAndSend(bundle,MessageType.FIND);
+                        prepareAndSend(bundle,MessageType.QUERY);
                     }
                 });
                 t.start();
