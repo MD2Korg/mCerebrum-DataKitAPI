@@ -35,4 +35,7 @@ public class DataTypeString extends  DataType implements Serializable{
         super(timestamp);
         this.sample=sample;
     }
+    public String getSample(){
+        return sample;
+    }
 }

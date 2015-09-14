@@ -35,4 +35,7 @@ public class DataTypeBoolean extends  DataType implements Serializable{
         super(timestamp);
         this.sample=sample;
     }
+    public boolean getSample(){
+        return sample;
+    }
 }

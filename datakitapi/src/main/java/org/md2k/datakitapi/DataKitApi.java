@@ -102,6 +102,8 @@ public class DataKitApi {
     private boolean prepareAndSend(Bundle bundle, int messageType) {
         Message message = Message.obtain(null, 0, 0, 0);
         message.what = messageType;
+        Log.d(TAG,"messagetype="+message.what);
+        
         message.setData(bundle);
         message.replyTo = replyMessenger;
         try {
@@ -301,7 +303,6 @@ public class DataKitApi {
                     // no incoming message for INSERT
                     break;
                 case MessageType.SUBSCRIBED_DATA:
-                    Log.d(TAG, "DataKitApi->subscribed_data");
                     dataType = (DataType) msg.getData().getSerializable(DataType.class.getSimpleName());
                     onReceiveListener.onReceived(dataType);
                     break;

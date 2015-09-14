@@ -35,4 +35,7 @@ public class DataTypeLong extends  DataType implements Serializable{
         super(timestamp);
         this.sample=sample;
     }
+    public long getSample(){
+        return sample;
+    }
 }

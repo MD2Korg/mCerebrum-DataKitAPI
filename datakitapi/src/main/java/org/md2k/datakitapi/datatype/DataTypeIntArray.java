@@ -35,4 +35,8 @@ public class DataTypeIntArray extends  DataType implements Serializable{
         super(timestamp);
         this.sample=sample;
     }
+    public int[] getSample(){
+        return sample;
+    }
+
 }

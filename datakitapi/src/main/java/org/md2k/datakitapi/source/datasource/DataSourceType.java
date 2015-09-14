@@ -54,4 +54,11 @@ public class DataSourceType {
     public static final String CPU = "CPU";
     public static final String MEMORY="MEMORY";
     public static final String AUTOSENSE = "AUTOSENSE";
+    public static final String ACCELEROMETER_X = "ACCELEROMETER_X";
+    public static final String ACCELEROMETER_Y = "ACCELEROMETER_Y";
+    public static final String ACCELEROMETER_Z = "ACCELEROMETER_Z";
+    public static final String GYROSCOPE_X = "GYROSCOPE_X";
+    public static final String GYROSCOPE_Y = "GYROSCOPE_Y";
+    public static final String GYROSCOPE_Z = "GYROSCOPE_Z";
+
 }
