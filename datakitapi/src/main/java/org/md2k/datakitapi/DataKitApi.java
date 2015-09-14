@@ -102,8 +102,7 @@ public class DataKitApi {
     private boolean prepareAndSend(Bundle bundle, int messageType) {
         Message message = Message.obtain(null, 0, 0, 0);
         message.what = messageType;
-        Log.d(TAG,"messagetype="+message.what);
-        
+
         message.setData(bundle);
         message.replyTo = replyMessenger;
         try {
@@ -289,7 +288,6 @@ public class DataKitApi {
                     dataSourceClients = (ArrayList<DataSourceClient>) msg.getData().getSerializable(DataSourceClient.class.getSimpleName());
                     break;
                 case MessageType.SUBSCRIBE:
-                    Log.d(TAG,"DataKitApi->subscribe");
                     msg.getData().getSerializable(DataType.class.getSimpleName());
                     break;
                 case MessageType.UNSUBSCRIBE:
