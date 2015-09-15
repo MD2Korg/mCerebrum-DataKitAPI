@@ -112,7 +112,6 @@ public class DataKitApi {
             return false;
         }
     }
-
     public PendingResult<DataSourceClient> register(final DataSource dataSource) {
         PendingResult<DataSourceClient> pendingResult = new PendingResult<DataSourceClient>() {
             @Override
@@ -283,6 +282,8 @@ public class DataKitApi {
             switch (msg.what) {
                 case MessageType.REGISTER:
                     dataSourceClient = (DataSourceClient) msg.getData().getSerializable(DataSourceClient.class.getSimpleName());
+                    Log.e(TAG,dataSourceClient.getDataSource().getPlatform().getId()+" "+dataSourceClient.getDataSource().getType()+" "+dataSourceClient.getDs_id());
+
                     break;
                 case MessageType.FIND:
                     dataSourceClients = (ArrayList<DataSourceClient>) msg.getData().getSerializable(DataSourceClient.class.getSimpleName());
@@ -306,7 +307,7 @@ public class DataKitApi {
                     break;
             }
             synchronized (lock) {
-                lock.notifyAll();
+                lock.notify();
             }
         }
     }
