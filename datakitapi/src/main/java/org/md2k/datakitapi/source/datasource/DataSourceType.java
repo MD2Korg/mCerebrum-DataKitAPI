@@ -61,4 +61,6 @@ public class DataSourceType {
     public static final String GYROSCOPE_Y = "GYROSCOPE_Y";
     public static final String GYROSCOPE_Z = "GYROSCOPE_Z";
 
+    public static final String SURVEY = "SURVEY";
+
 }
