@@ -1,6 +1,9 @@
 package org.md2k.datakitapi.source;
 
+import org.md2k.datakitapi.source.datasource.DataSourceBuilder;
+
 import java.io.Serializable;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -33,17 +36,20 @@ public abstract class AbstractObject implements Serializable{
     protected String type = null;
     protected String id = null;
     protected String description = null;
-    protected Map<String, String> metadata = null;
+    protected HashMap<String, String> metadata = null;
     public String getType() {
         return type;
     }
     public String getId() {
         return id;
     }
+    public void setId(String id){
+        this.id=id;
+    }
     public String getDescription() {
         return description;
     }
-    public Map<String, String> getMetadata() {
+    public HashMap<String, String> getMetadata() {
         return metadata;
     }
     public String toString() {
@@ -54,6 +60,11 @@ public abstract class AbstractObject implements Serializable{
             for (String s : metadata.keySet()) str = str + "(" + s + "->" + metadata.get(s) + ");";
         }
         return str;
+    }
+    public DataSourceBuilder toDataSourceBuilder(){
+        DataSourceBuilder dataSourceBuilder=new DataSourceBuilder();
+        dataSourceBuilder.setType(type).setId(id).setDescription(description).setMetadata(metadata);
+        return dataSourceBuilder;
     }
     public AbstractObject(AbstractObjectBuilder abstractObjectBuilder) {
         this.type = abstractObjectBuilder.type;

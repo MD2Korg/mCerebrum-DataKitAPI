@@ -37,4 +37,6 @@ public abstract class AbstractObjectBuilder {
     public AbstractObjectBuilder setId(String id){this.id = id; return this; }
     public AbstractObjectBuilder setDescription(String description){this.description = description; return this; }
     public AbstractObjectBuilder setMetadata(String key, String value){this.metadata.put(key,value); return this; }
+    public AbstractObjectBuilder setMetadata(HashMap<String,String> metadata){this.metadata=metadata; return this; }
+
 }

@@ -5,6 +5,8 @@ import org.md2k.datakitapi.source.platform.Platform;
 import org.md2k.datakitapi.source.platformapp.PlatformApp;
 import org.md2k.datakitapi.source.AbstractObjectBuilder;
 
+import java.util.HashMap;
+
 /**
  * Copyright (c) 2015, The University of Memphis, MD2K Center
  * - Syed Monowar Hossain <monowar.hossain@gmail.com>
@@ -41,7 +43,8 @@ public class DataSourceBuilder extends AbstractObjectBuilder {
         public DataSourceBuilder setType(String type){super.setType(type); return this; }
         public DataSourceBuilder setId(String id){super.setId(id); return this; }
         public DataSourceBuilder setDescription(String description){super.setDescription(description); return this; }
-        public DataSourceBuilder setMetadata(String key, String value){super.setMetadata(key,value); return this; }
+        public DataSourceBuilder setMetadata(String key, String value){super.setMetadata(key, value); return this; }
+        public DataSourceBuilder setMetadata(HashMap<String,String> metadata){super.setMetadata(metadata); return this; }
 
         public DataSourceBuilder setLineage(DataSource[] lineage){this.lineage = lineage; return this; }
         public DataSourceBuilder setDataType(String dataType){this.dataType = dataType; return this; }

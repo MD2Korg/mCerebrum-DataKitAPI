@@ -60,6 +60,12 @@ public class DataSource extends AbstractObject implements Serializable {
         this.application = dataSourceBuilder.application;
         this.persistent = dataSourceBuilder.persistent;
     }
+    public DataSourceBuilder toDataSourceBuilder(){
+        DataSourceBuilder dataSourceBuilder = super.toDataSourceBuilder();
+        dataSourceBuilder=dataSourceBuilder.setLineage(lineage).setDataType(dataType).
+                setPlatform(platform).setPlatformApp(platformApp).setApplication(application).setPersistent(persistent);
+        return dataSourceBuilder;
+    }
 
     public DataSource[] getLineage() {
         return lineage;

@@ -15,7 +15,10 @@ import android.os.RemoteException;
 import android.util.Log;
 
 import org.md2k.datakitapi.messagehandler.OnReceiveListener;
+import org.md2k.datakitapi.source.application.Application;
+import org.md2k.datakitapi.source.application.ApplicationBuilder;
 import org.md2k.datakitapi.source.datasource.DataSource;
+import org.md2k.datakitapi.source.datasource.DataSourceBuilder;
 import org.md2k.datakitapi.source.datasource.DataSourceClient;
 import org.md2k.datakitapi.messagehandler.MessageType;
 import org.md2k.datakitapi.datatype.DataType;
@@ -24,23 +27,24 @@ import org.md2k.datakitapi.messagehandler.OnRegistrationListener;
 import org.md2k.datakitapi.messagehandler.PendingResult;
 import org.md2k.datakitapi.messagehandler.ResultCallback;
 import org.md2k.datakitapi.status.Status;
+
 import java.util.ArrayList;
 
 /**
  * Copyright (c) 2015, The University of Memphis, MD2K Center
  * - Syed Monowar Hossain <monowar.hossain@gmail.com>
  * All rights reserved.
- *
+ * <p/>
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- *
+ * <p/>
  * * Redistributions of source code must retain the above copyright notice, this
  * list of conditions and the following disclaimer.
- *
+ * <p/>
  * * Redistributions in binary form must reproduce the above copyright notice,
  * this list of conditions and the following disclaimer in the documentation
  * and/or other materials provided with the distribution.
- *
+ * <p/>
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -84,7 +88,7 @@ public class DataKitApi {
         thread.start();
         IncomingHandler incomingHandler = new IncomingHandler(thread.getLooper());
         this.replyMessenger = new Messenger(incomingHandler);
-        if (context.bindService(intent, this.connection, Context.BIND_AUTO_CREATE) == false) {
+        if (!context.bindService(intent, this.connection, Context.BIND_AUTO_CREATE)) {
             thread.quit();
             context.unbindService(connection);
             return false;
@@ -112,7 +116,16 @@ public class DataKitApi {
             return false;
         }
     }
-    public PendingResult<DataSourceClient> register(final DataSource dataSource) {
+
+    public PendingResult<DataSourceClient> register(DataSource dataSource) {
+
+        if (dataSource.getApplication() == null) {
+            Application application = new ApplicationBuilder().setId(context.getPackageName()).build();
+            dataSource = dataSource.toDataSourceBuilder().setApplication(application).build();
+        } else
+            dataSource.getApplication().setId(context.getPackageName());
+        final DataSource dataSourceNew = dataSource;
+
         PendingResult<DataSourceClient> pendingResult = new PendingResult<DataSourceClient>() {
             @Override
             public DataSourceClient await() {
@@ -120,7 +133,7 @@ public class DataKitApi {
                     @Override
                     public void run() {
                         Bundle bundle = new Bundle();
-                        bundle.putSerializable(DataSource.class.getSimpleName(), dataSource);
+                        bundle.putSerializable(DataSource.class.getSimpleName(), dataSourceNew);
                         prepareAndSend(bundle, MessageType.REGISTER);
                     }
                 });
@@ -134,6 +147,7 @@ public class DataKitApi {
                 }
                 return dataSourceClient;
             }
+
             @Override
             public void setResultCallback(ResultCallback<DataSourceClient> callback) {
 
@@ -141,17 +155,19 @@ public class DataKitApi {
         };
         return pendingResult;
     }
+
     public PendingResult<Status> unsubscribe(final DataSourceClient dataSourceClient) {
         return unregister_unsubscribe(dataSourceClient, MessageType.UNSUBSCRIBE);
     }
 
     public boolean subscribe(final DataSourceClient dataSourceClient, OnReceiveListener onReceiveListener) {
-        this.onReceiveListener=onReceiveListener;
+        this.onReceiveListener = onReceiveListener;
 //        onReceiveListener.onReceived()
         Bundle bundle = new Bundle();
         bundle.putInt("ds_id", dataSourceClient.getDs_id());
-        return prepareAndSend(bundle,MessageType.SUBSCRIBE);
+        return prepareAndSend(bundle, MessageType.SUBSCRIBE);
     }
+
     public PendingResult<Status> unregister(final DataSourceClient dataSourceClient) {
         return unregister_unsubscribe(dataSourceClient, MessageType.UNREGISTER);
     }
@@ -165,7 +181,7 @@ public class DataKitApi {
                     public void run() {
                         Bundle bundle = new Bundle();
                         bundle.putInt("ds_id", dataSourceClient.getDs_id());
-                        prepareAndSend(bundle,messageType);
+                        prepareAndSend(bundle, messageType);
                     }
                 });
                 t.start();
@@ -178,6 +194,7 @@ public class DataKitApi {
                 }
                 return status;
             }
+
             @Override
             public void setResultCallback(ResultCallback<Status> callback) {
                 callback.onResult(status);
@@ -195,7 +212,7 @@ public class DataKitApi {
                     public void run() {
                         Bundle bundle = new Bundle();
                         bundle.putSerializable(DataSource.class.getSimpleName(), dataSource);
-                        prepareAndSend(bundle,MessageType.FIND);
+                        prepareAndSend(bundle, MessageType.FIND);
                     }
                 });
                 t.start();
@@ -217,6 +234,7 @@ public class DataKitApi {
         };
         return pendingResult;
     }
+
     public PendingResult<ArrayList<DataType>> query(final DataSourceClient dataSourceClient, final long starttimestamp, final long endtimestamp) {
         return new PendingResult<ArrayList<DataType>>() {
             @Override
@@ -228,7 +246,7 @@ public class DataKitApi {
                         bundle.putInt("ds_id", dataSourceClient.getDs_id());
                         bundle.putLong("starttimestamp", starttimestamp);
                         bundle.putLong("endtimestamp", endtimestamp);
-                        prepareAndSend(bundle,MessageType.QUERY);
+                        prepareAndSend(bundle, MessageType.QUERY);
                     }
                 });
                 t.start();
@@ -282,7 +300,7 @@ public class DataKitApi {
             switch (msg.what) {
                 case MessageType.REGISTER:
                     dataSourceClient = (DataSourceClient) msg.getData().getSerializable(DataSourceClient.class.getSimpleName());
-                    Log.e(TAG,dataSourceClient.getDataSource().getPlatform().getId()+" "+dataSourceClient.getDataSource().getType()+" "+dataSourceClient.getDs_id());
+//                    Log.e(TAG,dataSourceClient.getDataSource().getPlatform().getId()+" "+dataSourceClient.getDataSource().getType()+" "+dataSourceClient.getDs_id());
 
                     break;
                 case MessageType.FIND:
