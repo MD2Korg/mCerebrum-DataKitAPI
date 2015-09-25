@@ -12,7 +12,6 @@ import android.os.Looper;
 import android.os.Message;
 import android.os.Messenger;
 import android.os.RemoteException;
-import android.util.Log;
 
 import org.md2k.datakitapi.messagehandler.OnReceiveListener;
 import org.md2k.datakitapi.source.application.Application;
@@ -260,6 +259,37 @@ public class DataKitApi {
                 }
                 return dataTypes;
             }
+            @Override
+            public void setResultCallback(ResultCallback<ArrayList<DataType>> callback) {
+
+            }
+        };
+    }
+
+    public PendingResult<ArrayList<DataType>> query(final DataSourceClient dataSourceClient, final int last_n_sample) {
+        return new PendingResult<ArrayList<DataType>>() {
+            @Override
+            public ArrayList<DataType> await() {
+                Thread t = new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Bundle bundle = new Bundle();
+                        bundle.putInt("ds_id", dataSourceClient.getDs_id());
+                        bundle.putInt("last_n_sample", last_n_sample);
+                        prepareAndSend(bundle, MessageType.QUERY);
+                    }
+                });
+                t.start();
+                synchronized (lock) {
+
+                    try {
+                        lock.wait();
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+                return dataTypes;
+            }
 
             @Override
             public void setResultCallback(ResultCallback<ArrayList<DataType>> callback) {
@@ -268,13 +298,45 @@ public class DataKitApi {
         };
     }
 
-    public void insert(DataSourceClient dataSourceClient, DataType dataType) {
+    public PendingResult<Status> insert(final DataSourceClient dataSourceClient, final DataType dataType) {
+        return new PendingResult<Status>() {
+            @Override
+            public Status await() {
+                Thread t = new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Bundle bundle = new Bundle();
+                        bundle.putSerializable(DataType.class.getSimpleName(), dataType);
+                        bundle.putInt("ds_id", dataSourceClient.getDs_id());
+                        prepareAndSend(bundle, MessageType.INSERT);
+                    }
+                });
+                t.start();
+                synchronized (lock) {
+
+                    try {
+                        lock.wait();
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+                return status;
+            }
+
+            @Override
+            public void setResultCallback(ResultCallback<Status> callback) {
+
+            }
+        };
+    }
+
+/*    public void insert(DataSourceClient dataSourceClient, DataType dataType) {
         Bundle bundle = new Bundle();
         bundle.putSerializable(DataType.class.getSimpleName(), dataType);
         bundle.putInt("ds_id", dataSourceClient.getDs_id());
         prepareAndSend(bundle, MessageType.INSERT);
     }
-
+*/
     private class RemoteServiceConnection implements ServiceConnection {
         @Override
         public void onServiceConnected(ComponentName component, IBinder binder) {
@@ -317,7 +379,7 @@ public class DataKitApi {
                     dataTypes = (ArrayList<DataType>) msg.getData().getSerializable(DataType.class.getSimpleName());
                     break;
                 case MessageType.INSERT:
-                    // no incoming message for INSERT
+                    status= (Status) msg.getData().getSerializable(Status.class.getSimpleName());
                     break;
                 case MessageType.SUBSCRIBED_DATA:
                     dataType = (DataType) msg.getData().getSerializable(DataType.class.getSimpleName());
