@@ -29,6 +29,7 @@ import org.md2k.datakitapi.messagehandler.ResultCallback;
 import org.md2k.datakitapi.status.Status;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  * Copyright (c) 2015, The University of Memphis, MD2K Center
@@ -72,7 +73,8 @@ public class DataKitApi {
     ArrayList<DataType> dataTypes;
     DataType dataType;
     Status status;
-    OnReceiveListener onReceiveListener;
+//    OnReceiveListener onReceiveListener;
+    HashMap<Messenger,OnReceiveListener> messengerOnReceiveListenerHashMap=new HashMap<>();
 
     public DataKitApi(Context context) {
         this.context = context;
@@ -157,11 +159,13 @@ public class DataKitApi {
     }
 
     public PendingResult<Status> unsubscribe(final DataSourceClient dataSourceClient) {
+        messengerOnReceiveListenerHashMap.remove(replyMessenger);
         return unregister_unsubscribe(dataSourceClient, MessageType.UNSUBSCRIBE);
     }
 
     public boolean subscribe(final DataSourceClient dataSourceClient, OnReceiveListener onReceiveListener) {
-        this.onReceiveListener = onReceiveListener;
+        messengerOnReceiveListenerHashMap.put(replyMessenger,onReceiveListener);
+//        this.onReceiveListener = onReceiveListener;
 //        onReceiveListener.onReceived()
         Bundle bundle = new Bundle();
         bundle.putInt("ds_id", dataSourceClient.getDs_id());
@@ -321,7 +325,8 @@ public class DataKitApi {
                     break;
                 case MessageType.SUBSCRIBED_DATA:
                     dataType = (DataType) msg.getData().getSerializable(DataType.class.getSimpleName());
-                    onReceiveListener.onReceived(dataType);
+                    messengerOnReceiveListenerHashMap.get(msg.replyTo).onReceived(dataType);
+//                    onReceiveListener.onReceived(dataType);
                     break;
             }
             synchronized (lock) {
