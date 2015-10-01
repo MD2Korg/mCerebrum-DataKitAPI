@@ -42,7 +42,7 @@ public class DataType implements Serializable{
     public DataType(long dateTime) {
         this.dateTime = dateTime;
     }
-    public long getStartDateTime() {
+    public long getDateTime() {
         return dateTime;
     }
 
