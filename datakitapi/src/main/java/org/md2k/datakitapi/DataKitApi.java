@@ -12,6 +12,7 @@ import android.os.Looper;
 import android.os.Message;
 import android.os.Messenger;
 import android.os.RemoteException;
+import android.util.Log;
 
 import org.md2k.datakitapi.messagehandler.OnReceiveListener;
 import org.md2k.datakitapi.source.application.Application;
@@ -73,7 +74,7 @@ public class DataKitApi {
     DataType dataType;
     Status status;
 //    OnReceiveListener onReceiveListener;
-    HashMap<Messenger,OnReceiveListener> messengerOnReceiveListenerHashMap=new HashMap<>();
+    HashMap<Integer,OnReceiveListener> ds_idOnReceiveListenerHashMap=new HashMap<>();
 
     public DataKitApi(Context context) {
         this.context = context;
@@ -158,12 +159,12 @@ public class DataKitApi {
     }
 
     public PendingResult<Status> unsubscribe(final DataSourceClient dataSourceClient) {
-        messengerOnReceiveListenerHashMap.remove(replyMessenger);
+        ds_idOnReceiveListenerHashMap.remove(dataSourceClient.getDs_id());
         return unregister_unsubscribe(dataSourceClient, MessageType.UNSUBSCRIBE);
     }
 
     public boolean subscribe(final DataSourceClient dataSourceClient, OnReceiveListener onReceiveListener) {
-        messengerOnReceiveListenerHashMap.put(replyMessenger,onReceiveListener);
+        ds_idOnReceiveListenerHashMap.put(dataSourceClient.getDs_id(),onReceiveListener);
 //        this.onReceiveListener = onReceiveListener;
 //        onReceiveListener.onReceived()
         Bundle bundle = new Bundle();
@@ -215,18 +216,19 @@ public class DataKitApi {
                     public void run() {
                         Bundle bundle = new Bundle();
                         bundle.putSerializable(DataSource.class.getSimpleName(), dataSource);
+                        Log.d(TAG,"before: currentDataSourceType="+dataSource.getType());
                         prepareAndSend(bundle, MessageType.FIND);
                     }
                 });
                 t.start();
                 synchronized (lock) {
-
                     try {
                         lock.wait();
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
                 }
+                Log.d(TAG,"after: currentDataSourceType="+dataSource.getType()+" newDataSourceType="+dataSourceClients.get(0).getDataSource().getType());
                 return dataSourceClients;
             }
 
@@ -285,7 +287,6 @@ public class DataKitApi {
                 });
                 t.start();
                 synchronized (lock) {
-
                     try {
                         lock.wait();
                     } catch (InterruptedException e) {
@@ -371,10 +372,11 @@ public class DataKitApi {
                     break;
                 case MessageType.FIND:
                     dataSourceClients = (ArrayList<DataSourceClient>) msg.getData().getSerializable(DataSourceClient.class.getSimpleName());
+                    Log.d(TAG,"Operation: Find(): after msg: type:"+dataSourceClients.get(0).getDataSource().getType());
                     break;
                 case MessageType.SUBSCRIBE:
                     msg.getData().getSerializable(DataType.class.getSimpleName());
-                    break;
+                    return;
                 case MessageType.UNSUBSCRIBE:
                 case MessageType.UNREGISTER:
                     status = (Status) msg.getData().getSerializable(Status.class.getSimpleName());
@@ -387,11 +389,12 @@ public class DataKitApi {
                     break;
                 case MessageType.SUBSCRIBED_DATA:
                     dataType = (DataType) msg.getData().getSerializable(DataType.class.getSimpleName());
-                    messengerOnReceiveListenerHashMap.get(msg.replyTo).onReceived(dataType);
-//                    onReceiveListener.onReceived(dataType);
-                    break;
+                    int ds_id=msg.getData().getInt("ds_id");
+                    ds_idOnReceiveListenerHashMap.get(ds_id).onReceived(dataType);
+                    return;
             }
             synchronized (lock) {
+                Log.d(TAG,"notify(): messagetype="+msg.what);
                 lock.notify();
             }
         }
