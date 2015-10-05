@@ -119,14 +119,13 @@ public class DataKitApi {
         }
     }
 
-    public PendingResult<DataSourceClient> register(DataSource dataSource) {
-
-        if (dataSource.getApplication() == null) {
+    public PendingResult<DataSourceClient> register(DataSourceBuilder dataSourceBuilder) {
+        if (dataSourceBuilder.build().getApplication() == null) {
             Application application = new ApplicationBuilder().setId(context.getPackageName()).build();
-            dataSource = dataSource.toDataSourceBuilder().setApplication(application).build();
+            dataSourceBuilder = dataSourceBuilder.setApplication(application);
         } else
-            dataSource.getApplication().setId(context.getPackageName());
-        final DataSource dataSourceNew = dataSource;
+            dataSourceBuilder.setId(context.getPackageName());
+        final DataSource dataSource = dataSourceBuilder.build();
 
         PendingResult<DataSourceClient> pendingResult = new PendingResult<DataSourceClient>() {
             @Override
@@ -135,7 +134,7 @@ public class DataKitApi {
                     @Override
                     public void run() {
                         Bundle bundle = new Bundle();
-                        bundle.putSerializable(DataSource.class.getSimpleName(), dataSourceNew);
+                        bundle.putSerializable(DataSource.class.getSimpleName(), dataSource);
                         prepareAndSend(bundle, MessageType.REGISTER);
                     }
                 });
@@ -216,7 +215,6 @@ public class DataKitApi {
                     public void run() {
                         Bundle bundle = new Bundle();
                         bundle.putSerializable(DataSource.class.getSimpleName(), dataSource);
-                        Log.d(TAG,"before: currentDataSourceType="+dataSource.getType());
                         prepareAndSend(bundle, MessageType.FIND);
                     }
                 });
@@ -228,7 +226,6 @@ public class DataKitApi {
                         e.printStackTrace();
                     }
                 }
-                Log.d(TAG,"after: currentDataSourceType="+dataSource.getType()+" newDataSourceType="+dataSourceClients.get(0).getDataSource().getType());
                 return dataSourceClients;
             }
 
@@ -367,12 +364,9 @@ public class DataKitApi {
             switch (msg.what) {
                 case MessageType.REGISTER:
                     dataSourceClient = (DataSourceClient) msg.getData().getSerializable(DataSourceClient.class.getSimpleName());
-//                    Log.e(TAG,dataSourceClient.getDataSource().getPlatform().getId()+" "+dataSourceClient.getDataSource().getType()+" "+dataSourceClient.getDs_id());
-
                     break;
                 case MessageType.FIND:
                     dataSourceClients = (ArrayList<DataSourceClient>) msg.getData().getSerializable(DataSourceClient.class.getSimpleName());
-                    Log.d(TAG,"Operation: Find(): after msg: type:"+dataSourceClients.get(0).getDataSource().getType());
                     break;
                 case MessageType.SUBSCRIBE:
                     msg.getData().getSerializable(DataType.class.getSimpleName());
@@ -390,11 +384,11 @@ public class DataKitApi {
                 case MessageType.SUBSCRIBED_DATA:
                     dataType = (DataType) msg.getData().getSerializable(DataType.class.getSimpleName());
                     int ds_id=msg.getData().getInt("ds_id");
-                    ds_idOnReceiveListenerHashMap.get(ds_id).onReceived(dataType);
+                    if (ds_idOnReceiveListenerHashMap.containsKey(ds_id))
+                        ds_idOnReceiveListenerHashMap.get(ds_id).onReceived(dataType);
                     return;
             }
             synchronized (lock) {
-                Log.d(TAG,"notify(): messagetype="+msg.what);
                 lock.notify();
             }
         }

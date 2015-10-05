@@ -5,6 +5,7 @@ import org.md2k.datakitapi.source.platform.Platform;
 import org.md2k.datakitapi.source.platformapp.PlatformApp;
 import org.md2k.datakitapi.source.AbstractObjectBuilder;
 
+import java.io.Serializable;
 import java.util.HashMap;
 
 /**
@@ -33,7 +34,7 @@ import java.util.HashMap;
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-public class DataSourceBuilder extends AbstractObjectBuilder {
+public class DataSourceBuilder extends AbstractObjectBuilder implements Serializable {
         public DataSource[] lineage=null;
         public String dataType=null;
         public Platform platform=null;
