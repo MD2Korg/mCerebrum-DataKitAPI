@@ -50,6 +50,14 @@ public class ApplicationBuilder extends AbstractObjectBuilder implements Seriali
         super.setMetadata(key, value);
         return this;
     }
+    public ApplicationBuilder(){
+    }
+    public ApplicationBuilder(Application application){
+        this.metadata=application.getMetadata();
+        this.type=application.getType();
+        this.description=application.getDescription();
+        this.id=application.getId();
+    }
 
     public Application build() {
         return new Application(this);

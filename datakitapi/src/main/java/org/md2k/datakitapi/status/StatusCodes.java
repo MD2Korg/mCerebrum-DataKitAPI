@@ -33,11 +33,12 @@ import java.util.Map;
 public class StatusCodes{
     public static final int SUCCESS = 0;
 
-    public static final int DATASOURCE_EXISTS = 1;
+    public static final int DATASOURCE_EXIST = 1;
     public static final int DATASOURCE_MULTIPLE_EXIST=2;
-    public static final int DATASOURCE_NOT_FOUND = 3;
-    public static final int INVALID_ENTRY=4;
-    public static final int FAILED=5;
+    public static final int DATASOURCE_NOT_EXIST = 3;
+    public static final int DATASOURCE_INVALID =4;
+    public static final int DATASOURCE_PUBLISHED=5;
+    public static final int INTERNAL_ERROR =5;
     public static final int ALREADY_SUBSCRIBED=6;
 
     private static Map<Integer, String> constantNames = null;

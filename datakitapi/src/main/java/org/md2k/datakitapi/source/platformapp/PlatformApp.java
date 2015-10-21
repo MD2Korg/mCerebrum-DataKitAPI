@@ -29,7 +29,6 @@ import org.md2k.datakitapi.source.AbstractObject;
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 public class PlatformApp extends AbstractObject {
-    private static final String TAG = PlatformApp.class.getSimpleName();
     PlatformApp(PlatformAppBuilder platformAppBuilder){
         super(platformAppBuilder);
     }

@@ -4,6 +4,8 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.HandlerThread;
@@ -72,8 +74,8 @@ public class DataKitApi {
     ArrayList<DataType> dataTypes;
     DataType dataType;
     Status status;
-//    OnReceiveListener onReceiveListener;
-    HashMap<Integer,OnReceiveListener> ds_idOnReceiveListenerHashMap=new HashMap<>();
+    //    OnReceiveListener onReceiveListener;
+    HashMap<Integer, OnReceiveListener> ds_idOnReceiveListenerHashMap = new HashMap<>();
 
     public DataKitApi(Context context) {
         this.context = context;
@@ -119,12 +121,7 @@ public class DataKitApi {
     }
 
     public PendingResult<DataSourceClient> register(DataSourceBuilder dataSourceBuilder) {
-        if (dataSourceBuilder.build().getApplication() == null) {
-            Application application = new ApplicationBuilder().setId(context.getPackageName()).build();
-            dataSourceBuilder = dataSourceBuilder.setApplication(application);
-        } else
-            dataSourceBuilder.setId(context.getPackageName());
-        final DataSource dataSource = dataSourceBuilder.build();
+        final DataSource dataSource = prepareDataSource(dataSourceBuilder);
 
         PendingResult<DataSourceClient> pendingResult = new PendingResult<DataSourceClient>() {
             @Override
@@ -162,7 +159,7 @@ public class DataKitApi {
     }
 
     public boolean subscribe(final DataSourceClient dataSourceClient, OnReceiveListener onReceiveListener) {
-        ds_idOnReceiveListenerHashMap.put(dataSourceClient.getDs_id(),onReceiveListener);
+        ds_idOnReceiveListenerHashMap.put(dataSourceClient.getDs_id(), onReceiveListener);
 //        this.onReceiveListener = onReceiveListener;
 //        onReceiveListener.onReceived()
         Bundle bundle = new Bundle();
@@ -205,7 +202,29 @@ public class DataKitApi {
         return pendingResult;
     }
 
-    public PendingResult<ArrayList<DataSourceClient>> find(final DataSource dataSource) {
+    private DataSource prepareDataSource(DataSourceBuilder dataSourceBuilder) {
+        String versionNumber = null;
+        int versionCode = 0;
+        try {
+            PackageInfo pInfo = context.getPackageManager().getPackageInfo(context.getPackageName(), 0);
+            versionNumber = pInfo.versionName;
+            versionCode = pInfo.versionCode;
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        }
+        ApplicationBuilder applicationBuilder;
+        if (dataSourceBuilder.build().getApplication() == null)
+            applicationBuilder = new ApplicationBuilder();
+        else
+            applicationBuilder = new ApplicationBuilder(dataSourceBuilder.build().getApplication());
+        Application application = applicationBuilder.setType(context.getPackageName()).setMetadata("version_number", versionNumber).setMetadata("version_code", String.valueOf(versionCode)).build();
+        dataSourceBuilder = dataSourceBuilder.setApplication(application);
+        return dataSourceBuilder.build();
+    }
+
+    public PendingResult<ArrayList<DataSourceClient>> find(DataSourceBuilder dataSourceBuilder) {
+        final DataSource dataSource = dataSourceBuilder.build();
+
         PendingResult<ArrayList<DataSourceClient>> pendingResult = new PendingResult<ArrayList<DataSourceClient>>() {
             @Override
             public ArrayList<DataSourceClient> await() {
@@ -261,6 +280,7 @@ public class DataKitApi {
                 }
                 return dataTypes;
             }
+
             @Override
             public void setResultCallback(ResultCallback<ArrayList<DataType>> callback) {
 
@@ -331,13 +351,6 @@ public class DataKitApi {
         };
     }
 
-/*    public void insert(DataSourceClient dataSourceClient, DataType dataType) {
-        Bundle bundle = new Bundle();
-        bundle.putSerializable(DataType.class.getSimpleName(), dataType);
-        bundle.putInt("ds_id", dataSourceClient.getDs_id());
-        prepareAndSend(bundle, MessageType.INSERT);
-    }
-*/
     private class RemoteServiceConnection implements ServiceConnection {
         @Override
         public void onServiceConnected(ComponentName component, IBinder binder) {
@@ -378,11 +391,11 @@ public class DataKitApi {
                     dataTypes = (ArrayList<DataType>) msg.getData().getSerializable(DataType.class.getSimpleName());
                     break;
                 case MessageType.INSERT:
-                    status= (Status) msg.getData().getSerializable(Status.class.getSimpleName());
+                    status = (Status) msg.getData().getSerializable(Status.class.getSimpleName());
                     break;
                 case MessageType.SUBSCRIBED_DATA:
                     dataType = (DataType) msg.getData().getSerializable(DataType.class.getSimpleName());
-                    int ds_id=msg.getData().getInt("ds_id");
+                    int ds_id = msg.getData().getInt("ds_id");
                     if (ds_idOnReceiveListenerHashMap.containsKey(ds_id))
                         ds_idOnReceiveListenerHashMap.get(ds_id).onReceived(dataType);
                     return;

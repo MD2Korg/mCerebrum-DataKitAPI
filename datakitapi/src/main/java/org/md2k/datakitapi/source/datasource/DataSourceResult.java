@@ -41,7 +41,7 @@ public class DataSourceResult extends Object implements Serializable {
     }
 
     public DataSourceResult() {
-        setStatus(StatusCodes.DATASOURCE_NOT_FOUND);
+        setStatus(StatusCodes.DATASOURCE_NOT_EXIST);
         dataSources = new ArrayList<DataSource>();
     }
 
