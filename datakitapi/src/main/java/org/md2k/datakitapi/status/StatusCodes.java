@@ -37,9 +37,9 @@ public class StatusCodes{
     public static final int DATASOURCE_MULTIPLE_EXIST=2;
     public static final int DATASOURCE_NOT_EXIST = 3;
     public static final int DATASOURCE_INVALID =4;
-    public static final int DATASOURCE_PUBLISHED=5;
-    public static final int INTERNAL_ERROR =5;
-    public static final int ALREADY_SUBSCRIBED=6;
+    public static final int DATASOURCE_ACTIVE =5;
+    public static final int INTERNAL_ERROR =6;
+    public static final int ALREADY_SUBSCRIBED=7;
 
     private static Map<Integer, String> constantNames = null;
 
