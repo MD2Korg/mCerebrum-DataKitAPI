@@ -41,17 +41,17 @@ public class DataSourceResult extends Object implements Serializable {
     }
 
     public DataSourceResult() {
-        setStatus(StatusCodes.DATASOURCE_NOT_EXIST);
-        dataSources = new ArrayList<DataSource>();
+        setStatus();
+        dataSources = new ArrayList<>();
     }
 
     public Status getStatus() {
         return status;
     }
 
-    public void setStatus(int statusCode) {
-        String str = new String(StatusCodes.generateStatusString(statusCode));
-        status = new Status(statusCode, str);
+    public void setStatus() {
+        String str = StatusCodes.generateStatusString(StatusCodes.DATASOURCE_NOT_EXIST);
+        status = new Status(StatusCodes.DATASOURCE_NOT_EXIST, str);
     }
 
     public void addDataSource(DataSource dataSource) {
