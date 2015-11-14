@@ -4,7 +4,6 @@ import org.md2k.datakitapi.source.datasource.DataSourceBuilder;
 
 import java.io.Serializable;
 import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Copyright (c) 2015, The University of Memphis, MD2K Center
