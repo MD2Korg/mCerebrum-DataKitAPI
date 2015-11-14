@@ -50,7 +50,7 @@ public class StatusCodes{
     public static String getStatusCodeString(int statusCode) {
         String constNames = "Unknown";
         if (constantNames == null) {
-            Map<Integer, String> cNames = new HashMap<Integer, String>();
+            Map<Integer, String> cNames = new HashMap<>();
             for (Field field : StatusCodes.class.getDeclaredFields()) {
                 if ((field.getModifiers() & (Modifier.FINAL | Modifier.STATIC)) != 0 && int.class == field.getType()) {
                     // only record final static int fields
