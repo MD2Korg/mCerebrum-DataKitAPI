@@ -30,7 +30,7 @@ public class DataSourceType {
     public static final String ACCELEROMETER = "ACCELEROMETER";
     public static final String GYROSCOPE = "GYROSCOPE";
     public static final String COMPASS = "COMPASS";
-    public static final String LIGHT = "LIGHT";
+    public static final String AMBIENT_LIGHT = "AMBIENT_LIGHT";
     public static final String PRESSURE = "PRESSURE";
     public static final String PROXIMITY = "PROXIMITY";
     public static final String LOCATION = "LOCATION";
@@ -47,6 +47,9 @@ public class DataSourceType {
     public static final String ECG = "ECG";
     public static final String RESPIRATION = "RESPIRATION";
     public static final String GSR = "GSR";
+    public static final String ALTIMETER = "ALTIMETER";
+    public static final String AIR_PRESSURE = "AIR_PRESSURE";
+    public static final String RR_INTERVAL = "RR_INTERVAL";
 
     public static final String AMBIENT_TEMPERATURE = "AMBIENT_TEMPERATURE";
     public static final String SKIN_TEMPERATURE = "SKIN_TEMPERATURE";
@@ -62,5 +65,6 @@ public class DataSourceType {
     public static final String GYROSCOPE_Z = "GYROSCOPE_Z";
 
     public static final String SURVEY = "SURVEY";
+    public static final String INFO = "INFO";
 
 }

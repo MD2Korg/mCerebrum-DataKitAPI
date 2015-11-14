@@ -217,7 +217,7 @@ public class DataKitApi {
             applicationBuilder = new ApplicationBuilder();
         else
             applicationBuilder = new ApplicationBuilder(dataSourceBuilder.build().getApplication());
-        Application application = applicationBuilder.setType(context.getPackageName()).setMetadata("version_number", versionNumber).setMetadata("version_code", String.valueOf(versionCode)).build();
+        Application application = applicationBuilder.setId(context.getPackageName()).setMetadata("version_number", versionNumber).setMetadata("version_code", String.valueOf(versionCode)).build();
         dataSourceBuilder = dataSourceBuilder.setApplication(application);
         return dataSourceBuilder.build();
     }
