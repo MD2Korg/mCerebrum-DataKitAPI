@@ -13,7 +13,6 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutput;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
-import java.io.StreamCorruptedException;
 
 /**
  * Copyright (c) 2015, The University of Memphis, MD2K Center
@@ -97,8 +96,7 @@ public class DataSource extends AbstractObject implements Serializable {
         try {
             out = new ObjectOutputStream(bos);
             out.writeObject(this);
-            byte[] yourBytes = bos.toByteArray();
-            return yourBytes;
+            return bos.toByteArray();
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
@@ -127,8 +125,6 @@ public class DataSource extends AbstractObject implements Serializable {
             dataSource = (DataSource) in.readObject();
             return dataSource;
         } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        } catch (StreamCorruptedException e) {
             e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
