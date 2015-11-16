@@ -46,7 +46,7 @@ public class DataSourceType {
     public static final String CALORY_BURN = "CALORY_BURN";
     public static final String ECG = "ECG";
     public static final String RESPIRATION = "RESPIRATION";
-    public static final String GSR = "GSR";
+    public static final String GALVANIC_SKIN_RESPONSE = "GALVANIC_SKIN_RESPONSE";
     public static final String ALTIMETER = "ALTIMETER";
     public static final String AIR_PRESSURE = "AIR_PRESSURE";
     public static final String RR_INTERVAL = "RR_INTERVAL";
