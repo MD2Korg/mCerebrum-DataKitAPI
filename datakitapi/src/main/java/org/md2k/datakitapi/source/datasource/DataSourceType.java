@@ -65,7 +65,6 @@ public class DataSourceType {
     public static final String GYROSCOPE_Z = "GYROSCOPE_Z";
 
     public static final String SURVEY = "SURVEY";
-    public static final String INFO = "INFO";
     public static final String STATUS = "STATUS";
     public static final String NOTIFICATION = "NOTIFICATION";
 
