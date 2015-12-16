@@ -319,36 +319,17 @@ public class DataKitApi {
         };
     }
 
-    public PendingResult<Status> insert(final DataSourceClient dataSourceClient, final DataType dataType) {
-        return new PendingResult<Status>() {
+    public void insert(final DataSourceClient dataSourceClient, final DataType dataType) {
+        Thread t = new Thread(new Runnable() {
             @Override
-            public Status await() {
-                Thread t = new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        Bundle bundle = new Bundle();
-                        bundle.putSerializable(DataType.class.getSimpleName(), dataType);
-                        bundle.putInt("ds_id", dataSourceClient.getDs_id());
-                        prepareAndSend(bundle, MessageType.INSERT);
-                    }
-                });
-                t.start();
-                synchronized (lock) {
-
-                    try {
-                        lock.wait();
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                }
-                return status;
+            public void run() {
+                Bundle bundle = new Bundle();
+                bundle.putSerializable(DataType.class.getSimpleName(), dataType);
+                bundle.putInt("ds_id", dataSourceClient.getDs_id());
+                prepareAndSend(bundle, MessageType.INSERT);
             }
-
-            @Override
-            public void setResultCallback(ResultCallback<Status> callback) {
-
-            }
-        };
+        });
+        t.start();
     }
 
     private class RemoteServiceConnection implements ServiceConnection {
@@ -389,9 +370,6 @@ public class DataKitApi {
                     break;
                 case MessageType.QUERY:
                     dataTypes = (ArrayList<DataType>) msg.getData().getSerializable(DataType.class.getSimpleName());
-                    break;
-                case MessageType.INSERT:
-                    status = (Status) msg.getData().getSerializable(Status.class.getSimpleName());
                     break;
                 case MessageType.SUBSCRIBED_DATA:
                     dataType = (DataType) msg.getData().getSerializable(DataType.class.getSimpleName());

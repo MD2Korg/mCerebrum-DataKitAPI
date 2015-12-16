@@ -1,5 +1,8 @@
 package org.md2k.datakitapi.time;
 
+import java.util.Date;
+import java.util.TimeZone;
+
 /**
  * Copyright (c) 2015, The University of Memphis, MD2K Center
  * - Syed Monowar Hossain <monowar.hossain@gmail.com>
@@ -41,4 +44,41 @@ public class DateTime {
     public static long getDateTime() {
         return getDateTimeMillis();
     }
+    public static long getTimeZoneOffset(){
+        TimeZone timeZone=TimeZone.getDefault();
+        return timeZone.getRawOffset();
+    }
+    public static long getDayLightSavingOffset(){
+        TimeZone timeZone=TimeZone.getDefault();
+        return timeZone.getDSTSavings();
+    }
+    public static boolean isDayLightSavingNow(){
+        TimeZone timeZone=TimeZone.getDefault();
+        return timeZone.inDaylightTime(new Date());
+    }
+    public static String convertTimeToDayTimeStr(long timestamp){
+        timestamp=timestamp/1000;
+        long day=timestamp/(60*60*24);
+        timestamp=timestamp-(day*60*60*24);
+        long hour=timestamp/(60*60);
+        timestamp=timestamp-(hour*60*60);
+        long minute=timestamp/(60);
+        long second=timestamp-(minute*60);
+        String timeStr="";
+        if(day!=0){
+            timeStr=timeStr+String.format("%02d Day ",day);
+        }
+        if(timeStr.length()!=0 || hour!=0){
+            timeStr=timeStr+String.format("%02d Hour ",hour);
+        }
+        if(timeStr.length()!=0 || minute!=0){
+            timeStr=timeStr+String.format("%02d Minute ",minute);
+        }
+        if(timeStr.length()!=0 || minute!=0){
+            timeStr=timeStr+String.format("%02d Second",second);
+        }
+        return timeStr;
+
+    }
+
 }

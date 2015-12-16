@@ -55,7 +55,7 @@ public class DataSourceType {
     public static final String SKIN_TEMPERATURE = "SKIN_TEMPERATURE";
     public static final String BATTERY = "BATTERY";
     public static final String CPU = "CPU";
-    public static final String MEMORY="MEMORY";
+    public static final String MEMORY = "MEMORY";
     public static final String AUTOSENSE = "AUTOSENSE";
     public static final String ACCELEROMETER_X = "ACCELEROMETER_X";
     public static final String ACCELEROMETER_Y = "ACCELEROMETER_Y";
@@ -67,5 +67,9 @@ public class DataSourceType {
     public static final String SURVEY = "SURVEY";
     public static final String STATUS = "STATUS";
     public static final String NOTIFICATION = "NOTIFICATION";
+    public static final String LOG="LOG";
+
+    public static final String TIMEZONE = "TIMEZONE";
+    public static final String PRIVACY = "PRIVACY";
 
 }
