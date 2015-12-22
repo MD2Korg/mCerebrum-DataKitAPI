@@ -1,5 +1,7 @@
 package org.md2k.datakitapi.source;
 
+import org.md2k.datakitapi.Constants;
+
 import java.io.Serializable;
 import java.util.HashMap;
 
@@ -30,6 +32,7 @@ import java.util.HashMap;
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 public abstract class AbstractObjectBuilder implements Serializable {
+    private static final long serialVersionUID = Constants.serialVersionUID;
     protected String type=null;
     protected String id=null;
     protected String description=null;

@@ -1,5 +1,6 @@
 package org.md2k.datakitapi.source.datasource;
 
+import org.md2k.datakitapi.Constants;
 import org.md2k.datakitapi.source.application.Application;
 import org.md2k.datakitapi.source.platform.Platform;
 import org.md2k.datakitapi.source.platformapp.PlatformApp;
@@ -35,6 +36,7 @@ import java.util.HashMap;
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 public class DataSourceBuilder extends AbstractObjectBuilder implements Serializable {
+    private static final long serialVersionUID = Constants.serialVersionUID;
     public DataSource[] lineage = null;
     public String dataType = null;
     public Platform platform = null;

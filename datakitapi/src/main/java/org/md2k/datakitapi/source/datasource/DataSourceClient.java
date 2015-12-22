@@ -1,5 +1,6 @@
 package org.md2k.datakitapi.source.datasource;
 
+import org.md2k.datakitapi.Constants;
 import org.md2k.datakitapi.status.Status;
 
 import java.io.Serializable;
@@ -31,6 +32,7 @@ import java.io.Serializable;
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 public class DataSourceClient implements Serializable {
+    private static final long serialVersionUID = Constants.serialVersionUID;
     private int ds_id;
     DataSource dataSource;
     private Status status;

@@ -1,5 +1,8 @@
 package org.md2k.datakitapi.datatype;
 
+import org.md2k.datakitapi.Constants;
+import org.md2k.datakitapi.time.DateTime;
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -36,10 +39,13 @@ import java.io.Serializable;
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 public class DataType implements Serializable{
+    private static final long serialVersionUID = Constants.serialVersionUID;
     long dateTime;
+    long offset;
 
     public DataType(long dateTime) {
         this.dateTime = dateTime;
+        this.offset= DateTime.getTimeZoneOffset();
     }
     public long getDateTime() {
         return dateTime;

@@ -45,8 +45,7 @@ public class DateTime {
         return getDateTimeMillis();
     }
     public static long getTimeZoneOffset(){
-        TimeZone timeZone=TimeZone.getDefault();
-        return timeZone.getRawOffset();
+        return TimeZone.getDefault().getRawOffset();
     }
     public static long getDayLightSavingOffset(){
         TimeZone timeZone=TimeZone.getDefault();
@@ -56,29 +55,14 @@ public class DateTime {
         TimeZone timeZone=TimeZone.getDefault();
         return timeZone.inDaylightTime(new Date());
     }
-    public static String convertTimeToDayTimeStr(long timestamp){
+    public static String convertTimestampToTimeStr(long timestamp){
         timestamp=timestamp/1000;
-        long day=timestamp/(60*60*24);
-        timestamp=timestamp-(day*60*60*24);
         long hour=timestamp/(60*60);
         timestamp=timestamp-(hour*60*60);
         long minute=timestamp/(60);
         long second=timestamp-(minute*60);
         String timeStr="";
-        if(day!=0){
-            timeStr=timeStr+String.format("%02d Day ",day);
-        }
-        if(timeStr.length()!=0 || hour!=0){
-            timeStr=timeStr+String.format("%02d Hour ",hour);
-        }
-        if(timeStr.length()!=0 || minute!=0){
-            timeStr=timeStr+String.format("%02d Minute ",minute);
-        }
-        if(timeStr.length()!=0 || minute!=0){
-            timeStr=timeStr+String.format("%02d Second",second);
-        }
+        timeStr=timeStr+String.format("%02d:%02d:%02d",hour,minute,second);
         return timeStr;
-
     }
-
 }

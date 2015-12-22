@@ -1,5 +1,6 @@
 package org.md2k.datakitapi.source.platform;
 
+import org.md2k.datakitapi.Constants;
 import org.md2k.datakitapi.source.AbstractObjectBuilder;
 
 import java.io.Serializable;
@@ -31,6 +32,7 @@ import java.io.Serializable;
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 public class PlatformBuilder extends AbstractObjectBuilder implements Serializable {
+    private static final long serialVersionUID = Constants.serialVersionUID;
     public PlatformBuilder setType(String type) {
         super.setType(type);
         return this;

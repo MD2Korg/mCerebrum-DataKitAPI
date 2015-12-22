@@ -1,5 +1,6 @@
 package org.md2k.datakitapi.source.application;
 
+import org.md2k.datakitapi.Constants;
 import org.md2k.datakitapi.source.AbstractObject;
 
 import java.io.Serializable;
@@ -31,7 +32,7 @@ import java.io.Serializable;
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 public class Application extends AbstractObject implements Serializable {
-    private static final String TAG = Application.class.getSimpleName();
+    private static final long serialVersionUID = Constants.serialVersionUID;
     Application(ApplicationBuilder applicationBuilder) {
         super(applicationBuilder);
     }

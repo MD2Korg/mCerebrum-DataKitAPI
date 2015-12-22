@@ -1,5 +1,6 @@
 package org.md2k.datakitapi.source.datasource;
 
+import org.md2k.datakitapi.Constants;
 import org.md2k.datakitapi.status.Status;
 import org.md2k.datakitapi.status.StatusCodes;
 
@@ -33,6 +34,7 @@ import java.util.ArrayList;
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 public class DataSourceResult extends Object implements Serializable {
+    private static final long serialVersionUID = Constants.serialVersionUID;
     private Status status;
     ArrayList<DataSource> dataSources;
 

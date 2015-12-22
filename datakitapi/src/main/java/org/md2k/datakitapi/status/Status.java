@@ -1,5 +1,7 @@
 package org.md2k.datakitapi.status;
 
+import org.md2k.datakitapi.Constants;
+
 import java.io.Serializable;
 
 /**
@@ -29,6 +31,7 @@ import java.io.Serializable;
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 public class Status extends Object implements Serializable {
+    private static final long serialVersionUID = Constants.serialVersionUID;
     int statusCode;
     String statusMessage;
 

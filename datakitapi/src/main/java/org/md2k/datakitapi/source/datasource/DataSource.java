@@ -1,5 +1,6 @@
 package org.md2k.datakitapi.source.datasource;
 
+import org.md2k.datakitapi.Constants;
 import org.md2k.datakitapi.source.application.Application;
 import org.md2k.datakitapi.source.platform.Platform;
 import org.md2k.datakitapi.source.platformapp.PlatformApp;
@@ -41,8 +42,7 @@ import java.io.Serializable;
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 public class DataSource extends AbstractObject implements Serializable {
-    private static final String TAG = DataSource.class.getSimpleName();
-
+    private static final long serialVersionUID = Constants.serialVersionUID;
     private DataSource[] lineage = null;
     private String dataType = null;
     private Platform platform = null;
