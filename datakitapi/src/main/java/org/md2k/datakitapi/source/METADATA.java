@@ -1,4 +1,4 @@
-package org.md2k.datakitapi.source.datasource;
+package org.md2k.datakitapi.source;
 
 /**
  * Copyright (c) 2015, The University of Memphis, MD2K Center
@@ -35,6 +35,9 @@ public class METADATA {
     public static final String UNIT = "UNIT";
     public static final String DATA_TYPE = "DATA_TYPE";
     public static final String DATA_FORMAT = "DATA_FORMAT";
+    public static final String OPERATING_SYSTEM = "OPERATING_SYSTEM";
+    public static final String MANUFACTURER = "MANUFACTURER";
+    public static final String MODEL = "MODEL";
 
 
 }
