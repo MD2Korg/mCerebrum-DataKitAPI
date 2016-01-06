@@ -8,6 +8,7 @@ import org.md2k.datakitapi.source.AbstractObjectBuilder;
 
 import java.io.Serializable;
 import java.util.HashMap;
+import java.util.List;
 
 /**
  * Copyright (c) 2015, The University of Memphis, MD2K Center
@@ -37,12 +38,12 @@ import java.util.HashMap;
  */
 public class DataSourceBuilder extends AbstractObjectBuilder implements Serializable {
     private static final long serialVersionUID = Constants.serialVersionUID;
-    public DataSource[] lineage = null;
     public String dataType = null;
     public Platform platform = null;
     public PlatformApp platformApp = null;
     public Application application = null;
     public boolean persistent = true;
+    public List<HashMap<String,String>> dataDescriptors=null;
 
     public DataSourceBuilder setType(String type) {
         super.setType(type);
@@ -54,11 +55,6 @@ public class DataSourceBuilder extends AbstractObjectBuilder implements Serializ
         return this;
     }
 
-    public DataSourceBuilder setDescription(String description) {
-        super.setDescription(description);
-        return this;
-    }
-
     public DataSourceBuilder setMetadata(String key, String value) {
         super.setMetadata(key, value);
         return this;
@@ -66,11 +62,6 @@ public class DataSourceBuilder extends AbstractObjectBuilder implements Serializ
 
     public DataSourceBuilder setMetadata(HashMap<String, String> metadata) {
         super.setMetadata(metadata);
-        return this;
-    }
-
-    public DataSourceBuilder setLineage(DataSource[] lineage) {
-        this.lineage = lineage;
         return this;
     }
 
@@ -98,6 +89,10 @@ public class DataSourceBuilder extends AbstractObjectBuilder implements Serializ
         this.persistent = persistent;
         return this;
     }
+    public DataSourceBuilder setDataDescriptors(List<HashMap<String,String>> dataDescriptors){
+        this.dataDescriptors=dataDescriptors;
+        return this;
+    }
 
     public DataSource build() {
         return new DataSource(this);
@@ -109,14 +104,13 @@ public class DataSourceBuilder extends AbstractObjectBuilder implements Serializ
     public DataSourceBuilder(DataSource dataSource) {
         this.metadata = dataSource.getMetadata();
         this.type = dataSource.getType();
-        this.description = dataSource.getDescription();
         this.id = dataSource.getId();
-        this.lineage = dataSource.getLineage();
         this.dataType = dataSource.getDataType();
         this.platform = dataSource.getPlatform();
         this.platformApp = dataSource.getPlatformApp();
         this.application = dataSource.getApplication();
         this.persistent = dataSource.isPersistent();
+        this.dataDescriptors=dataSource.getDataDescriptors();
     }
 
 }

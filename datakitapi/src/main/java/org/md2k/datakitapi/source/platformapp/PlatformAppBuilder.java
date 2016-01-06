@@ -41,11 +41,6 @@ public class PlatformAppBuilder extends AbstractObjectBuilder implements Seriali
         return this;
     }
 
-    public PlatformAppBuilder setDescription(String description) {
-        super.setDescription(description);
-        return this;
-    }
-
     public PlatformAppBuilder setMetadata(String key, String value) {
         super.setMetadata(key, value);
         return this;
@@ -60,7 +55,6 @@ public class PlatformAppBuilder extends AbstractObjectBuilder implements Seriali
     public PlatformAppBuilder(PlatformApp platformApp) {
         this.metadata = platformApp.getMetadata();
         this.type = platformApp.getType();
-        this.description = platformApp.getDescription();
         this.id = platformApp.getId();
     }
 

@@ -14,6 +14,8 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutput;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
+import java.util.HashMap;
+import java.util.List;
 
 /**
  * Copyright (c) 2015, The University of Memphis, MD2K Center
@@ -43,16 +45,16 @@ import java.io.Serializable;
  */
 public class DataSource extends AbstractObject implements Serializable {
     private static final long serialVersionUID = Constants.serialVersionUID;
-    private DataSource[] lineage = null;
-    private String dataType = null;
     private Platform platform = null;
     private PlatformApp platformApp = null;
     private Application application = null;
     private boolean persistent = true;
+    private String dataType = null;
+    private List<HashMap<String,String>> dataDescriptors =null;
+
 
     DataSource(DataSourceBuilder dataSourceBuilder) {
         super(dataSourceBuilder);
-        this.lineage = dataSourceBuilder.lineage;
         this.dataType = dataSourceBuilder.dataType;
         this.platform = dataSourceBuilder.platform;
         this.platformApp = dataSourceBuilder.platformApp;
@@ -61,13 +63,9 @@ public class DataSource extends AbstractObject implements Serializable {
     }
     public DataSourceBuilder toDataSourceBuilder(){
         DataSourceBuilder dataSourceBuilder = super.toDataSourceBuilder();
-        dataSourceBuilder=dataSourceBuilder.setLineage(lineage).setDataType(dataType).
+        dataSourceBuilder=dataSourceBuilder.setDataType(dataType).
                 setPlatform(platform).setPlatformApp(platformApp).setApplication(application).setPersistent(persistent);
         return dataSourceBuilder;
-    }
-
-    public DataSource[] getLineage() {
-        return lineage;
     }
 
     public String getDataType() {
@@ -114,6 +112,10 @@ public class DataSource extends AbstractObject implements Serializable {
             }
         }
         return null;
+    }
+
+    public List<HashMap<String, String>> getDataDescriptors() {
+        return dataDescriptors;
     }
 
     public static DataSource fromBytes(byte[] dataSourceByteArray) {
