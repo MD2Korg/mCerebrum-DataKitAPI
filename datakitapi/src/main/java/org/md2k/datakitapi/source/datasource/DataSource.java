@@ -14,6 +14,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutput;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -49,27 +50,22 @@ public class DataSource extends AbstractObject implements Serializable {
     private PlatformApp platformApp = null;
     private Application application = null;
     private boolean persistent = true;
-    private String dataType = null;
-    private List<HashMap<String,String>> dataDescriptors =null;
+    private ArrayList<HashMap<String,String>> dataDescriptors =null;
 
 
     DataSource(DataSourceBuilder dataSourceBuilder) {
         super(dataSourceBuilder);
-        this.dataType = dataSourceBuilder.dataType;
         this.platform = dataSourceBuilder.platform;
         this.platformApp = dataSourceBuilder.platformApp;
         this.application = dataSourceBuilder.application;
         this.persistent = dataSourceBuilder.persistent;
+        this.dataDescriptors=dataSourceBuilder.dataDescriptors;
     }
     public DataSourceBuilder toDataSourceBuilder(){
         DataSourceBuilder dataSourceBuilder = super.toDataSourceBuilder();
-        dataSourceBuilder=dataSourceBuilder.setDataType(dataType).
-                setPlatform(platform).setPlatformApp(platformApp).setApplication(application).setPersistent(persistent);
+        dataSourceBuilder=dataSourceBuilder.
+                setPlatform(platform).setPlatformApp(platformApp).setApplication(application).setPersistent(persistent).setDataDescriptors(dataDescriptors);
         return dataSourceBuilder;
-    }
-
-    public String getDataType() {
-        return dataType;
     }
 
     public Platform getPlatform() {
@@ -114,7 +110,7 @@ public class DataSource extends AbstractObject implements Serializable {
         return null;
     }
 
-    public List<HashMap<String, String>> getDataDescriptors() {
+    public ArrayList<HashMap<String, String>> getDataDescriptors() {
         return dataDescriptors;
     }
 

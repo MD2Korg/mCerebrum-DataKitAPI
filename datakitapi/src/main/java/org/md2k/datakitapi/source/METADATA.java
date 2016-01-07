@@ -38,6 +38,7 @@ public class METADATA {
     public static final String OPERATING_SYSTEM = "OPERATING_SYSTEM";
     public static final String MANUFACTURER = "MANUFACTURER";
     public static final String MODEL = "MODEL";
-
-
+    public static final String VERSION_NAME="VERSION_NAME";
+    public static final String VERSION_NUMBER="VERSION_NUMBER";
+    public static final String DEVICE_ID="DEVICE_ID";
 }

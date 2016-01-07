@@ -43,20 +43,8 @@ public abstract class AbstractObject implements Serializable{
     public String getId() {
         return id;
     }
-    public void setId(String id){
-        this.id=id;
-    }
     public HashMap<String, String> getMetadata() {
         return metadata;
-    }
-    public String toString() {
-        String str = "type=" + type + ";id=" + id;
-        if (metadata == null) str = str + ";metadata=null";
-        else {
-            str = str + ";metadata=";
-            for (String s : metadata.keySet()) str = str + "(" + s + "->" + metadata.get(s) + ");";
-        }
-        return str;
     }
     public DataSourceBuilder toDataSourceBuilder(){
         DataSourceBuilder dataSourceBuilder=new DataSourceBuilder();

@@ -16,6 +16,7 @@ import android.os.Messenger;
 import android.os.RemoteException;
 
 import org.md2k.datakitapi.messagehandler.OnReceiveListener;
+import org.md2k.datakitapi.source.METADATA;
 import org.md2k.datakitapi.source.application.Application;
 import org.md2k.datakitapi.source.application.ApplicationBuilder;
 import org.md2k.datakitapi.source.datasource.DataSource;
@@ -203,12 +204,12 @@ public class DataKitApi {
     }
 
     private DataSource prepareDataSource(DataSourceBuilder dataSourceBuilder) {
-        String versionNumber = null;
-        int versionCode = 0;
+        String versionName = null;
+        int versionNumber = 0;
         try {
             PackageInfo pInfo = context.getPackageManager().getPackageInfo(context.getPackageName(), 0);
-            versionNumber = pInfo.versionName;
-            versionCode = pInfo.versionCode;
+            versionName = pInfo.versionName;
+            versionNumber = pInfo.versionCode;
         } catch (PackageManager.NameNotFoundException e) {
             e.printStackTrace();
         }
@@ -217,7 +218,7 @@ public class DataKitApi {
             applicationBuilder = new ApplicationBuilder();
         else
             applicationBuilder = new ApplicationBuilder(dataSourceBuilder.build().getApplication());
-        Application application = applicationBuilder.setId(context.getPackageName()).setMetadata("version_number", versionNumber).setMetadata("version_code", String.valueOf(versionCode)).build();
+        Application application = applicationBuilder.setId(context.getPackageName()).setMetadata(METADATA.VERSION_NAME, versionName).setMetadata(METADATA.VERSION_NUMBER, String.valueOf(versionNumber)).build();
         dataSourceBuilder = dataSourceBuilder.setApplication(application);
         return dataSourceBuilder.build();
     }

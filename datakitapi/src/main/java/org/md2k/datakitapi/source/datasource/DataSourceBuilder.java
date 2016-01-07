@@ -7,6 +7,7 @@ import org.md2k.datakitapi.source.platformapp.PlatformApp;
 import org.md2k.datakitapi.source.AbstractObjectBuilder;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -38,12 +39,11 @@ import java.util.List;
  */
 public class DataSourceBuilder extends AbstractObjectBuilder implements Serializable {
     private static final long serialVersionUID = Constants.serialVersionUID;
-    public String dataType = null;
     public Platform platform = null;
     public PlatformApp platformApp = null;
     public Application application = null;
     public boolean persistent = true;
-    public List<HashMap<String,String>> dataDescriptors=null;
+    public ArrayList<HashMap<String,String>> dataDescriptors=null;
 
     public DataSourceBuilder setType(String type) {
         super.setType(type);
@@ -62,11 +62,6 @@ public class DataSourceBuilder extends AbstractObjectBuilder implements Serializ
 
     public DataSourceBuilder setMetadata(HashMap<String, String> metadata) {
         super.setMetadata(metadata);
-        return this;
-    }
-
-    public DataSourceBuilder setDataType(String dataType) {
-        this.dataType = dataType;
         return this;
     }
 
@@ -89,7 +84,7 @@ public class DataSourceBuilder extends AbstractObjectBuilder implements Serializ
         this.persistent = persistent;
         return this;
     }
-    public DataSourceBuilder setDataDescriptors(List<HashMap<String,String>> dataDescriptors){
+    public DataSourceBuilder setDataDescriptors(ArrayList<HashMap<String,String>> dataDescriptors){
         this.dataDescriptors=dataDescriptors;
         return this;
     }
@@ -105,7 +100,6 @@ public class DataSourceBuilder extends AbstractObjectBuilder implements Serializ
         this.metadata = dataSource.getMetadata();
         this.type = dataSource.getType();
         this.id = dataSource.getId();
-        this.dataType = dataSource.getDataType();
         this.platform = dataSource.getPlatform();
         this.platformApp = dataSource.getPlatformApp();
         this.application = dataSource.getApplication();
