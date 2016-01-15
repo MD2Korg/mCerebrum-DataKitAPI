@@ -73,6 +73,7 @@ public class DataSourceType {
     public static final String PRIVACY = "PRIVACY";
 
     public static final String STUDY_INFO = "STUDY_INFO";
+    public static final String USER_INFO = "USER_INFO";
     public static final String SLEEP = "SLEEP";
 
 }
