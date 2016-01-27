@@ -38,15 +38,15 @@ import java.util.ArrayList;
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-public class DataKitAPI1 {
-    private static final String TAG = DataKitAPI1.class.getSimpleName();
+public class DataKitAPI {
+    private static final String TAG = DataKitAPI.class.getSimpleName();
     DataKitAPIExecute dataKitAPIExecute;
     Context context;
-    private static DataKitAPI1 instance = null;
+    private static DataKitAPI instance = null;
 
-    public static DataKitAPI1 getInstance(Context context) {
+    public static DataKitAPI getInstance(Context context) {
         if (instance == null) {
-            instance = new DataKitAPI1(context);
+            instance = new DataKitAPI(context);
         }
         return instance;
     }
@@ -55,7 +55,7 @@ public class DataKitAPI1 {
         return dataKitAPIExecute.isBound;
     }
 
-    private DataKitAPI1(Context context) {
+    private DataKitAPI(Context context) {
         this.context = context;
         dataKitAPIExecute = new DataKitAPIExecute(context);
     }
