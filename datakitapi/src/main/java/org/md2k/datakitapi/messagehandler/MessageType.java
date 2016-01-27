@@ -37,4 +37,5 @@ public class MessageType {
     public static final int QUERY = 8;
     public static final int FIND =9;
     public static final int SUBSCRIBED_DATA=10;
+    public static final int INTERNAL_ERROR=11;
 }
