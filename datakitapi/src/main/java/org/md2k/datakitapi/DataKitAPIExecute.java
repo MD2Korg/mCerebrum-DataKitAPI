@@ -98,8 +98,10 @@ class DataKitAPIExecute {
     }
 
     protected void connect(OnConnectionListener onConnectionListener, OnExceptionListener onExceptionListener) {
-        if (isBound)
+        if (isBound) {
             onConnectionListener.onConnected();
+            return;
+        }
         this.onConnectionListener = onConnectionListener;
         this.onExceptionListener = onExceptionListener;
         if (!isInstalled(context, "org.md2k.datakit")) {

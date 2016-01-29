@@ -61,9 +61,6 @@ public class DataKitAPI {
     }
 
     public void connect(OnConnectionListener callerOnConnectionListener, OnExceptionListener onExceptionListener) {
-        if (isConnected()) {
-            callerOnConnectionListener.onConnected();
-        }
         dataKitAPIExecute.connect(callerOnConnectionListener, onExceptionListener);
     }
 
