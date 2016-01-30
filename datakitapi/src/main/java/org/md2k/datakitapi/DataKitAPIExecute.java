@@ -37,21 +37,22 @@ import org.md2k.datakitapi.status.Status;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-/**
+/*
  * Copyright (c) 2015, The University of Memphis, MD2K Center
  * - Syed Monowar Hossain <monowar.hossain@gmail.com>
+ * - Timothy W. Hnat <twhnat@memphis.edu>
  * All rights reserved.
- * <p/>
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * <p/>
+ *
  * * Redistributions of source code must retain the above copyright notice, this
  * list of conditions and the following disclaimer.
- * <p/>
+ *
  * * Redistributions in binary form must reproduce the above copyright notice,
  * this list of conditions and the following disclaimer in the documentation
  * and/or other materials provided with the distribution.
- * <p/>
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -373,6 +374,43 @@ class DataKitAPIExecute {
             }
         };
     }
+
+
+    public PendingResult<ArrayList<DataType>> query(final DataSourceClient dataSourceClient, final long lastSyncedValue){
+        if (!isBound) {
+            onExceptionListener.onException(new Status(Status.ERROR_BOUND));
+            return null;
+        }
+        return new PendingResult<ArrayList<DataType>>() {
+            @Override
+            public ArrayList<DataType> await() {
+                Thread t = new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Bundle bundle = new Bundle();
+                        bundle.putInt("ds_id", dataSourceClient.getDs_id());
+                        bundle.putLong("last_key", lastSyncedValue);
+                        prepareAndSend(bundle, MessageType.QUERY);
+                    }
+                });
+                t.start();
+                synchronized (lock) {
+                    try {
+                        lock.wait();
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+                return dataTypes;
+            }
+
+            @Override
+            public void setResultCallback(ResultCallback<ArrayList<DataType>> callback) {
+
+            }
+        };
+    }
+
 
     public void insert(final DataSourceClient dataSourceClient, final DataType dataType) {
         if (!isBound) {
