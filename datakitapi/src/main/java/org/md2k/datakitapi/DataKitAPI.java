@@ -89,6 +89,10 @@ public class DataKitAPI {
         return dataKitAPIExecute.query(dataSourceClient, starttimestamp, endtimestamp).await();
     }
 
+    public ArrayList<DataType> query(DataSourceClient dataSourceClient, long lastSyncedKey) {
+        return dataKitAPIExecute.query(dataSourceClient, lastSyncedKey).await();
+    }
+
     public void subscribe(DataSourceClient dataSourceClient, OnReceiveListener onReceiveListener) {
         dataKitAPIExecute.subscribe(dataSourceClient, onReceiveListener);
     }
