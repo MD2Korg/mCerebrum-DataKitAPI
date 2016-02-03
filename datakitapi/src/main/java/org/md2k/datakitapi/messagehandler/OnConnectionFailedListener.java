@@ -2,7 +2,7 @@ package org.md2k.datakitapi.messagehandler;
 
 import org.md2k.datakitapi.status.Status;
 
-/**
+/*
  * Copyright (c) 2015, The University of Memphis, MD2K Center
  * - Syed Monowar Hossain <monowar.hossain@gmail.com>
  * All rights reserved.
