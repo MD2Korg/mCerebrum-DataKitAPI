@@ -437,7 +437,7 @@ class DataKitAPIExecute {
             @Override
             public void run() {
                 Bundle bundle = new Bundle();
-                bundle.putSerializable(DataType.class.getSimpleName(), dataType);
+                bundle.putSerializable(DataTypeDoubleArray.class.getSimpleName(), dataType);
                 bundle.putInt("ds_id", dataSourceClient.getDs_id());
                 prepareAndSend(bundle, MessageType.INSERT_HIGH_FREQUENCY);
             }
