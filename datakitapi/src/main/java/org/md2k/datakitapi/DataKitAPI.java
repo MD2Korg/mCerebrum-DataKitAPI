@@ -3,6 +3,7 @@ package org.md2k.datakitapi;
 import android.content.Context;
 
 import org.md2k.datakitapi.datatype.DataType;
+import org.md2k.datakitapi.datatype.DataTypeDoubleArray;
 import org.md2k.datakitapi.datatype.RowObject;
 import org.md2k.datakitapi.messagehandler.OnConnectionListener;
 import org.md2k.datakitapi.messagehandler.OnExceptionListener;
@@ -42,9 +43,14 @@ import java.util.ArrayList;
  */
 public class DataKitAPI {
     private static final String TAG = DataKitAPI.class.getSimpleName();
+    private static DataKitAPI instance = null;
     DataKitAPIExecute dataKitAPIExecute;
     Context context;
-    private static DataKitAPI instance = null;
+
+    private DataKitAPI(Context context) {
+        this.context = context;
+        dataKitAPIExecute = new DataKitAPIExecute(context);
+    }
 
     public static DataKitAPI getInstance(Context context) {
         if (instance == null) {
@@ -57,11 +63,6 @@ public class DataKitAPI {
         return dataKitAPIExecute.isBound;
     }
 
-    private DataKitAPI(Context context) {
-        this.context = context;
-        dataKitAPIExecute = new DataKitAPIExecute(context);
-    }
-
     public void connect(OnConnectionListener callerOnConnectionListener, OnExceptionListener onExceptionListener) {
         dataKitAPIExecute.connect(callerOnConnectionListener, onExceptionListener);
     }
@@ -72,6 +73,10 @@ public class DataKitAPI {
 
     public void insert(DataSourceClient dataSourceClient, DataType data) {
         dataKitAPIExecute.insert(dataSourceClient, data);
+    }
+
+    public void insertHighFrequency(DataSourceClient dataSourceClient, DataTypeDoubleArray data) {
+        dataKitAPIExecute.insertHighFrequency(dataSourceClient, data);
     }
 
     public DataSourceClient register(DataSourceBuilder dataSourceBuilder) {

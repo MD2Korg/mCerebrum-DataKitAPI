@@ -1,9 +1,7 @@
 package org.md2k.datakitapi;
 
-import android.app.AlertDialog;
 import android.content.ComponentName;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.pm.PackageInfo;
@@ -17,23 +15,22 @@ import android.os.Message;
 import android.os.Messenger;
 import android.os.RemoteException;
 import android.util.Log;
-import android.view.WindowManager;
 
+import org.md2k.datakitapi.datatype.DataType;
+import org.md2k.datakitapi.datatype.DataTypeDoubleArray;
 import org.md2k.datakitapi.datatype.RowObject;
+import org.md2k.datakitapi.messagehandler.MessageType;
+import org.md2k.datakitapi.messagehandler.OnConnectionListener;
 import org.md2k.datakitapi.messagehandler.OnExceptionListener;
 import org.md2k.datakitapi.messagehandler.OnReceiveListener;
+import org.md2k.datakitapi.messagehandler.PendingResult;
+import org.md2k.datakitapi.messagehandler.ResultCallback;
 import org.md2k.datakitapi.source.METADATA;
 import org.md2k.datakitapi.source.application.Application;
 import org.md2k.datakitapi.source.application.ApplicationBuilder;
 import org.md2k.datakitapi.source.datasource.DataSource;
 import org.md2k.datakitapi.source.datasource.DataSourceBuilder;
 import org.md2k.datakitapi.source.datasource.DataSourceClient;
-import org.md2k.datakitapi.messagehandler.MessageType;
-import org.md2k.datakitapi.datatype.DataType;
-import org.md2k.datakitapi.messagehandler.OnConnectionListener;
-import org.md2k.datakitapi.messagehandler.PendingResult;
-import org.md2k.datakitapi.messagehandler.ResultCallback;
-import org.md2k.datakitapi.status.Status;
 import org.md2k.datakitapi.status.Status;
 
 import java.util.ArrayList;
@@ -68,16 +65,10 @@ import java.util.HashMap;
  */
 class DataKitAPIExecute {
     private static final String TAG = DataKitAPIExecute.class.getSimpleName();
-    private Context context;
-    private ServiceConnection connection;//receives callbacks from bind and unbind invocations
+    final Object lock = new Object();
     public boolean isBound = false;
-    private Messenger sendMessenger = null;
-    private Messenger replyMessenger = null; //invocation replies are processed by this Messenger
-    private OnConnectionListener onConnectionListener;
-    private OnExceptionListener onExceptionListener;
     Status receivedStatus;
     Intent intent;
-    final Object lock = new Object();
     DataSourceClient dataSourceClient = null;
     ArrayList<DataSourceClient> dataSourceClients;
     ArrayList<DataType> dataTypes;
@@ -85,6 +76,12 @@ class DataKitAPIExecute {
     DataType dataType;
     Status status;
     HashMap<Integer, OnReceiveListener> ds_idOnReceiveListenerHashMap = new HashMap<>();
+    private Context context;
+    private ServiceConnection connection;//receives callbacks from bind and unbind invocations
+    private Messenger sendMessenger = null;
+    private Messenger replyMessenger = null; //invocation replies are processed by this Messenger
+    private OnConnectionListener onConnectionListener;
+    private OnExceptionListener onExceptionListener;
 
     public DataKitAPIExecute(Context context) {
         this.context = context;
@@ -432,6 +429,22 @@ class DataKitAPIExecute {
         t.start();
     }
 
+    public void insertHighFrequency(final DataSourceClient dataSourceClient, final DataTypeDoubleArray dataType) {
+        if (!isBound) {
+            onExceptionListener.onException(new Status(Status.ERROR_BOUND));
+        }
+        Thread t = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                Bundle bundle = new Bundle();
+                bundle.putSerializable(DataType.class.getSimpleName(), dataType);
+                bundle.putInt("ds_id", dataSourceClient.getDs_id());
+                prepareAndSend(bundle, MessageType.INSERT_HIGH_FREQUENCY);
+            }
+        });
+        t.start();
+    }
+
     private class RemoteServiceConnection implements ServiceConnection {
         @Override
         public void onServiceConnected(ComponentName component, IBinder binder) {
@@ -488,6 +501,9 @@ class DataKitAPIExecute {
                     return;
                 case MessageType.INSERT:
                     return;
+                case MessageType.INSERT_HIGH_FREQUENCY:
+                    return;
+
             }
             synchronized (lock) {
                 lock.notify();

@@ -38,4 +38,5 @@ public class DataTypeDoubleArray extends  DataType implements Serializable{
     public double[] getSample(){
         return sample;
     }
+
 }
