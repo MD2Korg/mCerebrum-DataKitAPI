@@ -3,6 +3,7 @@ package org.md2k.datakitapi;
 import android.content.Context;
 
 import org.md2k.datakitapi.datatype.DataType;
+import org.md2k.datakitapi.datatype.RowObject;
 import org.md2k.datakitapi.messagehandler.OnConnectionListener;
 import org.md2k.datakitapi.messagehandler.OnExceptionListener;
 import org.md2k.datakitapi.messagehandler.OnReceiveListener;
@@ -89,8 +90,8 @@ public class DataKitAPI {
         return dataKitAPIExecute.query(dataSourceClient, starttimestamp, endtimestamp).await();
     }
 
-    public ArrayList<DataType> queryFromPrimaryKey(DataSourceClient dataSourceClient, long lastSyncedKey) {
-        return dataKitAPIExecute.query(dataSourceClient, lastSyncedKey).await();
+    public ArrayList<RowObject> queryFromPrimaryKey(DataSourceClient dataSourceClient, long lastSyncedKey, int limit) {
+        return dataKitAPIExecute.queryFromPrimaryKey(dataSourceClient, lastSyncedKey, limit).await();
     }
 
     public void subscribe(DataSourceClient dataSourceClient, OnReceiveListener onReceiveListener) {
