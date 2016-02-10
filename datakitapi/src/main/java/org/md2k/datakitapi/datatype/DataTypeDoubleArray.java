@@ -36,6 +36,11 @@ public class DataTypeDoubleArray extends  DataType implements Serializable{
         super(timestamp);
         this.sample=sample;
     }
+
+    public DataTypeDoubleArray(long dateTime, double sample) {
+        this(dateTime, new double[1]);
+        this.sample[0] = sample;
+    }
     public double[] getSample(){
         return sample;
     }
