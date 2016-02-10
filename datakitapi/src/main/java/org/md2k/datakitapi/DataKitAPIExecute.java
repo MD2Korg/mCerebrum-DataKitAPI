@@ -1,9 +1,7 @@
 package org.md2k.datakitapi;
 
-import android.app.AlertDialog;
 import android.content.ComponentName;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.pm.PackageInfo;
@@ -17,21 +15,22 @@ import android.os.Message;
 import android.os.Messenger;
 import android.os.RemoteException;
 import android.util.Log;
-import android.view.WindowManager;
+
+import org.md2k.datakitapi.datatype.DataType;
+import org.md2k.datakitapi.datatype.DataTypeDoubleArray;
+import org.md2k.datakitapi.datatype.RowObject;
+import org.md2k.datakitapi.messagehandler.MessageType;
+import org.md2k.datakitapi.messagehandler.OnConnectionListener;
 import org.md2k.datakitapi.messagehandler.OnExceptionListener;
 import org.md2k.datakitapi.messagehandler.OnReceiveListener;
+import org.md2k.datakitapi.messagehandler.PendingResult;
+import org.md2k.datakitapi.messagehandler.ResultCallback;
 import org.md2k.datakitapi.source.METADATA;
 import org.md2k.datakitapi.source.application.Application;
 import org.md2k.datakitapi.source.application.ApplicationBuilder;
 import org.md2k.datakitapi.source.datasource.DataSource;
 import org.md2k.datakitapi.source.datasource.DataSourceBuilder;
 import org.md2k.datakitapi.source.datasource.DataSourceClient;
-import org.md2k.datakitapi.messagehandler.MessageType;
-import org.md2k.datakitapi.datatype.DataType;
-import org.md2k.datakitapi.messagehandler.OnConnectionListener;
-import org.md2k.datakitapi.messagehandler.PendingResult;
-import org.md2k.datakitapi.messagehandler.ResultCallback;
-import org.md2k.datakitapi.status.Status;
 import org.md2k.datakitapi.status.Status;
 
 import java.util.ArrayList;
@@ -66,22 +65,23 @@ import java.util.HashMap;
  */
 class DataKitAPIExecute {
     private static final String TAG = DataKitAPIExecute.class.getSimpleName();
+    final Object lock = new Object();
+    public boolean isBound = false;
+    Status receivedStatus;
+    Intent intent;
+    DataSourceClient dataSourceClient = null;
+    ArrayList<DataSourceClient> dataSourceClients;
+    ArrayList<DataType> dataTypes;
+    ArrayList<RowObject> objectTypes;
+    DataType dataType;
+    Status status;
+    HashMap<Integer, OnReceiveListener> ds_idOnReceiveListenerHashMap = new HashMap<>();
     private Context context;
     private ServiceConnection connection;//receives callbacks from bind and unbind invocations
-    public boolean isBound = false;
     private Messenger sendMessenger = null;
     private Messenger replyMessenger = null; //invocation replies are processed by this Messenger
     private OnConnectionListener onConnectionListener;
     private OnExceptionListener onExceptionListener;
-    Status receivedStatus;
-    Intent intent;
-    final Object lock = new Object();
-    DataSourceClient dataSourceClient = null;
-    ArrayList<DataSourceClient> dataSourceClients;
-    ArrayList<DataType> dataTypes;
-    DataType dataType;
-    Status status;
-    HashMap<Integer, OnReceiveListener> ds_idOnReceiveListenerHashMap = new HashMap<>();
 
     public DataKitAPIExecute(Context context) {
         this.context = context;
@@ -376,20 +376,21 @@ class DataKitAPIExecute {
     }
 
 
-    public PendingResult<ArrayList<DataType>> query(final DataSourceClient dataSourceClient, final long lastSyncedValue){
+    public PendingResult<ArrayList<RowObject>> queryFromPrimaryKey(final DataSourceClient dataSourceClient, final long lastSyncedValue, final int limit){
         if (!isBound) {
             onExceptionListener.onException(new Status(Status.ERROR_BOUND));
             return null;
         }
-        return new PendingResult<ArrayList<DataType>>() {
+        return new PendingResult<ArrayList<RowObject>>() {
             @Override
-            public ArrayList<DataType> await() {
+            public ArrayList<RowObject> await() {
                 Thread t = new Thread(new Runnable() {
                     @Override
                     public void run() {
                         Bundle bundle = new Bundle();
                         bundle.putInt("ds_id", dataSourceClient.getDs_id());
                         bundle.putLong("last_key", lastSyncedValue);
+                        bundle.putLong("limit", limit);
                         prepareAndSend(bundle, MessageType.QUERY);
                     }
                 });
@@ -401,11 +402,11 @@ class DataKitAPIExecute {
                         e.printStackTrace();
                     }
                 }
-                return dataTypes;
+                return objectTypes;
             }
 
             @Override
-            public void setResultCallback(ResultCallback<ArrayList<DataType>> callback) {
+            public void setResultCallback(ResultCallback<ArrayList<RowObject>> callback) {
 
             }
         };
@@ -423,6 +424,22 @@ class DataKitAPIExecute {
                 bundle.putSerializable(DataType.class.getSimpleName(), dataType);
                 bundle.putInt("ds_id", dataSourceClient.getDs_id());
                 prepareAndSend(bundle, MessageType.INSERT);
+            }
+        });
+        t.start();
+    }
+
+    public void insertHighFrequency(final DataSourceClient dataSourceClient, final DataTypeDoubleArray dataType) {
+        if (!isBound) {
+            onExceptionListener.onException(new Status(Status.ERROR_BOUND));
+        }
+        Thread t = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                Bundle bundle = new Bundle();
+                bundle.putSerializable(DataTypeDoubleArray.class.getSimpleName(), dataType);
+                bundle.putInt("ds_id", dataSourceClient.getDs_id());
+                prepareAndSend(bundle, MessageType.INSERT_HIGH_FREQUENCY);
             }
         });
         t.start();
@@ -473,6 +490,9 @@ class DataKitAPIExecute {
                 case MessageType.QUERY:
                     dataTypes = (ArrayList<DataType>) msg.getData().getSerializable(DataType.class.getSimpleName());
                     break;
+                case MessageType.QUERYPRIMARYKEY:
+                    objectTypes = (ArrayList<RowObject>) msg.getData().getSerializable(RowObject.class.getSimpleName());
+                    break;
                 case MessageType.SUBSCRIBED_DATA:
                     dataType = (DataType) msg.getData().getSerializable(DataType.class.getSimpleName());
                     int ds_id = msg.getData().getInt("ds_id");
@@ -481,6 +501,9 @@ class DataKitAPIExecute {
                     return;
                 case MessageType.INSERT:
                     return;
+                case MessageType.INSERT_HIGH_FREQUENCY:
+                    return;
+
             }
             synchronized (lock) {
                 lock.notify();
