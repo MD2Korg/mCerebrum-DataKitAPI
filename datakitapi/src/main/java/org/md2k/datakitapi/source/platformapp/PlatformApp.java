@@ -1,5 +1,8 @@
 package org.md2k.datakitapi.source.platformapp;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import org.md2k.datakitapi.source.AbstractObject;
 
 /*
@@ -28,8 +31,37 @@ import org.md2k.datakitapi.source.AbstractObject;
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-public class PlatformApp extends AbstractObject {
+public class PlatformApp extends AbstractObject implements Parcelable{
     PlatformApp(PlatformAppBuilder platformAppBuilder){
         super(platformAppBuilder);
     }
+    public PlatformApp(){
+
+    }
+
+    protected PlatformApp(Parcel in) {
+        super(in);
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        super.writeToParcel(dest, flags);
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    public static final Creator<PlatformApp> CREATOR = new Creator<PlatformApp>() {
+        @Override
+        public PlatformApp createFromParcel(Parcel in) {
+            return new PlatformApp(in);
+        }
+
+        @Override
+        public PlatformApp[] newArray(int size) {
+            return new PlatformApp[size];
+        }
+    };
 }

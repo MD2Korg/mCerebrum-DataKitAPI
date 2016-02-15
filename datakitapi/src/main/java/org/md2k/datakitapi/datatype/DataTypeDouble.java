@@ -1,6 +1,7 @@
 package org.md2k.datakitapi.datatype;
 
-import java.io.Serializable;
+import android.os.Parcel;
+import android.os.Parcelable;
 
 /*
  * Copyright (c) 2015, The University of Memphis, MD2K Center
@@ -28,13 +29,42 @@ import java.io.Serializable;
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-public class DataTypeDouble extends DataType implements Serializable {
+public class DataTypeDouble extends DataType implements Parcelable {
     double sample;
 
     public DataTypeDouble(long timestamp, double sample) {
         super(timestamp);
         this.sample = sample;
     }
+    public DataTypeDouble(){}
+
+    protected DataTypeDouble(Parcel in) {
+        super(in);
+        sample = in.readDouble();
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        super.writeToParcel(dest, flags);
+        dest.writeDouble(sample);
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    public static final Creator<DataTypeDouble> CREATOR = new Creator<DataTypeDouble>() {
+        @Override
+        public DataTypeDouble createFromParcel(Parcel in) {
+            return new DataTypeDouble(in);
+        }
+
+        @Override
+        public DataTypeDouble[] newArray(int size) {
+            return new DataTypeDouble[size];
+        }
+    };
 
     public double getSample() {
         return sample;

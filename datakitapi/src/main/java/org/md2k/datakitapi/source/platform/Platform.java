@@ -1,9 +1,9 @@
 package org.md2k.datakitapi.source.platform;
 
-import org.md2k.datakitapi.Constants;
-import org.md2k.datakitapi.source.AbstractObject;
+import android.os.Parcel;
+import android.os.Parcelable;
 
-import java.io.Serializable;
+import org.md2k.datakitapi.source.AbstractObject;
 
 /*
  * Copyright (c) 2015, The University of Memphis, MD2K Center
@@ -31,9 +31,37 @@ import java.io.Serializable;
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-public class Platform extends AbstractObject implements Serializable {
-    private static final long serialVersionUID = Constants.serialVersionUID;
+public class Platform extends AbstractObject implements Parcelable {
     Platform(PlatformBuilder platformBuilder) {
         super(platformBuilder);
     }
+
+    public Platform(){
+        
+    }
+    protected Platform(Parcel in) {
+        super(in);
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        super.writeToParcel(dest, flags);
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    public static final Creator<Platform> CREATOR = new Creator<Platform>() {
+        @Override
+        public Platform createFromParcel(Parcel in) {
+            return new Platform(in);
+        }
+
+        @Override
+        public Platform[] newArray(int size) {
+            return new Platform[size];
+        }
+    };
 }

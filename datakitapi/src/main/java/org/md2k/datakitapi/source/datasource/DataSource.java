@@ -1,22 +1,16 @@
 package org.md2k.datakitapi.source.datasource;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import org.md2k.datakitapi.Constants;
 import org.md2k.datakitapi.source.application.Application;
 import org.md2k.datakitapi.source.platform.Platform;
 import org.md2k.datakitapi.source.platformapp.PlatformApp;
 import org.md2k.datakitapi.source.AbstractObject;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.ObjectInput;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutput;
-import java.io.ObjectOutputStream;
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
 /*
  * Copyright (c) 2015, The University of Memphis, MD2K Center
@@ -44,13 +38,15 @@ import java.util.List;
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-public class DataSource extends AbstractObject implements Serializable {
-    private static final long serialVersionUID = Constants.serialVersionUID;
+public class DataSource extends AbstractObject implements Parcelable {
     private Platform platform = null;
     private PlatformApp platformApp = null;
     private Application application = null;
     private boolean persistent = true;
-    private ArrayList<HashMap<String,String>> dataDescriptors =null;
+    private ArrayList<HashMap<String, String>> dataDescriptors = null;
+    public DataSource(){
+
+    }
 
 
     DataSource(DataSourceBuilder dataSourceBuilder) {
@@ -59,11 +55,81 @@ public class DataSource extends AbstractObject implements Serializable {
         this.platformApp = dataSourceBuilder.platformApp;
         this.application = dataSourceBuilder.application;
         this.persistent = dataSourceBuilder.persistent;
-        this.dataDescriptors=dataSourceBuilder.dataDescriptors;
+        this.dataDescriptors = dataSourceBuilder.dataDescriptors;
     }
-    public DataSourceBuilder toDataSourceBuilder(){
+
+    protected DataSource(Parcel in) {
+        super(in);
+        platform = in.readParcelable(Platform.class.getClassLoader());
+        platformApp = in.readParcelable(PlatformApp.class.getClassLoader());
+        application = in.readParcelable(Application.class.getClassLoader());
+        persistent = in.readByte() != 0;
+        int size = in.readInt();
+        if (size == -1) dataDescriptors = null;
+        else {
+            dataDescriptors = new ArrayList<>();
+            for (int i = 0; i < size; i++) {
+                HashMap<String, String> a;
+                int size1 = in.readInt();
+                if (size1 == -1)
+                    a = null;
+                else {
+                    a = new HashMap<>();
+                    for (int j = 0; j < size1; j++) {
+                        a.put(in.readString(), in.readString());
+                    }
+                }
+                dataDescriptors.add(a);
+            }
+        }
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        super.writeToParcel(dest, flags);
+        dest.writeParcelable(platform, flags);
+        dest.writeParcelable(platformApp, flags);
+        dest.writeParcelable(application, flags);
+        dest.writeByte((byte) (persistent ? 1 : 0));
+        if (dataDescriptors == null)
+            dest.writeInt(-1);
+        else {
+            int size = dataDescriptors.size();
+            dest.writeInt(size);
+            for (int i = 0; i < size; i++) {
+                if (dataDescriptors.get(i) == null) {
+                    dest.writeInt(-1);
+                } else {
+                    dest.writeInt(dataDescriptors.get(i).size());
+                    for (HashMap.Entry<String, String> entry : dataDescriptors.get(i).entrySet()) {
+                        dest.writeString(entry.getKey());
+                        dest.writeString(entry.getValue());
+                    }
+                }
+            }
+        }
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    public static final Creator<DataSource> CREATOR = new Creator<DataSource>() {
+        @Override
+        public DataSource createFromParcel(Parcel in) {
+            return new DataSource(in);
+        }
+
+        @Override
+        public DataSource[] newArray(int size) {
+            return new DataSource[size];
+        }
+    };
+
+    public DataSourceBuilder toDataSourceBuilder() {
         DataSourceBuilder dataSourceBuilder = super.toDataSourceBuilder();
-        dataSourceBuilder=dataSourceBuilder.
+        dataSourceBuilder = dataSourceBuilder.
                 setPlatform(platform).setPlatformApp(platformApp).setApplication(application).setPersistent(persistent).setDataDescriptors(dataDescriptors);
         return dataSourceBuilder;
     }
@@ -84,63 +150,8 @@ public class DataSource extends AbstractObject implements Serializable {
         return persistent;
     }
 
-    public byte[] toBytes() {
-        ByteArrayOutputStream bos = new ByteArrayOutputStream();
-        ObjectOutput out = null;
-        try {
-            out = new ObjectOutputStream(bos);
-            out.writeObject(this);
-            return bos.toByteArray();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-            try {
-                if (out != null) {
-                    out.close();
-                }
-            } catch (IOException ex) {
-                // ignore close exception
-            }
-            try {
-                bos.close();
-            } catch (IOException ex) {
-                // ignore close exception
-            }
-        }
-        return null;
-    }
-
     public ArrayList<HashMap<String, String>> getDataDescriptors() {
         return dataDescriptors;
-    }
-
-    public static DataSource fromBytes(byte[] dataSourceByteArray) {
-        ByteArrayInputStream bis = new ByteArrayInputStream(dataSourceByteArray);
-        DataSource dataSource = null;
-        ObjectInput in = null;
-        try {
-            in = new ObjectInputStream(bis);
-            dataSource = (DataSource) in.readObject();
-            return dataSource;
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-            try {
-                bis.close();
-            } catch (IOException ex) {
-                // ignore close exception
-            }
-            try {
-                if (in != null) {
-                    in.close();
-                }
-            } catch (IOException ex) {
-                // ignore close exception
-            }
-        }
-        return null;
     }
 }
 

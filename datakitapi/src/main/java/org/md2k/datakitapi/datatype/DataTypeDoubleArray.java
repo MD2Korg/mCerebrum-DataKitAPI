@@ -1,6 +1,8 @@
 package org.md2k.datakitapi.datatype;
 
-import java.io.Serializable;
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import java.nio.ByteBuffer;
 
 /*
@@ -29,18 +31,48 @@ import java.nio.ByteBuffer;
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-public class DataTypeDoubleArray extends  DataType implements Serializable{
+public class DataTypeDoubleArray extends  DataType implements Parcelable{
     double[] sample;
 
     public DataTypeDoubleArray(long timestamp, double[] sample) {
         super(timestamp);
         this.sample=sample;
     }
+    public DataTypeDoubleArray(){}
 
     public DataTypeDoubleArray(long dateTime, double sample) {
         this(dateTime, new double[1]);
         this.sample[0] = sample;
     }
+
+    protected DataTypeDoubleArray(Parcel in) {
+        super(in);
+        sample = in.createDoubleArray();
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        super.writeToParcel(dest, flags);
+        dest.writeDoubleArray(sample);
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    public static final Creator<DataTypeDoubleArray> CREATOR = new Creator<DataTypeDoubleArray>() {
+        @Override
+        public DataTypeDoubleArray createFromParcel(Parcel in) {
+            return new DataTypeDoubleArray(in);
+        }
+
+        @Override
+        public DataTypeDoubleArray[] newArray(int size) {
+            return new DataTypeDoubleArray[size];
+        }
+    };
+
     public double[] getSample(){
         return sample;
     }

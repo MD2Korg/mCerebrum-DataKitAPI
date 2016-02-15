@@ -29,7 +29,6 @@ import org.md2k.datakitapi.Constants;
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 public class PlatformType {
-    private static final long serialVersionUID = Constants.serialVersionUID;
     public static final String AUTOSENSE_CHEST = "AUTOSENSE_CHEST";
     public static final String AUTOSENSE_WRIST = "AUTOSENSE_WRIST";
     public static final String MICROSOFT_BAND = "MICROSOFT_BAND";

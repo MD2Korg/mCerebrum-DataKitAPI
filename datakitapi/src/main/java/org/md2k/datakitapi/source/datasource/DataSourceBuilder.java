@@ -1,15 +1,12 @@
 package org.md2k.datakitapi.source.datasource;
 
-import org.md2k.datakitapi.Constants;
 import org.md2k.datakitapi.source.application.Application;
 import org.md2k.datakitapi.source.platform.Platform;
 import org.md2k.datakitapi.source.platformapp.PlatformApp;
 import org.md2k.datakitapi.source.AbstractObjectBuilder;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
 /*
  * Copyright (c) 2015, The University of Memphis, MD2K Center
@@ -37,8 +34,7 @@ import java.util.List;
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-public class DataSourceBuilder extends AbstractObjectBuilder implements Serializable {
-    private static final long serialVersionUID = Constants.serialVersionUID;
+public class DataSourceBuilder extends AbstractObjectBuilder {
     public Platform platform = null;
     public PlatformApp platformApp = null;
     public Application application = null;

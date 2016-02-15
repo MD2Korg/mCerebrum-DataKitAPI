@@ -1,8 +1,8 @@
 package org.md2k.datakitapi.status;
 
-import org.md2k.datakitapi.Constants;
+import android.os.Parcel;
+import android.os.Parcelable;
 
-import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.HashMap;
@@ -34,8 +34,7 @@ import java.util.Map;
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-public class Status extends Object implements Serializable {
-    private static final long serialVersionUID = Constants.serialVersionUID;
+public class Status extends Object implements Parcelable {
     int statusCode;
     String statusMessage;
     public static final int SUCCESS = 0;
@@ -51,6 +50,23 @@ public class Status extends Object implements Serializable {
     public static final int DATA_INVALID=8;
 
     private static Map<Integer, String> constantNames = null;
+
+    protected Status(Parcel in) {
+        statusCode = in.readInt();
+        statusMessage = in.readString();
+    }
+
+    public static final Creator<Status> CREATOR = new Creator<Status>() {
+        @Override
+        public Status createFromParcel(Parcel in) {
+            return new Status(in);
+        }
+
+        @Override
+        public Status[] newArray(int size) {
+            return new Status[size];
+        }
+    };
 
     public static String generateStatusString(int statusCode) {
         return getStatusCodeString(statusCode);
@@ -91,5 +107,16 @@ public class Status extends Object implements Serializable {
     }
     public int getStatusCode() {
         return statusCode;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeInt(statusCode);
+        dest.writeString(statusMessage);
     }
 }

@@ -1,6 +1,7 @@
 package org.md2k.datakitapi.datatype;
 
-import java.io.Serializable;
+import android.os.Parcel;
+import android.os.Parcelable;
 
 /*
  * Copyright (c) 2015, The University of Memphis, MD2K Center
@@ -28,13 +29,42 @@ import java.io.Serializable;
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-public class DataTypeLongArray extends DataType implements Serializable {
+public class DataTypeLongArray extends DataType implements Parcelable {
     long[] sample;
 
     public DataTypeLongArray(long timestamp, long[] sample) {
         super(timestamp);
         this.sample = sample;
     }
+    public DataTypeLongArray(){}
+
+    protected DataTypeLongArray(Parcel in) {
+        super(in);
+        sample = in.createLongArray();
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        super.writeToParcel(dest, flags);
+        dest.writeLongArray(sample);
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    public static final Creator<DataTypeLongArray> CREATOR = new Creator<DataTypeLongArray>() {
+        @Override
+        public DataTypeLongArray createFromParcel(Parcel in) {
+            return new DataTypeLongArray(in);
+        }
+
+        @Override
+        public DataTypeLongArray[] newArray(int size) {
+            return new DataTypeLongArray[size];
+        }
+    };
 
     public long[] getSample() {
         return sample;

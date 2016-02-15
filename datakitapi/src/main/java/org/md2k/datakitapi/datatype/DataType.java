@@ -1,5 +1,8 @@
 package org.md2k.datakitapi.datatype;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import org.md2k.datakitapi.Constants;
 import org.md2k.datakitapi.time.DateTime;
 
@@ -10,7 +13,6 @@ import java.io.ObjectInput;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutput;
 import java.io.ObjectOutputStream;
-import java.io.Serializable;
 
 /*
  * Copyright (c) 2015, The University of Memphis, MD2K Center
@@ -38,8 +40,7 @@ import java.io.Serializable;
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-public class DataType implements Serializable{
-    private static final long serialVersionUID = Constants.serialVersionUID;
+public class DataType implements Parcelable{
     long dateTime;
     long offset;
 
@@ -47,62 +48,36 @@ public class DataType implements Serializable{
         this.dateTime = dateTime;
         this.offset= DateTime.getTimeZoneOffset();
     }
+    public DataType(){}
+
+    protected DataType(Parcel in) {
+        dateTime = in.readLong();
+        offset = in.readLong();
+    }
+
+    public static final Creator<DataType> CREATOR = new Creator<DataType>() {
+        @Override
+        public DataType createFromParcel(Parcel in) {
+            return new DataType(in);
+        }
+
+        @Override
+        public DataType[] newArray(int size) {
+            return new DataType[size];
+        }
+    };
+
     public long getDateTime() {
         return dateTime;
     }
-
-    public byte[] toBytes() {
-        ByteArrayOutputStream bos = new ByteArrayOutputStream();
-        ObjectOutput out = null;
-        try {
-            out = new ObjectOutputStream(bos);
-            out.writeObject(this);
-            return bos.toByteArray();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-            try {
-                if (out != null) {
-                    out.close();
-                }
-            } catch (IOException ex) {
-                // ignore close exception
-            }
-            try {
-                bos.close();
-            } catch (IOException ex) {
-                // ignore close exception
-            }
-        }
-        return null;
+    @Override
+    public int describeContents() {
+        return 0;
     }
 
-    public static DataType fromBytes(byte[] dataSourceByteArray) {
-        ByteArrayInputStream bis = new ByteArrayInputStream(dataSourceByteArray);
-        DataType dataSource = null;
-        ObjectInput in = null;
-        try {
-            in = new ObjectInputStream(bis);
-            dataSource = (DataType) in.readObject();
-            return dataSource;
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-            try {
-                bis.close();
-            } catch (IOException ex) {
-                // ignore close exception
-            }
-            try {
-                if (in != null) {
-                    in.close();
-                }
-            } catch (IOException ex) {
-                // ignore close exception
-            }
-        }
-        return null;
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeLong(dateTime);
+        dest.writeLong(offset);
     }
 }

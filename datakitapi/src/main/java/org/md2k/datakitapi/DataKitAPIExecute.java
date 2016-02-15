@@ -13,6 +13,7 @@ import android.os.IBinder;
 import android.os.Looper;
 import android.os.Message;
 import android.os.Messenger;
+import android.os.Parcelable;
 import android.os.RemoteException;
 import android.util.Log;
 
@@ -165,7 +166,7 @@ class DataKitAPIExecute {
                     @Override
                     public void run() {
                         Bundle bundle = new Bundle();
-                        bundle.putSerializable(DataSource.class.getSimpleName(), dataSource);
+                        bundle.putParcelable(DataSource.class.getSimpleName(), (Parcelable) dataSource);
                         prepareAndSend(bundle, MessageType.REGISTER);
                     }
                 });
@@ -280,7 +281,7 @@ class DataKitAPIExecute {
                     @Override
                     public void run() {
                         Bundle bundle = new Bundle();
-                        bundle.putSerializable(DataSource.class.getSimpleName(), dataSource);
+                        bundle.putParcelable(DataSource.class.getSimpleName(), dataSource);
                         prepareAndSend(bundle, MessageType.FIND);
                     }
                 });
@@ -421,7 +422,7 @@ class DataKitAPIExecute {
             @Override
             public void run() {
                 Bundle bundle = new Bundle();
-                bundle.putSerializable(DataType.class.getSimpleName(), dataType);
+                bundle.putParcelable(DataType.class.getSimpleName(), dataType);
                 bundle.putInt("ds_id", dataSourceClient.getDs_id());
                 prepareAndSend(bundle, MessageType.INSERT);
             }
@@ -437,7 +438,7 @@ class DataKitAPIExecute {
             @Override
             public void run() {
                 Bundle bundle = new Bundle();
-                bundle.putSerializable(DataTypeDoubleArray.class.getSimpleName(), dataType);
+                bundle.putParcelable(DataTypeDoubleArray.class.getSimpleName(), dataType);
                 bundle.putInt("ds_id", dataSourceClient.getDs_id());
                 prepareAndSend(bundle, MessageType.INSERT_HIGH_FREQUENCY);
             }
@@ -469,32 +470,40 @@ class DataKitAPIExecute {
 
         @Override
         public void handleMessage(Message msg) {
-            receivedStatus = (Status) msg.getData().getSerializable(Status.class.getSimpleName());
+            msg.getData().setClassLoader(Status.class.getClassLoader());
+            receivedStatus = msg.getData().getParcelable(Status.class.getSimpleName());
             switch (msg.what) {
                 case MessageType.INTERNAL_ERROR:
                     onExceptionListener.onException(receivedStatus);
                     return;
                 case MessageType.REGISTER:
-                    dataSourceClient = (DataSourceClient) msg.getData().getSerializable(DataSourceClient.class.getSimpleName());
+                    msg.getData().setClassLoader(DataSourceClient.class.getClassLoader());
+                    dataSourceClient = (DataSourceClient) msg.getData().getParcelable(DataSourceClient.class.getSimpleName());
                     break;
                 case MessageType.FIND:
-                    dataSourceClients = (ArrayList<DataSourceClient>) msg.getData().getSerializable(DataSourceClient.class.getSimpleName());
+                    msg.getData().setClassLoader(DataSourceClient.class.getClassLoader());
+                    dataSourceClients = msg.getData().getParcelableArrayList(DataSourceClient.class.getSimpleName());
                     break;
                 case MessageType.SUBSCRIBE:
-                    msg.getData().getSerializable(DataType.class.getSimpleName());
+                    msg.getData().setClassLoader(DataType.class.getClassLoader());
+                    msg.getData().getParcelable(DataType.class.getSimpleName());
                     return;
                 case MessageType.UNSUBSCRIBE:
                 case MessageType.UNREGISTER:
-                    status = (Status) msg.getData().getSerializable(Status.class.getSimpleName());
+                    msg.getData().setClassLoader(Status.class.getClassLoader());
+                    status = msg.getData().getParcelable(Status.class.getSimpleName());
                     break;
                 case MessageType.QUERY:
-                    dataTypes = (ArrayList<DataType>) msg.getData().getSerializable(DataType.class.getSimpleName());
+                    msg.getData().setClassLoader(DataType.class.getClassLoader());
+                    dataTypes = msg.getData().getParcelableArrayList(DataType.class.getSimpleName());
                     break;
                 case MessageType.QUERYPRIMARYKEY:
-                    objectTypes = (ArrayList<RowObject>) msg.getData().getSerializable(RowObject.class.getSimpleName());
+                    msg.getData().setClassLoader(RowObject.class.getClassLoader());
+                    objectTypes = msg.getData().getParcelableArrayList(RowObject.class.getSimpleName());
                     break;
                 case MessageType.SUBSCRIBED_DATA:
-                    dataType = (DataType) msg.getData().getSerializable(DataType.class.getSimpleName());
+                    msg.getData().setClassLoader(DataType.class.getClassLoader());
+                    dataType = msg.getData().getParcelable(DataType.class.getSimpleName());
                     int ds_id = msg.getData().getInt("ds_id");
                     if (ds_idOnReceiveListenerHashMap.containsKey(ds_id))
                         ds_idOnReceiveListenerHashMap.get(ds_id).onReceived(dataType);

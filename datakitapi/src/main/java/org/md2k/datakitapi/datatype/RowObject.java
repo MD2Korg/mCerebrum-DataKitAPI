@@ -27,11 +27,42 @@ package org.md2k.datakitapi.datatype;
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-public class RowObject {
+import android.os.Parcel;
+import android.os.Parcelable;
+
+public class RowObject implements Parcelable{
     public DataType data;
     public long rowKey;
     public RowObject(long aLong, DataType dt) {
         rowKey = aLong;
         data = dt;
+    }
+
+    protected RowObject(Parcel in) {
+        data = in.readParcelable(DataType.class.getClassLoader());
+        rowKey = in.readLong();
+    }
+
+    public static final Creator<RowObject> CREATOR = new Creator<RowObject>() {
+        @Override
+        public RowObject createFromParcel(Parcel in) {
+            return new RowObject(in);
+        }
+
+        @Override
+        public RowObject[] newArray(int size) {
+            return new RowObject[size];
+        }
+    };
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeParcelable(data, flags);
+        dest.writeLong(rowKey);
     }
 }

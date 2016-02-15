@@ -1,9 +1,11 @@
 package org.md2k.datakitapi.source;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import org.md2k.datakitapi.Constants;
 import org.md2k.datakitapi.source.datasource.DataSourceBuilder;
 
-import java.io.Serializable;
 import java.util.HashMap;
 
 /*
@@ -32,29 +34,80 @@ import java.util.HashMap;
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-public abstract class AbstractObject implements Serializable{
-    private static final long serialVersionUID = Constants.serialVersionUID;
+public class AbstractObject implements Parcelable{
     protected String type = null;
     protected String id = null;
     protected HashMap<String, String> metadata = null;
+    public AbstractObject(){
+
+    }
+
+    protected AbstractObject(Parcel in) {
+        type = in.readString();
+        id = in.readString();
+        int size = in.readInt();
+        if (size == -1) metadata = null;
+        else {
+            metadata = new HashMap<>();
+            for (int i = 0; i < size; i++) {
+                metadata.put(in.readString(), in.readString());
+            }
+        }
+    }
+
+    public static final Creator<AbstractObject> CREATOR = new Creator<AbstractObject>() {
+        @Override
+        public AbstractObject createFromParcel(Parcel in) {
+            return new AbstractObject(in);
+        }
+
+        @Override
+        public AbstractObject[] newArray(int size) {
+            return new AbstractObject[size];
+        }
+    };
+
     public String getType() {
         return type;
     }
+
     public String getId() {
         return id;
     }
+
     public HashMap<String, String> getMetadata() {
         return metadata;
     }
-    public DataSourceBuilder toDataSourceBuilder(){
-        DataSourceBuilder dataSourceBuilder=new DataSourceBuilder();
+
+    public DataSourceBuilder toDataSourceBuilder() {
+        DataSourceBuilder dataSourceBuilder = new DataSourceBuilder();
         dataSourceBuilder.setType(type).setId(id).setMetadata(metadata);
         return dataSourceBuilder;
     }
+
     public AbstractObject(AbstractObjectBuilder abstractObjectBuilder) {
         this.type = abstractObjectBuilder.type;
         this.id = abstractObjectBuilder.id;
         this.metadata = abstractObjectBuilder.metadata;
     }
 
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(type);
+        dest.writeString(id);
+        if (metadata == null)
+            dest.writeInt(-1);
+        else {
+            dest.writeInt(metadata.size());
+            for (HashMap.Entry<String, String> entry : metadata.entrySet()) {
+                dest.writeString(entry.getKey());
+                dest.writeString(entry.getValue());
+            }
+        }
+    }
 }
