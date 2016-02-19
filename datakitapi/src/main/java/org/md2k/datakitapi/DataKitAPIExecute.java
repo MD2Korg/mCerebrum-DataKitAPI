@@ -391,8 +391,8 @@ class DataKitAPIExecute {
                         Bundle bundle = new Bundle();
                         bundle.putInt("ds_id", dataSourceClient.getDs_id());
                         bundle.putLong("last_key", lastSyncedValue);
-                        bundle.putLong("limit", limit);
-                        prepareAndSend(bundle, MessageType.QUERY);
+                        bundle.putInt("limit", limit);
+                        prepareAndSend(bundle, MessageType.QUERYPRIMARYKEY);
                     }
                 });
                 t.start();
