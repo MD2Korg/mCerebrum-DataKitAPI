@@ -80,5 +80,7 @@ public class DataSourceType {
     public static final String DAY_END="DAY_END";
     public static final String STRESS_PROBABILITY="STRESS_PROBABILITY";
     public static final String STRESS_LABEL="STRESS_LABEL";
+    public static final String STUDY_START="STUDY_START";
+    public static final String STUDY_END="STUDY_END";
 
 }
