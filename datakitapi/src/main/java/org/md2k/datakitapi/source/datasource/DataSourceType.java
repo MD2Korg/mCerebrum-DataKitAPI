@@ -82,5 +82,9 @@ public class DataSourceType {
     public static final String STRESS_LABEL="STRESS_LABEL";
     public static final String STUDY_START="STUDY_START";
     public static final String STUDY_END="STUDY_END";
-
+    public static final String STRESS_ACTIVITY = "STRESS_ACTIVITY";
+    public static final String CSTRESS_FEATURE_VECTOR = "CSTRESS_FEATURE_VECTOR";
+    public static final String ORG_MD2K_CSTRESS_DATA_RIP_QUALITY = "ORG_MD2K_CSTRESS_DATA_RIP_QUALITY";
+    public static final String ORG_MD2K_CSTRESS_DATA_ECG_QUALITY = "ORG_MD2K_CSTRESS_DATA_ECG_QUALITY";
+    public static final String ORG_MD2K_CSTRESS_STRESS_EPISODE_CLASSIFICATION = "ORG_MD2K_CSTRESS_STRESS_EPISODE_CLASSIFICATION";
 }
