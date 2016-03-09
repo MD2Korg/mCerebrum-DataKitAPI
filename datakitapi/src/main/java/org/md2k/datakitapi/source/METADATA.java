@@ -43,4 +43,5 @@ public class METADATA {
     public static final String VERSION_FIRMWARE="VERSION_FIRMWARE";
     public static final String VERSION_HARDWARE="VERSION_HARDWARE";
     public static final String DEVICE_ID="DEVICE_ID";
+    public static final String DESCRIPTIVESTATISTICS = "DESCRIPTIVE_STATISTICS";
 }

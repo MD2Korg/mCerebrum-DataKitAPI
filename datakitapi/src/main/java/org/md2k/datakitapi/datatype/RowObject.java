@@ -31,18 +31,6 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 public class RowObject implements Parcelable{
-    public DataType data;
-    public long rowKey;
-    public RowObject(long aLong, DataType dt) {
-        rowKey = aLong;
-        data = dt;
-    }
-
-    protected RowObject(Parcel in) {
-        data = in.readParcelable(DataType.class.getClassLoader());
-        rowKey = in.readLong();
-    }
-
     public static final Creator<RowObject> CREATOR = new Creator<RowObject>() {
         @Override
         public RowObject createFromParcel(Parcel in) {
@@ -54,6 +42,43 @@ public class RowObject implements Parcelable{
             return new RowObject[size];
         }
     };
+    public DataType data;
+    public long rowKey;
+
+    public RowObject(long aLong, DataType dt) {
+        rowKey = aLong;
+        data = dt;
+    }
+    
+    protected RowObject(Parcel in) {
+        data = in.readParcelable(DataType.class.getClassLoader());
+        rowKey = in.readLong();
+    }
+
+    public DataType toArrayForm() {
+        if (this.data instanceof DataTypeBoolean) {
+            return new DataTypeBooleanArray(this.data.getDateTime(), new boolean[]{((DataTypeBoolean) this.data).getSample()});
+        }
+        if (this.data instanceof DataTypeByte) {
+            return new DataTypeByteArray(this.data.getDateTime(), new byte[]{((DataTypeByte) this.data).getSample()});
+        }
+        if (this.data instanceof DataTypeDouble) {
+            return new DataTypeDoubleArray(this.data.getDateTime(), new double[]{((DataTypeDouble) this.data).getSample()});
+        }
+        if (this.data instanceof DataTypeFloat) {
+            return new DataTypeFloatArray(this.data.getDateTime(), new float[]{((DataTypeFloat) this.data).getSample()});
+        }
+        if (this.data instanceof DataTypeInt) {
+            return new DataTypeIntArray(this.data.getDateTime(), new int[]{((DataTypeInt) this.data).getSample()});
+        }
+        if (this.data instanceof DataTypeLong) {
+            return new DataTypeLongArray(this.data.getDateTime(), new long[]{((DataTypeLong) this.data).getSample()});
+        }
+        if (this.data instanceof DataTypeString) {
+            return new DataTypeStringArray(this.data.getDateTime(), new String[]{((DataTypeString) this.data).getSample()});
+        }
+        return this.data;
+    }
 
     @Override
     public int describeContents() {
