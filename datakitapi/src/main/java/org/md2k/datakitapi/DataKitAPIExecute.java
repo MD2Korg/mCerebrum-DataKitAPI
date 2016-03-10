@@ -13,7 +13,6 @@ import android.os.IBinder;
 import android.os.Looper;
 import android.os.Message;
 import android.os.Messenger;
-import android.os.Parcelable;
 import android.os.RemoteException;
 import android.util.Log;
 
@@ -166,7 +165,7 @@ class DataKitAPIExecute {
                     @Override
                     public void run() {
                         Bundle bundle = new Bundle();
-                        bundle.putParcelable(DataSource.class.getSimpleName(), (Parcelable) dataSource);
+                        bundle.putParcelable(DataSource.class.getSimpleName(), dataSource);
                         prepareAndSend(bundle, MessageType.REGISTER);
                     }
                 });
@@ -415,7 +414,7 @@ class DataKitAPIExecute {
 
 
     public void insert(final DataSourceClient dataSourceClient, final DataType dataType) {
-        if (!isBound) {
+        if (!isBound || onExceptionListener == null) {
             onExceptionListener.onException(new Status(Status.ERROR_BOUND));
         }
         Thread t = new Thread(new Runnable() {
@@ -431,7 +430,7 @@ class DataKitAPIExecute {
     }
 
     public void insertHighFrequency(final DataSourceClient dataSourceClient, final DataTypeDoubleArray dataType) {
-        if (!isBound) {
+        if (!isBound || onExceptionListener == null) {
             onExceptionListener.onException(new Status(Status.ERROR_BOUND));
         }
         Thread t = new Thread(new Runnable() {
@@ -478,7 +477,7 @@ class DataKitAPIExecute {
                     return;
                 case MessageType.REGISTER:
                     msg.getData().setClassLoader(DataSourceClient.class.getClassLoader());
-                    dataSourceClient = (DataSourceClient) msg.getData().getParcelable(DataSourceClient.class.getSimpleName());
+                    dataSourceClient = msg.getData().getParcelable(DataSourceClient.class.getSimpleName());
                     break;
                 case MessageType.FIND:
                     msg.getData().setClassLoader(DataSourceClient.class.getClassLoader());
