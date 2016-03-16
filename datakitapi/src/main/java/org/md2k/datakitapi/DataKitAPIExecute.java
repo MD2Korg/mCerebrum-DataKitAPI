@@ -18,6 +18,7 @@ import android.util.Log;
 
 import org.md2k.datakitapi.datatype.DataType;
 import org.md2k.datakitapi.datatype.DataTypeDoubleArray;
+import org.md2k.datakitapi.datatype.DataTypeLong;
 import org.md2k.datakitapi.datatype.RowObject;
 import org.md2k.datakitapi.messagehandler.MessageType;
 import org.md2k.datakitapi.messagehandler.OnConnectionListener;
@@ -73,6 +74,7 @@ class DataKitAPIExecute {
     ArrayList<DataSourceClient> dataSourceClients;
     ArrayList<DataType> dataTypes;
     ArrayList<RowObject> objectTypes;
+    DataTypeLong countType;
     DataType dataType;
     Status status;
     HashMap<Integer, OnReceiveListener> ds_idOnReceiveListenerHashMap = new HashMap<>();
@@ -412,6 +414,39 @@ class DataKitAPIExecute {
         };
     }
 
+    public PendingResult<DataTypeLong> querySize() {
+        if (!isBound) {
+            onExceptionListener.onException(new Status(Status.ERROR_BOUND));
+            return null;
+        }
+        return new PendingResult<DataTypeLong>() {
+            @Override
+            public DataTypeLong await() {
+                Thread t = new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Bundle bundle = new Bundle();
+                        prepareAndSend(bundle, MessageType.QUERYSIZE);
+                    }
+                });
+                t.start();
+                synchronized (lock) {
+                    try {
+                        lock.wait();
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+                return countType;
+            }
+
+            @Override
+            public void setResultCallback(ResultCallback<DataTypeLong> callback) {
+
+            }
+        };
+    }
+
 
     public void insert(final DataSourceClient dataSourceClient, final DataType dataType) {
         if (!isBound || onExceptionListener == null) {
@@ -495,6 +530,10 @@ class DataKitAPIExecute {
                 case MessageType.QUERY:
                     msg.getData().setClassLoader(DataType.class.getClassLoader());
                     dataTypes = msg.getData().getParcelableArrayList(DataType.class.getSimpleName());
+                    break;
+                case MessageType.QUERYSIZE:
+                    msg.getData().setClassLoader(DataType.class.getClassLoader());
+                    countType = msg.getData().getParcelable(DataTypeLong.class.getSimpleName());
                     break;
                 case MessageType.QUERYPRIMARYKEY:
                     msg.getData().setClassLoader(RowObject.class.getClassLoader());

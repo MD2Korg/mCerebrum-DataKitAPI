@@ -40,4 +40,5 @@ public class MessageType {
     public static final int INTERNAL_ERROR=11;
     public static final int QUERYPRIMARYKEY = 12;
     public static final int INSERT_HIGH_FREQUENCY = 13;
+    public static final int QUERYSIZE = 14;
 }
