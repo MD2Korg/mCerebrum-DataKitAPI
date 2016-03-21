@@ -3,11 +3,12 @@ package org.md2k.datakitapi.source.datasource;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import org.md2k.datakitapi.Constants;
+import com.bluelinelabs.logansquare.annotation.JsonObject;
+
+import org.md2k.datakitapi.source.AbstractObject;
 import org.md2k.datakitapi.source.application.Application;
 import org.md2k.datakitapi.source.platform.Platform;
 import org.md2k.datakitapi.source.platformapp.PlatformApp;
-import org.md2k.datakitapi.source.AbstractObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -38,16 +39,29 @@ import java.util.HashMap;
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+@JsonObject(fieldDetectionPolicy = JsonObject.FieldDetectionPolicy.NONPRIVATE_FIELDS)
 public class DataSource extends AbstractObject implements Parcelable {
+    public static final Creator<DataSource> CREATOR = new Creator<DataSource>() {
+        @Override
+        public DataSource createFromParcel(Parcel in) {
+            return new DataSource(in);
+        }
+
+        @Override
+        public DataSource[] newArray(int size) {
+            return new DataSource[size];
+        }
+    };
     private Platform platform = null;
     private PlatformApp platformApp = null;
     private Application application = null;
     private boolean persistent = true;
     private ArrayList<HashMap<String, String>> dataDescriptors = null;
+
+
     public DataSource(){
 
     }
-
 
     DataSource(DataSourceBuilder dataSourceBuilder) {
         super(dataSourceBuilder);
@@ -114,18 +128,6 @@ public class DataSource extends AbstractObject implements Parcelable {
     public int describeContents() {
         return 0;
     }
-
-    public static final Creator<DataSource> CREATOR = new Creator<DataSource>() {
-        @Override
-        public DataSource createFromParcel(Parcel in) {
-            return new DataSource(in);
-        }
-
-        @Override
-        public DataSource[] newArray(int size) {
-            return new DataSource[size];
-        }
-    };
 
     public DataSourceBuilder toDataSourceBuilder() {
         DataSourceBuilder dataSourceBuilder = super.toDataSourceBuilder();

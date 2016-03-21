@@ -3,16 +3,9 @@ package org.md2k.datakitapi.datatype;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import org.md2k.datakitapi.Constants;
-import org.md2k.datakitapi.time.DateTime;
+import com.bluelinelabs.logansquare.annotation.JsonObject;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.ObjectInput;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutput;
-import java.io.ObjectOutputStream;
+import org.md2k.datakitapi.time.DateTime;
 
 /*
  * Copyright (c) 2015, The University of Memphis, MD2K Center
@@ -40,21 +33,8 @@ import java.io.ObjectOutputStream;
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+@JsonObject(fieldDetectionPolicy = JsonObject.FieldDetectionPolicy.NONPRIVATE_FIELDS)
 public class DataType implements Parcelable{
-    long dateTime;
-    long offset;
-
-    public DataType(long dateTime) {
-        this.dateTime = dateTime;
-        this.offset= DateTime.getTimeZoneOffset();
-    }
-    public DataType(){}
-
-    protected DataType(Parcel in) {
-        dateTime = in.readLong();
-        offset = in.readLong();
-    }
-
     public static final Creator<DataType> CREATOR = new Creator<DataType>() {
         @Override
         public DataType createFromParcel(Parcel in) {
@@ -66,6 +46,19 @@ public class DataType implements Parcelable{
             return new DataType[size];
         }
     };
+    long dateTime;
+    long offset;
+    public DataType(long dateTime) {
+        this.dateTime = dateTime;
+        this.offset= DateTime.getTimeZoneOffset();
+    }
+
+    public DataType(){}
+
+    protected DataType(Parcel in) {
+        dateTime = in.readLong();
+        offset = in.readLong();
+    }
 
     public long getDateTime() {
         return dateTime;

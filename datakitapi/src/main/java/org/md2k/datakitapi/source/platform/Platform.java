@@ -3,6 +3,8 @@ package org.md2k.datakitapi.source.platform;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.bluelinelabs.logansquare.annotation.JsonObject;
+
 import org.md2k.datakitapi.source.AbstractObject;
 
 /*
@@ -31,14 +33,27 @@ import org.md2k.datakitapi.source.AbstractObject;
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+@JsonObject(fieldDetectionPolicy = JsonObject.FieldDetectionPolicy.NONPRIVATE_FIELDS)
 public class Platform extends AbstractObject implements Parcelable {
+    public static final Creator<Platform> CREATOR = new Creator<Platform>() {
+        @Override
+        public Platform createFromParcel(Parcel in) {
+            return new Platform(in);
+        }
+
+        @Override
+        public Platform[] newArray(int size) {
+            return new Platform[size];
+        }
+    };
+
     Platform(PlatformBuilder platformBuilder) {
         super(platformBuilder);
     }
-
     public Platform(){
-        
+
     }
+
     protected Platform(Parcel in) {
         super(in);
     }
@@ -52,16 +67,4 @@ public class Platform extends AbstractObject implements Parcelable {
     public int describeContents() {
         return 0;
     }
-
-    public static final Creator<Platform> CREATOR = new Creator<Platform>() {
-        @Override
-        public Platform createFromParcel(Parcel in) {
-            return new Platform(in);
-        }
-
-        @Override
-        public Platform[] newArray(int size) {
-            return new Platform[size];
-        }
-    };
 }

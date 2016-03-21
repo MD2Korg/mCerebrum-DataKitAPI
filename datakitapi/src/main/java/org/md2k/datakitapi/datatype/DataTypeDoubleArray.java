@@ -32,12 +32,23 @@ import java.nio.ByteBuffer;
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 public class DataTypeDoubleArray extends  DataType implements Parcelable{
-    double[] sample;
+    public static final Creator<DataTypeDoubleArray> CREATOR = new Creator<DataTypeDoubleArray>() {
+        @Override
+        public DataTypeDoubleArray createFromParcel(Parcel in) {
+            return new DataTypeDoubleArray(in);
+        }
 
+        @Override
+        public DataTypeDoubleArray[] newArray(int size) {
+            return new DataTypeDoubleArray[size];
+        }
+    };
+    double[] sample;
     public DataTypeDoubleArray(long timestamp, double[] sample) {
         super(timestamp);
         this.sample=sample;
     }
+
     public DataTypeDoubleArray(){}
 
     public DataTypeDoubleArray(long dateTime, double sample) {
@@ -48,6 +59,16 @@ public class DataTypeDoubleArray extends  DataType implements Parcelable{
     protected DataTypeDoubleArray(Parcel in) {
         super(in);
         sample = in.createDoubleArray();
+    }
+
+    static public DataTypeDoubleArray fromRawBytes(long timestamp, byte[] data) {
+
+        double[] sample = new double[data.length / 8];
+        for (int i = 0; i < sample.length; i++) {
+            sample[i] = ByteBuffer.wrap(data, i * 8, 8).getDouble();
+        }
+        return new DataTypeDoubleArray(timestamp, sample);
+
     }
 
     @Override
@@ -61,22 +82,9 @@ public class DataTypeDoubleArray extends  DataType implements Parcelable{
         return 0;
     }
 
-    public static final Creator<DataTypeDoubleArray> CREATOR = new Creator<DataTypeDoubleArray>() {
-        @Override
-        public DataTypeDoubleArray createFromParcel(Parcel in) {
-            return new DataTypeDoubleArray(in);
-        }
-
-        @Override
-        public DataTypeDoubleArray[] newArray(int size) {
-            return new DataTypeDoubleArray[size];
-        }
-    };
-
     public double[] getSample(){
         return sample;
     }
-
 
     public byte[] toRawBytes() {
         byte[] data = new byte[sample.length * 8];
@@ -86,16 +94,6 @@ public class DataTypeDoubleArray extends  DataType implements Parcelable{
         }
 
         return data;
-    }
-
-    public DataTypeDoubleArray fromRawBytes(long timestamp, byte[] data) {
-
-        double[] sample = new double[data.length / 8];
-        for (int i = 0; i < sample.length; i++) {
-            sample[i] = ByteBuffer.wrap(data, i * 8, 8).getDouble();
-        }
-        return new DataTypeDoubleArray(timestamp, sample);
-
     }
 
 }

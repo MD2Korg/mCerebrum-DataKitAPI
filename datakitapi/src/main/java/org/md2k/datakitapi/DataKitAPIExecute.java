@@ -74,6 +74,7 @@ class DataKitAPIExecute {
     ArrayList<DataSourceClient> dataSourceClients;
     ArrayList<DataType> dataTypes;
     ArrayList<RowObject> objectTypes;
+    ArrayList<RowObject> objectHFTypes;
     DataTypeLong countType;
     DataType dataType;
     Status status;
@@ -414,6 +415,42 @@ class DataKitAPIExecute {
         };
     }
 
+    public PendingResult<ArrayList<RowObject>> queryHFFromPrimaryKey(final DataSourceClient dataSourceClient, final long lastSyncedValue, final int limit) {
+        if (!isBound) {
+            onExceptionListener.onException(new Status(Status.ERROR_BOUND));
+            return null;
+        }
+        return new PendingResult<ArrayList<RowObject>>() {
+            @Override
+            public ArrayList<RowObject> await() {
+                Thread t = new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Bundle bundle = new Bundle();
+                        bundle.putInt("ds_id", dataSourceClient.getDs_id());
+                        bundle.putLong("last_key", lastSyncedValue);
+                        bundle.putInt("limit", limit);
+                        prepareAndSend(bundle, MessageType.QUERYHFPRIMARYKEY);
+                    }
+                });
+                t.start();
+                synchronized (lock) {
+                    try {
+                        lock.wait();
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+                return objectHFTypes;
+            }
+
+            @Override
+            public void setResultCallback(ResultCallback<ArrayList<RowObject>> callback) {
+
+            }
+        };
+    }
+
     public PendingResult<DataTypeLong> querySize() {
         if (!isBound) {
             onExceptionListener.onException(new Status(Status.ERROR_BOUND));
@@ -538,6 +575,10 @@ class DataKitAPIExecute {
                 case MessageType.QUERYPRIMARYKEY:
                     msg.getData().setClassLoader(RowObject.class.getClassLoader());
                     objectTypes = msg.getData().getParcelableArrayList(RowObject.class.getSimpleName());
+                    break;
+                case MessageType.QUERYHFPRIMARYKEY:
+                    msg.getData().setClassLoader(RowObject.class.getClassLoader());
+                    objectHFTypes = msg.getData().getParcelableArrayList(RowObject.class.getSimpleName());
                     break;
                 case MessageType.SUBSCRIBED_DATA:
                     msg.getData().setClassLoader(DataType.class.getClassLoader());

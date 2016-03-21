@@ -100,6 +100,10 @@ public class DataKitAPI {
         return dataKitAPIExecute.queryFromPrimaryKey(dataSourceClient, lastSyncedKey, limit).await();
     }
 
+    public ArrayList<RowObject> queryHFFromPrimaryKey(DataSourceClient dataSourceClient, long lastSyncedKey, int limit) {
+        return dataKitAPIExecute.queryHFFromPrimaryKey(dataSourceClient, lastSyncedKey, limit).await();
+    }
+
     public DataTypeLong querySize() {
         return dataKitAPIExecute.querySize().await();
     }
