@@ -66,7 +66,6 @@ public class DataSourceType {
 
     public static final String SURVEY = "SURVEY";
     public static final String STATUS = "STATUS";
-    public static final String NOTIFICATION = "NOTIFICATION";
     public static final String LOG="LOG";
 
     public static final String TIMEZONE = "TIMEZONE";
@@ -91,4 +90,13 @@ public class DataSourceType {
     public static final String STRESS_RIP_PROBABILITY = "STRESS_RIP_PROBABILITY";
     public static final String STRESS_RIP_LABEL = "STRESS_RIP_LABEL";
     public static final String ACTIVITY = "ACCELEROMETER_ACTIVITY_DEVIATION";
+
+
+    public static final String NOTIFICATION_REQUEST = "NOTIFICATION_REQUEST";
+    public static final String NOTIFICATION_DELIVER = "NOTIFICATION_DELIVER";
+    public static final String NOTIFICATION_ACKNOWLEDGE = "NOTIFICATION_ACKNOWLEDGE";
+
+
+    public static final String TYPE_OF_DAY="TYPE_OF_DAY";
+    public static final String EVENT="EVENT";
 }
