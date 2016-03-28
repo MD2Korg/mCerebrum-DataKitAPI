@@ -92,6 +92,10 @@ public class DataKitAPI {
         return dataKitAPIExecute.query(dataSourceClient, last_n_sample).await();
     }
 
+    public ArrayList<DataType> queryHFlastN(DataSourceClient dataSourceClient, int last_n_sample) {
+        return dataKitAPIExecute.queryHFlastN(dataSourceClient, last_n_sample).await();
+    }
+
     public ArrayList<DataType> query(DataSourceClient dataSourceClient, long starttimestamp, long endtimestamp) {
         return dataKitAPIExecute.query(dataSourceClient, starttimestamp, endtimestamp).await();
     }

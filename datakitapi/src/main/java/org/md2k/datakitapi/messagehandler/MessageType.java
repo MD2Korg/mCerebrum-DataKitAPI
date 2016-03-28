@@ -42,4 +42,5 @@ public class MessageType {
     public static final int INSERT_HIGH_FREQUENCY = 13;
     public static final int QUERYSIZE = 14;
     public static final int QUERYHFPRIMARYKEY = 15;
+    public static final int QUERYHFLASTN = 16;
 }

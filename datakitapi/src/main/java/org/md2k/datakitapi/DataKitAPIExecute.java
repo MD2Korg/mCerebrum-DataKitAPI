@@ -568,6 +568,10 @@ class DataKitAPIExecute {
                     msg.getData().setClassLoader(DataType.class.getClassLoader());
                     dataTypes = msg.getData().getParcelableArrayList(DataType.class.getSimpleName());
                     break;
+                case MessageType.QUERYHFLASTN:
+                    msg.getData().setClassLoader(DataType.class.getClassLoader());
+                    dataTypes = msg.getData().getParcelableArrayList(DataType.class.getSimpleName());
+                    break;
                 case MessageType.QUERYSIZE:
                     msg.getData().setClassLoader(DataType.class.getClassLoader());
                     countType = msg.getData().getParcelable(DataTypeLong.class.getSimpleName());
