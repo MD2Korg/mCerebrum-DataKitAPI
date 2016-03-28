@@ -378,6 +378,40 @@ class DataKitAPIExecute {
         };
     }
 
+    public PendingResult<ArrayList<DataType>> queryHFlastN(final DataSourceClient dataSourceClient, final int last_n_sample) {
+        if (!isBound) {
+            onExceptionListener.onException(new Status(Status.ERROR_BOUND));
+            return null;
+        }
+        return new PendingResult<ArrayList<DataType>>() {
+            @Override
+            public ArrayList<DataType> await() {
+                Thread t = new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Bundle bundle = new Bundle();
+                        bundle.putInt("ds_id", dataSourceClient.getDs_id());
+                        bundle.putInt("last_n_sample", last_n_sample);
+                        prepareAndSend(bundle, MessageType.QUERYHFLASTN);
+                    }
+                });
+                t.start();
+                synchronized (lock) {
+                    try {
+                        lock.wait();
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+                return dataTypes;
+            }
+
+            @Override
+            public void setResultCallback(ResultCallback<ArrayList<DataType>> callback) {
+
+            }
+        };
+    }
 
     public PendingResult<ArrayList<RowObject>> queryFromPrimaryKey(final DataSourceClient dataSourceClient, final long lastSyncedValue, final int limit){
         if (!isBound) {
