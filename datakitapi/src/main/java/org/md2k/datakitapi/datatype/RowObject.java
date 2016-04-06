@@ -30,6 +30,8 @@ package org.md2k.datakitapi.datatype;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.google.gson.JsonArray;
+
 public class RowObject implements Parcelable{
     public static final Creator<RowObject> CREATOR = new Creator<RowObject>() {
         @Override
@@ -76,6 +78,12 @@ public class RowObject implements Parcelable{
         }
         if (this.data instanceof DataTypeString) {
             return new DataTypeStringArray(this.data.getDateTime(), new String[]{((DataTypeString) this.data).getSample()});
+        }
+        if (this.data instanceof DataTypeJSONObject) {
+
+            JsonArray jo = new JsonArray();
+            jo.add(((DataTypeJSONObject) this.data).getSample());
+            return new DataTypeJSONObjectArray(this.data.getDateTime(), jo);
         }
         return this.data;
     }
