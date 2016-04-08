@@ -64,7 +64,7 @@ public class DataSourceType {
     public static final String GYROSCOPE_Y = "GYROSCOPE_Y";
     public static final String GYROSCOPE_Z = "GYROSCOPE_Z";
 
-    public static final String SURVEY = "SURVEY";
+    public static final String EMA = "EMA";
     public static final String STATUS = "STATUS";
     public static final String LOG="LOG";
 
@@ -100,4 +100,6 @@ public class DataSourceType {
 
     public static final String TYPE_OF_DAY="TYPE_OF_DAY";
     public static final String EVENT="EVENT";
+    public static final String INCENTIVE="INCENTIVE";
+
 }
