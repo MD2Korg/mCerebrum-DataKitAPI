@@ -55,12 +55,13 @@ public class DataKitAPI {
 
     public static DataKitAPI getInstance(Context context) {
         if (instance == null) {
-            instance = new DataKitAPI(context);
+            instance = new DataKitAPI(context.getApplicationContext());
         }
         return instance;
     }
 
     public boolean isConnected() {
+        if(dataKitAPIExecute==null) return false;
         return dataKitAPIExecute.isBound;
     }
 

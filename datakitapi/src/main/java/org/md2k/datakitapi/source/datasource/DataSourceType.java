@@ -102,4 +102,7 @@ public class DataSourceType {
     public static final String EVENT="EVENT";
     public static final String INCENTIVE="INCENTIVE";
 
+    public static final String BLOOD_PRESSURE="BLOOD_PRESSURE";
+    public static final String WEIGHT="WEIGHT";
+
 }

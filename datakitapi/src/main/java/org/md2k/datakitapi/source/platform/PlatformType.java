@@ -33,4 +33,6 @@ public class PlatformType {
     public static final String AUTOSENSE_WRIST = "AUTOSENSE_WRIST";
     public static final String MICROSOFT_BAND = "MICROSOFT_BAND";
     public static final String PHONE = "PHONE";
+    public static final String OMRON_BLOOD_PRESSURE="OMRON_BLOOD_PRESSURE";
+    public static final String OMRON_WEIGHT_SCALE="OMRON_WEIGHT_SCALE";
 }
