@@ -90,6 +90,9 @@ public class DataSourceType {
     public static final String STRESS_RIP_PROBABILITY = "STRESS_RIP_PROBABILITY";
     public static final String STRESS_RIP_LABEL = "STRESS_RIP_LABEL";
     public static final String ACTIVITY = "ACCELEROMETER_ACTIVITY_DEVIATION";
+    public static final String PUFF_PROBABILITY = "PUFF_PROBABILITY";
+    public static final String PUFF_LABEL = "PUFF_LABEL";
+    public static final String PUFFMARKER_FEATURE_VECTOR = "PUFFMARKER_FEATURE_VECTOR";
 
 
     public static final String NOTIFICATION_REQUEST = "NOTIFICATION_REQUEST";
