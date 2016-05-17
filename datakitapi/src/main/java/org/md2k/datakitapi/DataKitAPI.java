@@ -6,8 +6,8 @@ import org.md2k.datakitapi.datatype.DataType;
 import org.md2k.datakitapi.datatype.DataTypeDoubleArray;
 import org.md2k.datakitapi.datatype.DataTypeLong;
 import org.md2k.datakitapi.datatype.RowObject;
+import org.md2k.datakitapi.exception.DataKitException;
 import org.md2k.datakitapi.messagehandler.OnConnectionListener;
-import org.md2k.datakitapi.messagehandler.OnExceptionListener;
 import org.md2k.datakitapi.messagehandler.OnReceiveListener;
 import org.md2k.datakitapi.source.datasource.DataSourceBuilder;
 import org.md2k.datakitapi.source.datasource.DataSourceClient;
@@ -16,7 +16,7 @@ import org.md2k.datakitapi.status.Status;
 import java.util.ArrayList;
 
 /*
- * Copyright (c) 2015, The University of Memphis, MD2K Center
+ * Copyright (c) 2016, The University of Memphis, MD2K Center
  * - Syed Monowar Hossain <monowar.hossain@gmail.com>
  * - Timothy W. Hnat <twhnat@memphis.edu>
  * All rights reserved.
@@ -65,59 +65,59 @@ public class DataKitAPI {
         return dataKitAPIExecute.isBound;
     }
 
-    public void connect(OnConnectionListener callerOnConnectionListener, OnExceptionListener onExceptionListener) {
-        dataKitAPIExecute.connect(callerOnConnectionListener, onExceptionListener);
+    public void connect(OnConnectionListener callerOnConnectionListener) throws DataKitException {
+        dataKitAPIExecute.connect(callerOnConnectionListener);
     }
 
-    public ArrayList<DataSourceClient> find(DataSourceBuilder dataSourceBuilder) {
+    public ArrayList<DataSourceClient> find(DataSourceBuilder dataSourceBuilder) throws DataKitException {
         return dataKitAPIExecute.find(dataSourceBuilder).await();
     }
 
-    public void insert(DataSourceClient dataSourceClient, DataType data) {
+    public void insert(DataSourceClient dataSourceClient, DataType data) throws DataKitException {
         dataKitAPIExecute.insert(dataSourceClient, data);
     }
 
-    public void insertHighFrequency(DataSourceClient dataSourceClient, DataTypeDoubleArray data) {
+    public void insertHighFrequency(DataSourceClient dataSourceClient, DataTypeDoubleArray data) throws DataKitException {
         dataKitAPIExecute.insertHighFrequency(dataSourceClient, data);
     }
 
-    public DataSourceClient register(DataSourceBuilder dataSourceBuilder) {
+    public DataSourceClient register(DataSourceBuilder dataSourceBuilder) throws DataKitException {
         return dataKitAPIExecute.register(dataSourceBuilder).await();
     }
 
-    public Status unregister(DataSourceClient dataSourceClient) {
+    public Status unregister(DataSourceClient dataSourceClient) throws DataKitException {
         return dataKitAPIExecute.unregister(dataSourceClient).await();
     }
 
-    public ArrayList<DataType> query(DataSourceClient dataSourceClient, int last_n_sample) {
+    public ArrayList<DataType> query(DataSourceClient dataSourceClient, int last_n_sample) throws DataKitException {
         return dataKitAPIExecute.query(dataSourceClient, last_n_sample).await();
     }
 
-    public ArrayList<DataType> queryHFlastN(DataSourceClient dataSourceClient, int last_n_sample) {
+    public ArrayList<DataType> queryHFlastN(DataSourceClient dataSourceClient, int last_n_sample) throws DataKitException {
         return dataKitAPIExecute.queryHFlastN(dataSourceClient, last_n_sample).await();
     }
 
-    public ArrayList<DataType> query(DataSourceClient dataSourceClient, long starttimestamp, long endtimestamp) {
+    public ArrayList<DataType> query(DataSourceClient dataSourceClient, long starttimestamp, long endtimestamp) throws DataKitException {
         return dataKitAPIExecute.query(dataSourceClient, starttimestamp, endtimestamp).await();
     }
 
-    public ArrayList<RowObject> queryFromPrimaryKey(DataSourceClient dataSourceClient, long lastSyncedKey, int limit) {
+    public ArrayList<RowObject> queryFromPrimaryKey(DataSourceClient dataSourceClient, long lastSyncedKey, int limit) throws DataKitException {
         return dataKitAPIExecute.queryFromPrimaryKey(dataSourceClient, lastSyncedKey, limit).await();
     }
 
-    public ArrayList<RowObject> queryHFFromPrimaryKey(DataSourceClient dataSourceClient, long lastSyncedKey, int limit) {
+    public ArrayList<RowObject> queryHFFromPrimaryKey(DataSourceClient dataSourceClient, long lastSyncedKey, int limit) throws DataKitException {
         return dataKitAPIExecute.queryHFFromPrimaryKey(dataSourceClient, lastSyncedKey, limit).await();
     }
 
-    public DataTypeLong querySize() {
+    public DataTypeLong querySize() throws DataKitException {
         return dataKitAPIExecute.querySize().await();
     }
 
-    public void subscribe(DataSourceClient dataSourceClient, OnReceiveListener onReceiveListener) {
+    public void subscribe(DataSourceClient dataSourceClient, OnReceiveListener onReceiveListener) throws DataKitException {
         dataKitAPIExecute.subscribe(dataSourceClient, onReceiveListener);
     }
 
-    public Status unsubscribe(DataSourceClient dataSourceClient) {
+    public Status unsubscribe(DataSourceClient dataSourceClient) throws DataKitException {
         return dataKitAPIExecute.unsubscribe(dataSourceClient).await();
     }
 
@@ -125,10 +125,4 @@ public class DataKitAPI {
         dataKitAPIExecute.disconnect();
     }
 
-    public void close() {
-        if(isConnected())
-            disconnect();
-        dataKitAPIExecute = null;
-        instance = null;
-    }
 }

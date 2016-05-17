@@ -20,6 +20,8 @@ import org.md2k.datakitapi.datatype.DataType;
 import org.md2k.datakitapi.datatype.DataTypeDoubleArray;
 import org.md2k.datakitapi.datatype.DataTypeLong;
 import org.md2k.datakitapi.datatype.RowObject;
+import org.md2k.datakitapi.exception.DataKitException;
+import org.md2k.datakitapi.exception.DataKitNotFoundException;
 import org.md2k.datakitapi.messagehandler.MessageType;
 import org.md2k.datakitapi.messagehandler.OnConnectionListener;
 import org.md2k.datakitapi.messagehandler.OnExceptionListener;
@@ -101,33 +103,35 @@ class DataKitAPIExecute {
         }
     }
 
-    protected void connect(OnConnectionListener onConnectionListener, OnExceptionListener onExceptionListener) {
+    protected void connect(OnConnectionListener onConnectionListener) throws DataKitException {
         if (isBound) {
             onConnectionListener.onConnected();
             return;
         }
         this.onConnectionListener = onConnectionListener;
-        this.onExceptionListener = onExceptionListener;
+
         if (!isInstalled(context, "org.md2k.datakit")) {
-            onExceptionListener.onException(new Status(Status.ERROR_NOT_INSTALLED));
-            return;
+            throw new DataKitNotFoundException(new Status(Status.ERROR_NOT_INSTALLED));
         }
+
         intent = new Intent();
         intent.setClassName("org.md2k.datakit", "org.md2k.datakit.ServiceDataKit");
         this.connection = new RemoteServiceConnection();
         HandlerThread thread = new HandlerThread("MyHandlerThread");
         thread.start();
+
         IncomingHandler incomingHandler = new IncomingHandler(thread.getLooper());
         this.replyMessenger = new Messenger(incomingHandler);
         intent.putExtra("name",context.getPackageName());
         intent.putExtra("messenger",this.replyMessenger);
         Log.d(TAG,"connect()..before bound...");
+
         if (!context.bindService(intent, this.connection, Context.BIND_AUTO_CREATE)) {
             Log.d(TAG,"bind fail...");
             thread.quit();
             context.unbindService(connection);
             isBound=false;
-            onExceptionListener.onException(new Status(Status.ERROR_BOUND));
+            throw new DataKitNotFoundException(new Status(Status.ERROR_BOUND));
         }
 
     }
@@ -140,24 +144,24 @@ class DataKitAPIExecute {
         }
     }
 
-    private boolean prepareAndSend(Bundle bundle, int messageType) {
+    private void prepareAndSend(Bundle bundle, int messageType) {
         Message message = Message.obtain(null, 0, 0, 0);
         message.what = messageType;
 
         message.setData(bundle);
         message.replyTo = replyMessenger;
+
         try {
             sendMessenger.send(message);
-            return true;
         } catch (RemoteException e) {
-            return false;
+            Log.e(TAG, "RemoteException: " + e);
+            e.printStackTrace();
         }
     }
 
-    public PendingResult<DataSourceClient> register(DataSourceBuilder dataSourceBuilder) {
+    public PendingResult<DataSourceClient> register(DataSourceBuilder dataSourceBuilder) throws DataKitException {
         if (!isBound) {
-            onExceptionListener.onException(new Status(Status.ERROR_BOUND));
-            return null;
+            throw new DataKitNotFoundException(new Status(Status.ERROR_BOUND));
         }
         final DataSource dataSource = prepareDataSource(dataSourceBuilder);
 
@@ -190,35 +194,32 @@ class DataKitAPIExecute {
         return pendingResult;
     }
 
-    public PendingResult<Status> unsubscribe(final DataSourceClient dataSourceClient){
+    public PendingResult<Status> unsubscribe(final DataSourceClient dataSourceClient) throws DataKitException {
         if (!isBound) {
-            onExceptionListener.onException(new Status(Status.ERROR_BOUND));
-            return null;
+            throw new DataKitNotFoundException(new Status(Status.ERROR_BOUND));
         }
         ds_idOnReceiveListenerHashMap.remove(dataSourceClient.getDs_id());
         return unregister_unsubscribe(dataSourceClient, MessageType.UNSUBSCRIBE);
     }
 
-    public boolean subscribe(final DataSourceClient dataSourceClient, OnReceiveListener onReceiveListener) {
+    public void subscribe(final DataSourceClient dataSourceClient, OnReceiveListener onReceiveListener) throws DataKitException {
         if (!isBound) {
-            onExceptionListener.onException(new Status(Status.ERROR_BOUND));
-            return false;
+            throw new DataKitNotFoundException(new Status(Status.ERROR_BOUND));
         }
         ds_idOnReceiveListenerHashMap.put(dataSourceClient.getDs_id(), onReceiveListener);
         Bundle bundle = new Bundle();
         bundle.putInt("ds_id", dataSourceClient.getDs_id());
-        return prepareAndSend(bundle, MessageType.SUBSCRIBE);
+        prepareAndSend(bundle, MessageType.SUBSCRIBE);
     }
 
-    public PendingResult<Status> unregister(final DataSourceClient dataSourceClient) {
+    public PendingResult<Status> unregister(final DataSourceClient dataSourceClient) throws DataKitException {
         if (!isBound) {
-            onExceptionListener.onException(new Status(Status.ERROR_BOUND));
-            return null;
+            throw new DataKitNotFoundException(new Status(Status.ERROR_BOUND));
         }
         return unregister_unsubscribe(dataSourceClient, MessageType.UNREGISTER);
     }
 
-    private PendingResult<Status> unregister_unsubscribe(final DataSourceClient dataSourceClient, final int messageType) {
+    private PendingResult<Status> unregister_unsubscribe(final DataSourceClient dataSourceClient, final int messageType) throws DataKitException {
         PendingResult<Status> pendingResult = new PendingResult<Status>() {
             @Override
             public Status await() {
@@ -269,10 +270,9 @@ class DataKitAPIExecute {
         return dataSourceBuilder.build();
     }
 
-    public PendingResult<ArrayList<DataSourceClient>> find(DataSourceBuilder dataSourceBuilder){
+    public PendingResult<ArrayList<DataSourceClient>> find(DataSourceBuilder dataSourceBuilder) throws DataKitException {
         if (!isBound) {
-            onExceptionListener.onException(new Status(Status.ERROR_BOUND));
-            return null;
+            throw new DataKitNotFoundException(new Status(Status.ERROR_BOUND));
         }
         final DataSource dataSource = dataSourceBuilder.build();
 
@@ -306,10 +306,9 @@ class DataKitAPIExecute {
         return pendingResult;
     }
 
-    public PendingResult<ArrayList<DataType>> query(final DataSourceClient dataSourceClient, final long starttimestamp, final long endtimestamp) {
+    public PendingResult<ArrayList<DataType>> query(final DataSourceClient dataSourceClient, final long starttimestamp, final long endtimestamp) throws DataKitException {
         if (!isBound) {
-            onExceptionListener.onException(new Status(Status.ERROR_BOUND));
-            return null;
+            throw new DataKitNotFoundException(new Status(Status.ERROR_BOUND));
         }
         return new PendingResult<ArrayList<DataType>>() {
             @Override
@@ -343,10 +342,9 @@ class DataKitAPIExecute {
         };
     }
 
-    public PendingResult<ArrayList<DataType>> query(final DataSourceClient dataSourceClient, final int last_n_sample){
+    public PendingResult<ArrayList<DataType>> query(final DataSourceClient dataSourceClient, final int last_n_sample) throws DataKitException {
         if (!isBound) {
-            onExceptionListener.onException(new Status(Status.ERROR_BOUND));
-            return null;
+            throw new DataKitNotFoundException(new Status(Status.ERROR_BOUND));
         }
         return new PendingResult<ArrayList<DataType>>() {
             @Override
@@ -378,10 +376,9 @@ class DataKitAPIExecute {
         };
     }
 
-    public PendingResult<ArrayList<DataType>> queryHFlastN(final DataSourceClient dataSourceClient, final int last_n_sample) {
+    public PendingResult<ArrayList<DataType>> queryHFlastN(final DataSourceClient dataSourceClient, final int last_n_sample) throws DataKitException {
         if (!isBound) {
-            onExceptionListener.onException(new Status(Status.ERROR_BOUND));
-            return null;
+            throw new DataKitNotFoundException(new Status(Status.ERROR_BOUND));
         }
         return new PendingResult<ArrayList<DataType>>() {
             @Override
@@ -413,10 +410,9 @@ class DataKitAPIExecute {
         };
     }
 
-    public PendingResult<ArrayList<RowObject>> queryFromPrimaryKey(final DataSourceClient dataSourceClient, final long lastSyncedValue, final int limit){
+    public PendingResult<ArrayList<RowObject>> queryFromPrimaryKey(final DataSourceClient dataSourceClient, final long lastSyncedValue, final int limit) throws DataKitException {
         if (!isBound) {
-            onExceptionListener.onException(new Status(Status.ERROR_BOUND));
-            return null;
+            throw new DataKitNotFoundException(new Status(Status.ERROR_BOUND));
         }
         return new PendingResult<ArrayList<RowObject>>() {
             @Override
@@ -449,10 +445,9 @@ class DataKitAPIExecute {
         };
     }
 
-    public PendingResult<ArrayList<RowObject>> queryHFFromPrimaryKey(final DataSourceClient dataSourceClient, final long lastSyncedValue, final int limit) {
+    public PendingResult<ArrayList<RowObject>> queryHFFromPrimaryKey(final DataSourceClient dataSourceClient, final long lastSyncedValue, final int limit) throws DataKitException {
         if (!isBound) {
-            onExceptionListener.onException(new Status(Status.ERROR_BOUND));
-            return null;
+            throw new DataKitNotFoundException(new Status(Status.ERROR_BOUND));
         }
         return new PendingResult<ArrayList<RowObject>>() {
             @Override
@@ -485,10 +480,9 @@ class DataKitAPIExecute {
         };
     }
 
-    public PendingResult<DataTypeLong> querySize() {
+    public PendingResult<DataTypeLong> querySize() throws DataKitException {
         if (!isBound) {
-            onExceptionListener.onException(new Status(Status.ERROR_BOUND));
-            return null;
+            throw new DataKitNotFoundException(new Status(Status.ERROR_BOUND));
         }
         return new PendingResult<DataTypeLong>() {
             @Override
@@ -519,9 +513,9 @@ class DataKitAPIExecute {
     }
 
 
-    public void insert(final DataSourceClient dataSourceClient, final DataType dataType) {
-        if (!isBound || onExceptionListener == null) {
-            onExceptionListener.onException(new Status(Status.ERROR_BOUND));
+    public void insert(final DataSourceClient dataSourceClient, final DataType dataType) throws DataKitException {
+        if (!isBound) {
+            throw new DataKitNotFoundException(new Status(Status.ERROR_BOUND));
         }
         Thread t = new Thread(new Runnable() {
             @Override
@@ -535,9 +529,9 @@ class DataKitAPIExecute {
         t.start();
     }
 
-    public void insertHighFrequency(final DataSourceClient dataSourceClient, final DataTypeDoubleArray dataType) {
-        if (!isBound || onExceptionListener == null) {
-            onExceptionListener.onException(new Status(Status.ERROR_BOUND));
+    public void insertHighFrequency(final DataSourceClient dataSourceClient, final DataTypeDoubleArray dataType) throws DataKitException {
+        if (!isBound) {
+            throw new DataKitNotFoundException(new Status(Status.ERROR_BOUND));
         }
         Thread t = new Thread(new Runnable() {
             @Override
