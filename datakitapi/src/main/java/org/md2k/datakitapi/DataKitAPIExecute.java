@@ -86,7 +86,6 @@ class DataKitAPIExecute {
     private Messenger sendMessenger = null;
     private Messenger replyMessenger = null; //invocation replies are processed by this Messenger
     private OnConnectionListener onConnectionListener;
-    private OnExceptionListener onExceptionListener;
 
     public DataKitAPIExecute(Context context) {
         this.context = context;
@@ -573,7 +572,6 @@ class DataKitAPIExecute {
             receivedStatus = msg.getData().getParcelable(Status.class.getSimpleName());
             switch (msg.what) {
                 case MessageType.INTERNAL_ERROR:
-                    onExceptionListener.onException(receivedStatus);
                     return;
                 case MessageType.REGISTER:
                     msg.getData().setClassLoader(DataSourceClient.class.getClassLoader());
