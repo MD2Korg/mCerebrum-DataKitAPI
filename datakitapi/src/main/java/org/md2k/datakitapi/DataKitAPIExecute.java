@@ -86,6 +86,7 @@ class DataKitAPIExecute {
     private Messenger sendMessenger = null;
     private Messenger replyMessenger = null; //invocation replies are processed by this Messenger
     private OnConnectionListener onConnectionListener;
+    private static final long WAIT=2000;
 
     public DataKitAPIExecute(Context context) {
         this.context = context;
@@ -178,7 +179,7 @@ class DataKitAPIExecute {
                 t.start();
                 synchronized (lock) {
                     try {
-                        lock.wait();
+                        lock.wait(WAIT);
                     } catch (InterruptedException e) {
                     }
                 }
@@ -202,13 +203,17 @@ class DataKitAPIExecute {
     }
 
     public void subscribe(final DataSourceClient dataSourceClient, OnReceiveListener onReceiveListener) throws DataKitException {
-        if (!isBound) {
-            throw new DataKitNotFoundException(new Status(Status.ERROR_BOUND));
+        try {
+            if (!isBound) {
+                throw new DataKitNotFoundException(new Status(Status.ERROR_BOUND));
+            }
+            ds_idOnReceiveListenerHashMap.put(dataSourceClient.getDs_id(), onReceiveListener);
+            Bundle bundle = new Bundle();
+            bundle.putInt("ds_id", dataSourceClient.getDs_id());
+            prepareAndSend(bundle, MessageType.SUBSCRIBE);
+        }catch (Exception e){
+            throw new DataKitException(e.getCause());
         }
-        ds_idOnReceiveListenerHashMap.put(dataSourceClient.getDs_id(), onReceiveListener);
-        Bundle bundle = new Bundle();
-        bundle.putInt("ds_id", dataSourceClient.getDs_id());
-        prepareAndSend(bundle, MessageType.SUBSCRIBE);
     }
 
     public PendingResult<Status> unregister(final DataSourceClient dataSourceClient) throws DataKitException {
@@ -233,7 +238,7 @@ class DataKitAPIExecute {
                 t.start();
                 synchronized (lock) {
                     try {
-                        lock.wait();
+                        lock.wait(WAIT);
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
