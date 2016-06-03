@@ -96,8 +96,8 @@ public class DataSourceType {
 
 
     public static final String NOTIFICATION_REQUEST = "NOTIFICATION_REQUEST";
-    public static final String NOTIFICATION_DELIVER = "NOTIFICATION_DELIVER";
     public static final String NOTIFICATION_ACKNOWLEDGE = "NOTIFICATION_ACKNOWLEDGE";
+    public static final String NOTIFICATION_RESPONSE = "NOTIFICATION_RESPONSE";
     public static final String DATA_QUALITY="DATA_QUALITY";
 
 
