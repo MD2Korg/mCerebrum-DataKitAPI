@@ -93,7 +93,7 @@ public class DataSourceType {
     public static final String PUFF_PROBABILITY = "PUFF_PROBABILITY";
     public static final String PUFF_LABEL = "PUFF_LABEL";
     public static final String PUFFMARKER_FEATURE_VECTOR = "PUFFMARKER_FEATURE_VECTOR";
-
+    public static final String PUFFMARKER_SMOKING_EPISODE = "PUFFMARKER_SMOKING_EPISODE";
 
     public static final String NOTIFICATION_REQUEST = "NOTIFICATION_REQUEST";
     public static final String NOTIFICATION_ACKNOWLEDGE = "NOTIFICATION_ACKNOWLEDGE";
