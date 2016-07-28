@@ -7,6 +7,7 @@ import org.md2k.datakitapi.datatype.DataTypeDoubleArray;
 import org.md2k.datakitapi.datatype.DataTypeLong;
 import org.md2k.datakitapi.datatype.RowObject;
 import org.md2k.datakitapi.exception.DataKitException;
+import org.md2k.datakitapi.exception.DataKitNotFoundException;
 import org.md2k.datakitapi.messagehandler.OnConnectionListener;
 import org.md2k.datakitapi.messagehandler.OnReceiveListener;
 import org.md2k.datakitapi.source.datasource.DataSourceBuilder;
@@ -70,7 +71,10 @@ public class DataKitAPI {
     }
 
     public ArrayList<DataSourceClient> find(DataSourceBuilder dataSourceBuilder) throws DataKitException {
-        return dataKitAPIExecute.find(dataSourceBuilder).await();
+        ArrayList<DataSourceClient> dataSourceClients = dataKitAPIExecute.find(dataSourceBuilder).await();
+        if(dataSourceClients==null)
+            throw new DataKitNotFoundException(new Status(Status.ERROR_BOUND));
+        else return dataSourceClients;
     }
 
     public void insert(DataSourceClient dataSourceClient, DataType data) throws DataKitException {
@@ -82,43 +86,72 @@ public class DataKitAPI {
     }
 
     public DataSourceClient register(DataSourceBuilder dataSourceBuilder) throws DataKitException {
-        return dataKitAPIExecute.register(dataSourceBuilder).await();
+        DataSourceClient dataSourceClient = dataKitAPIExecute.register(dataSourceBuilder).await();
+        if(dataSourceClient==null)
+            throw new DataKitNotFoundException(new Status(Status.ERROR_BOUND));
+        else return dataSourceClient;
     }
 
     public Status unregister(DataSourceClient dataSourceClient) throws DataKitException {
-        return dataKitAPIExecute.unregister(dataSourceClient).await();
+        Status status = dataKitAPIExecute.unregister(dataSourceClient).await();
+        if(status==null)
+            throw new DataKitNotFoundException(new Status(Status.ERROR_BOUND));
+        else return status;
     }
 
     public ArrayList<DataType> query(DataSourceClient dataSourceClient, int last_n_sample) throws DataKitException {
-        return dataKitAPIExecute.query(dataSourceClient, last_n_sample).await();
+        ArrayList<DataType> dataTypes =  dataKitAPIExecute.query(dataSourceClient, last_n_sample).await();
+        if(dataTypes==null)
+            throw new DataKitNotFoundException(new Status(Status.ERROR_BOUND));
+        else return dataTypes;
     }
 
     public ArrayList<DataType> queryHFlastN(DataSourceClient dataSourceClient, int last_n_sample) throws DataKitException {
-        return dataKitAPIExecute.queryHFlastN(dataSourceClient, last_n_sample).await();
+        ArrayList<DataType> dataTypes =  dataKitAPIExecute.queryHFlastN(dataSourceClient, last_n_sample).await();
+        if(dataTypes==null)
+            throw new DataKitNotFoundException(new Status(Status.ERROR_BOUND));
+        else return dataTypes;
     }
 
     public ArrayList<DataType> query(DataSourceClient dataSourceClient, long starttimestamp, long endtimestamp) throws DataKitException {
-        return dataKitAPIExecute.query(dataSourceClient, starttimestamp, endtimestamp).await();
+        ArrayList<DataType> dataTypes = dataKitAPIExecute.query(dataSourceClient, starttimestamp, endtimestamp).await();
+        if(dataTypes==null)
+            throw new DataKitNotFoundException(new Status(Status.ERROR_BOUND));
+        else return dataTypes;
     }
 
     public ArrayList<RowObject> queryFromPrimaryKey(DataSourceClient dataSourceClient, long lastSyncedKey, int limit) throws DataKitException {
-        return dataKitAPIExecute.queryFromPrimaryKey(dataSourceClient, lastSyncedKey, limit).await();
+        ArrayList<RowObject> rowObjects =  dataKitAPIExecute.queryFromPrimaryKey(dataSourceClient, lastSyncedKey, limit).await();
+        if(rowObjects==null)
+            throw new DataKitNotFoundException(new Status(Status.ERROR_BOUND));
+        else return rowObjects;
     }
 
     public ArrayList<RowObject> queryHFFromPrimaryKey(DataSourceClient dataSourceClient, long lastSyncedKey, int limit) throws DataKitException {
-        return dataKitAPIExecute.queryHFFromPrimaryKey(dataSourceClient, lastSyncedKey, limit).await();
+        ArrayList<RowObject> rowObjects = dataKitAPIExecute.queryHFFromPrimaryKey(dataSourceClient, lastSyncedKey, limit).await();
+        if(rowObjects==null)
+            throw new DataKitNotFoundException(new Status(Status.ERROR_BOUND));
+        else return rowObjects;
     }
 
     public DataTypeLong querySize() throws DataKitException {
-        return dataKitAPIExecute.querySize().await();
+        DataTypeLong dataTypeLong= dataKitAPIExecute.querySize().await();
+        if(dataTypeLong==null)
+            throw new DataKitNotFoundException(new Status(Status.ERROR_BOUND));
+        else return dataTypeLong;
     }
 
     public void subscribe(DataSourceClient dataSourceClient, OnReceiveListener onReceiveListener) throws DataKitException {
-        dataKitAPIExecute.subscribe(dataSourceClient, onReceiveListener);
+        Status status = dataKitAPIExecute.subscribe(dataSourceClient, onReceiveListener);
+        if(status==null)
+            throw new DataKitNotFoundException(new Status(Status.ERROR_BOUND));
     }
 
     public Status unsubscribe(DataSourceClient dataSourceClient) throws DataKitException {
-        return dataKitAPIExecute.unsubscribe(dataSourceClient).await();
+        Status status = dataKitAPIExecute.unsubscribe(dataSourceClient).await();
+        if(status==null)
+            throw new DataKitNotFoundException(new Status(Status.ERROR_BOUND));
+        else return status;
     }
 
     public void disconnect() {
