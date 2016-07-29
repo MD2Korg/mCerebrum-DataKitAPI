@@ -99,6 +99,7 @@ public class DataSourceType {
     public static final String NOTIFICATION_ACKNOWLEDGE = "NOTIFICATION_ACKNOWLEDGE";
     public static final String NOTIFICATION_RESPONSE = "NOTIFICATION_RESPONSE";
     public static final String DATA_QUALITY="DATA_QUALITY";
+    public static final String DATA_VARIANCE="DATA_VARIANCE";
 
 
     public static final String TYPE_OF_DAY="TYPE_OF_DAY";
