@@ -13,6 +13,7 @@ import android.os.IBinder;
 import android.os.Looper;
 import android.os.Message;
 import android.os.Messenger;
+import android.os.RemoteException;
 import android.util.Log;
 
 import org.md2k.datakitapi.datatype.DataType;
@@ -25,7 +26,6 @@ import org.md2k.datakitapi.messagehandler.MessageType;
 import org.md2k.datakitapi.messagehandler.OnConnectionListener;
 import org.md2k.datakitapi.messagehandler.OnReceiveListener;
 import org.md2k.datakitapi.messagehandler.PendingResult;
-import org.md2k.datakitapi.messagehandler.ResultCallback;
 import org.md2k.datakitapi.source.METADATA;
 import org.md2k.datakitapi.source.application.Application;
 import org.md2k.datakitapi.source.application.ApplicationBuilder;
@@ -36,8 +36,8 @@ import org.md2k.datakitapi.status.Status;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
 
 /*
@@ -72,7 +72,6 @@ class DataKitAPIExecute {
     public boolean isBound = false;
     Status receivedStatus;
     Intent intent;
-    ReentrantLock lock = new ReentrantLock();
 
     DataType subscribedData;
     ArrayList<RowObject> queryHFPrimaryKeyData;
@@ -85,18 +84,10 @@ class DataKitAPIExecute {
     ArrayList<DataSourceClient> findData;
     DataSourceClient registerData;
     Status subscribeData;
+    ReentrantLock lock;
 
-    final Condition registerCondition = lock.newCondition();
-    final Condition findCondition = lock.newCondition();
-    final Condition subscribeCondition = lock.newCondition();
-    final Condition unsubscribeCondition = lock.newCondition();
-    final Condition unregisterCondition = lock.newCondition();
-    final Condition queryCondition = lock.newCondition();
-    final Condition queryHFLastNCondition = lock.newCondition();
-    final Condition querySizeCondition = lock.newCondition();
-    final Condition queryPrimaryKeyCondition = lock.newCondition();
-    final Condition queryHFPrimaryKeyCondition = lock.newCondition();
-
+    private Semaphore semaphoreReceive;
+    private Semaphore semaphoreOrder;
 
     HashMap<Integer, OnReceiveListener> ds_idOnReceiveListenerHashMap = new HashMap<>();
     private Context context;
@@ -107,12 +98,10 @@ class DataKitAPIExecute {
     private static final long WAIT_TIME = 2000;
 
 
-    final Condition conditionSubscribe = lock.newCondition();
-
-
     public DataKitAPIExecute(Context context) {
         this.context = context;
         isBound = false;
+        lock = new ReentrantLock();
     }
 
     private boolean isInstalled(Context context, String packageName) {
@@ -146,28 +135,33 @@ class DataKitAPIExecute {
         this.replyMessenger = new Messenger(incomingHandler);
         intent.putExtra("name", context.getPackageName());
         intent.putExtra("messenger", this.replyMessenger);
-        Log.d(TAG, "connect()..before bound...");
 
         if (!context.bindService(intent, this.connection, Context.BIND_AUTO_CREATE)) {
-            Log.d(TAG, "bind fail...");
             thread.quit();
             context.unbindService(connection);
             isBound = false;
             throw new DataKitNotFoundException(new Status(Status.ERROR_BOUND));
         }
-
+        semaphoreOrder = new Semaphore(1, true);
+        semaphoreReceive = new Semaphore(0, true);
     }
 
     public void disconnect() {
-        Log.d(TAG, "disconnect()...");
+        ds_idOnReceiveListenerHashMap.clear();
         if (isBound) {
+            try {
+                Thread.sleep(1);
+            } catch (InterruptedException e) {
+            }
+            semaphoreReceive.release(0);
+            semaphoreOrder.release(0);
             context.unbindService(connection);
             isBound = false;
         }
     }
 
 
-    private void prepareAndSend(Bundle bundle, int messageType) throws Exception {
+    private void prepareAndSend(Bundle bundle, int messageType) throws RemoteException {
         Message message = Message.obtain(null, 0, 0, 0);
         message.what = messageType;
 
@@ -185,25 +179,23 @@ class DataKitAPIExecute {
             @Override
             public DataSourceClient await() {
                 try {
-                    lock.tryLock(WAIT_TIME, TimeUnit.MILLISECONDS);
-                    if (!isAlive() || dataSourceBuilder==null)
+                    semaphoreOrder.acquire();
+                    if (!isAlive() || dataSourceBuilder == null)
                         throw new DataKitNotFoundException(new Status(Status.ERROR_BOUND));
                     DataSource dataSource = prepareDataSource(dataSourceBuilder);
                     Bundle bundle = new Bundle();
                     bundle.putParcelable(DataSource.class.getSimpleName(), dataSource);
                     prepareAndSend(bundle, MessageType.REGISTER);
-                    registerCondition.await(WAIT_TIME, TimeUnit.MILLISECONDS);
+                    semaphoreReceive.tryAcquire(WAIT_TIME, TimeUnit.MILLISECONDS);
+                } catch (InterruptedException e) {
+                    registerData = null;
                 } catch (Exception e) {
                     registerData = null;
-                    registerCondition.signal();
+//                    semaphoreReceive.release();
+                } finally {
+                    semaphoreOrder.release();
                 }
-                lock.unlock();
                 return registerData;
-            }
-
-            @Override
-            public void setResultCallback(ResultCallback<DataSourceClient> callback) {
-
             }
         };
         return pendingResult;
@@ -214,25 +206,24 @@ class DataKitAPIExecute {
             @Override
             public Status await() {
                 try {
-                    lock.tryLock(WAIT_TIME, TimeUnit.MILLISECONDS);
-                    if (!isAlive() || dataSourceClient==null)
+                    unsubscribeData = null;
+                    semaphoreOrder.acquire();
+                    if (!isAlive() || dataSourceClient == null)
                         throw new DataKitNotFoundException(new Status(Status.ERROR_BOUND));
                     ds_idOnReceiveListenerHashMap.remove(dataSourceClient.getDs_id());
                     Bundle bundle = new Bundle();
                     bundle.putInt("ds_id", dataSourceClient.getDs_id());
                     prepareAndSend(bundle, MessageType.UNSUBSCRIBE);
-                    unsubscribeCondition.await(WAIT_TIME, TimeUnit.MILLISECONDS);
+                    semaphoreReceive.tryAcquire(WAIT_TIME, TimeUnit.MILLISECONDS);
+                } catch (InterruptedException e) {
+                    unsubscribeData = null;
                 } catch (Exception e) {
                     unsubscribeData = null;
-                    unsubscribeCondition.signal();
+ //                   semaphoreReceive.release();
+                } finally {
+                    semaphoreOrder.release();
                 }
-                lock.unlock();
                 return unsubscribeData;
-            }
-
-            @Override
-            public void setResultCallback(ResultCallback<Status> callback) {
-                callback.onResult(unsubscribeData);
             }
         };
         return pendingResult;
@@ -243,24 +234,23 @@ class DataKitAPIExecute {
             @Override
             public Status await() {
                 try {
-                    lock.tryLock(WAIT_TIME, TimeUnit.MILLISECONDS);
-                    if (!isAlive() || dataSourceClient==null)
+                    unregisterData = null;
+                    semaphoreOrder.acquire();
+                    if (!isAlive() || dataSourceClient == null)
                         throw new DataKitNotFoundException(new Status(Status.ERROR_BOUND));
                     Bundle bundle = new Bundle();
                     bundle.putInt("ds_id", dataSourceClient.getDs_id());
                     prepareAndSend(bundle, MessageType.UNREGISTER);
-                    unregisterCondition.await(WAIT_TIME, TimeUnit.MILLISECONDS);
+                    semaphoreReceive.tryAcquire(WAIT_TIME, TimeUnit.MILLISECONDS);
+                } catch (InterruptedException e) {
+                    unregisterData = null;
                 } catch (Exception e) {
                     unregisterData = null;
-                    unregisterCondition.signal();
+     //               semaphoreReceive.release();
+                } finally {
+                    semaphoreOrder.release();
                 }
-                lock.unlock();
                 return unregisterData;
-            }
-
-            @Override
-            public void setResultCallback(ResultCallback<Status> callback) {
-                callback.onResult(unregisterData);
             }
         };
         return pendingResult;
@@ -268,136 +258,137 @@ class DataKitAPIExecute {
 
     public Status subscribe(final DataSourceClient dataSourceClient, OnReceiveListener onReceiveListener) throws DataKitException {
         try {
-            lock.tryLock(WAIT_TIME, TimeUnit.MILLISECONDS);
-            if (!isAlive() || dataSourceClient==null || onReceiveListener==null)
+            subscribeData = null;
+            semaphoreOrder.acquire();
+            if (!isAlive() || dataSourceClient == null || onReceiveListener == null)
                 throw new DataKitNotFoundException(new Status(Status.ERROR_BOUND));
             ds_idOnReceiveListenerHashMap.put(dataSourceClient.getDs_id(), onReceiveListener);
             Bundle bundle = new Bundle();
             bundle.putInt("ds_id", dataSourceClient.getDs_id());
             prepareAndSend(bundle, MessageType.SUBSCRIBE);
-            subscribeCondition.await(WAIT_TIME, TimeUnit.MILLISECONDS);
+            semaphoreReceive.tryAcquire(WAIT_TIME, TimeUnit.MILLISECONDS);
+        } catch (InterruptedException e) {
+            subscribeData = null;
         } catch (Exception e) {
-            subscribeData=null;
-            subscribeCondition.signal();
+            subscribeData = null;
+  //          semaphoreReceive.release();
+        } finally {
+            semaphoreOrder.release();
         }
-        lock.unlock();
         return subscribeData;
     }
 
 
     public PendingResult<ArrayList<DataSourceClient>> find(final DataSourceBuilder dataSourceBuilder) throws DataKitException {
-            PendingResult<ArrayList<DataSourceClient>> pendingResult = new PendingResult<ArrayList<DataSourceClient>>() {
-                @Override
-                public ArrayList<DataSourceClient> await() {
-                    try {
-                        lock.tryLock(WAIT_TIME, TimeUnit.MILLISECONDS);
-                        if (!isAlive() || dataSourceBuilder==null)
-                            throw new DataKitNotFoundException(new Status(Status.ERROR_BOUND));
-                        final DataSource dataSource = dataSourceBuilder.build();
-                        Bundle bundle = new Bundle();
-                        bundle.putParcelable(DataSource.class.getSimpleName(), dataSource);
-                        prepareAndSend(bundle, MessageType.FIND);
-                        findCondition.await(WAIT_TIME, TimeUnit.MILLISECONDS);
-                    } catch (Exception e) {
-                        findData = null;
-                        findCondition.signal();
-                    }
-                    lock.unlock();
-                    return findData;
+        PendingResult<ArrayList<DataSourceClient>> pendingResult = new PendingResult<ArrayList<DataSourceClient>>() {
+            @Override
+            public ArrayList<DataSourceClient> await() {
+                try {
+                    findData = null;
+                    semaphoreOrder.acquire();
+                    if (!isAlive() || dataSourceBuilder == null)
+                        throw new DataKitNotFoundException(new Status(Status.ERROR_BOUND));
+                    final DataSource dataSource = dataSourceBuilder.build();
+                    Bundle bundle = new Bundle();
+                    bundle.putParcelable(DataSource.class.getSimpleName(), dataSource);
+                    prepareAndSend(bundle, MessageType.FIND);
+                    semaphoreReceive.tryAcquire(WAIT_TIME, TimeUnit.MILLISECONDS);
+                } catch (InterruptedException e) {
+                    findData = null;
+                } catch (Exception e) {
+                    findData = null;
+ //                   semaphoreReceive.release();
+                } finally {
+                    semaphoreOrder.release();
                 }
-
-                @Override
-                public void setResultCallback(ResultCallback<ArrayList<DataSourceClient>> callback) {
-
-                }
-            };
-            return pendingResult;
+                return findData;
+            }
+        };
+        return pendingResult;
     }
 
     public PendingResult<ArrayList<DataType>> query(final DataSourceClient dataSourceClient, final long starttimestamp, final long endtimestamp) throws DataKitException {
-            return new PendingResult<ArrayList<DataType>>() {
-                @Override
-                public ArrayList<DataType> await() {
-                    try {
-                        lock.tryLock(WAIT_TIME, TimeUnit.MILLISECONDS);
-                        if (!isAlive() || dataSourceClient==null || starttimestamp>endtimestamp)
-                            throw new DataKitNotFoundException(new Status(Status.ERROR_BOUND));
-                        Bundle bundle = new Bundle();
-                        bundle.putInt("ds_id", dataSourceClient.getDs_id());
-                        bundle.putLong("starttimestamp", starttimestamp);
-                        bundle.putLong("endtimestamp", endtimestamp);
-                        prepareAndSend(bundle, MessageType.QUERY);
-                        queryCondition.await(WAIT_TIME, TimeUnit.MILLISECONDS);
-                    } catch (Exception e) {
-                        queryData = null;
-                        queryCondition.signal();
-                    }
-                    lock.unlock();
-                    return queryData;
+        return new PendingResult<ArrayList<DataType>>() {
+            @Override
+            public ArrayList<DataType> await() {
+                try {
+                    queryData = null;
+                    semaphoreOrder.acquire();
+                    if (!isAlive() || dataSourceClient == null || starttimestamp > endtimestamp)
+                        throw new DataKitNotFoundException(new Status(Status.ERROR_BOUND));
+                    Bundle bundle = new Bundle();
+                    bundle.putInt("ds_id", dataSourceClient.getDs_id());
+                    bundle.putLong("starttimestamp", starttimestamp);
+                    bundle.putLong("endtimestamp", endtimestamp);
+                    prepareAndSend(bundle, MessageType.QUERY);
+                    semaphoreReceive.tryAcquire(WAIT_TIME, TimeUnit.MILLISECONDS);
+                } catch (InterruptedException e) {
+                    queryData = null;
+                } catch (Exception e) {
+                    queryData = null;
+   //                 semaphoreReceive.release();
+                } finally {
+                    semaphoreOrder.release();
                 }
-
-                @Override
-                public void setResultCallback(ResultCallback<ArrayList<DataType>> callback) {
-
-                }
-            };
+                return queryData;
+            }
+        };
     }
 
     public PendingResult<ArrayList<DataType>> query(final DataSourceClient dataSourceClient, final int last_n_sample) throws DataKitException {
 
-            return new PendingResult<ArrayList<DataType>>() {
-                @Override
-                public ArrayList<DataType> await() {
-                    try {
-                        lock.tryLock(WAIT_TIME, TimeUnit.MILLISECONDS);
-                        if (!isAlive() || dataSourceClient==null || last_n_sample==0)
-                            throw new DataKitNotFoundException(new Status(Status.ERROR_BOUND));
-                        Bundle bundle = new Bundle();
-                        bundle.putInt("ds_id", dataSourceClient.getDs_id());
-                        bundle.putInt("last_n_sample", last_n_sample);
-                        prepareAndSend(bundle, MessageType.QUERY);
-                        queryCondition.await(WAIT_TIME, TimeUnit.MILLISECONDS);
-                    } catch (Exception e) {
-                        queryData = null;
-                        queryCondition.signal();
-                    }
-                    lock.unlock();
-                    return queryData;
+        return new PendingResult<ArrayList<DataType>>() {
+            @Override
+            public ArrayList<DataType> await() {
+                try {
+                    queryData = null;
+                    semaphoreOrder.acquire();
+                    if (!isAlive() || dataSourceClient == null || last_n_sample == 0)
+                        throw new DataKitNotFoundException(new Status(Status.ERROR_BOUND));
+                    Bundle bundle = new Bundle();
+                    bundle.putInt("ds_id", dataSourceClient.getDs_id());
+                    bundle.putInt("last_n_sample", last_n_sample);
+                    prepareAndSend(bundle, MessageType.QUERY);
+                    semaphoreReceive.tryAcquire(WAIT_TIME, TimeUnit.MILLISECONDS);
+                } catch (InterruptedException e) {
+                    queryData = null;
+                } catch (Exception e) {
+                    queryData = null;
+//                    semaphoreReceive.release();
+                } finally {
+                    semaphoreOrder.release();
                 }
-
-                @Override
-                public void setResultCallback(ResultCallback<ArrayList<DataType>> callback) {
-
-                }
-            };
+                return queryData;
+            }
+        };
     }
 
     public PendingResult<ArrayList<DataType>> queryHFlastN(final DataSourceClient dataSourceClient, final int last_n_sample) throws DataKitException {
-            return new PendingResult<ArrayList<DataType>>() {
-                @Override
-                public ArrayList<DataType> await() {
-                    try {
-                        lock.tryLock(WAIT_TIME, TimeUnit.MILLISECONDS);
-                        if (!isAlive() || dataSourceClient==null || last_n_sample==0)
-                            throw new DataKitNotFoundException(new Status(Status.ERROR_BOUND));
-                        Bundle bundle = new Bundle();
-                        bundle.putInt("ds_id", dataSourceClient.getDs_id());
-                        bundle.putInt("last_n_sample", last_n_sample);
-                        prepareAndSend(bundle, MessageType.QUERYHFLASTN);
-                        queryHFLastNCondition.await(WAIT_TIME, TimeUnit.MILLISECONDS);
-                    } catch (Exception e) {
-                        queryHFLastNData = null;
-                        queryHFLastNCondition.signal();
-                    }
-                    lock.unlock();
-                    return queryHFLastNData;
-                }
+        return new PendingResult<ArrayList<DataType>>() {
+            @Override
+            public ArrayList<DataType> await() {
+                try {
+                    queryHFLastNData = null;
+                    semaphoreOrder.acquire();
+                    if (!isAlive() || dataSourceClient == null || last_n_sample == 0)
+                        throw new DataKitNotFoundException(new Status(Status.ERROR_BOUND));
+                    Bundle bundle = new Bundle();
+                    bundle.putInt("ds_id", dataSourceClient.getDs_id());
+                    bundle.putInt("last_n_sample", last_n_sample);
+                    prepareAndSend(bundle, MessageType.QUERYHFLASTN);
+                    semaphoreReceive.tryAcquire(WAIT_TIME, TimeUnit.MILLISECONDS);
 
-                @Override
-                public void setResultCallback(ResultCallback<ArrayList<DataType>> callback) {
-
+                } catch (InterruptedException e) {
+                    queryHFLastNData = null;
+                } catch (Exception e) {
+                    queryHFLastNData = null;
+  //                  semaphoreReceive.release();
+                } finally {
+                    semaphoreOrder.release();
                 }
-            };
+                return queryHFLastNData;
+            }
+        };
     }
 
     public PendingResult<ArrayList<RowObject>> queryFromPrimaryKey(final DataSourceClient dataSourceClient, final long lastSyncedValue, final int limit) throws DataKitException {
@@ -405,26 +396,26 @@ class DataKitAPIExecute {
             @Override
             public ArrayList<RowObject> await() {
                 try {
-                    lock.tryLock(WAIT_TIME, TimeUnit.MILLISECONDS);
-                    if (!isAlive() || dataSourceClient==null)
+                    queryPrimaryKeyData = null;
+                    semaphoreOrder.acquire();
+                    if (!isAlive() || dataSourceClient == null)
                         throw new DataKitNotFoundException(new Status(Status.ERROR_BOUND));
                     Bundle bundle = new Bundle();
                     bundle.putInt("ds_id", dataSourceClient.getDs_id());
                     bundle.putLong("last_key", lastSyncedValue);
                     bundle.putInt("limit", limit);
                     prepareAndSend(bundle, MessageType.QUERYPRIMARYKEY);
-                    queryPrimaryKeyCondition.await(WAIT_TIME, TimeUnit.MILLISECONDS);
+                    semaphoreReceive.tryAcquire(WAIT_TIME, TimeUnit.MILLISECONDS);
+
+                } catch (InterruptedException e) {
+                    queryPrimaryKeyData = null;
                 } catch (Exception e) {
                     queryPrimaryKeyData = null;
-                    queryPrimaryKeyCondition.signal();
+//                    semaphoreReceive.release();
+                } finally {
+                    semaphoreOrder.release();
                 }
-                lock.unlock();
                 return queryPrimaryKeyData;
-            }
-
-            @Override
-            public void setResultCallback(ResultCallback<ArrayList<RowObject>> callback) {
-
             }
         };
     }
@@ -434,26 +425,25 @@ class DataKitAPIExecute {
             @Override
             public ArrayList<RowObject> await() {
                 try {
-                    lock.tryLock(WAIT_TIME, TimeUnit.MILLISECONDS);
-                    if (!isAlive() || dataSourceClient==null)
+                    queryHFPrimaryKeyData = null;
+                    semaphoreOrder.acquire();
+                    if (!isAlive() || dataSourceClient == null)
                         throw new DataKitNotFoundException(new Status(Status.ERROR_BOUND));
                     Bundle bundle = new Bundle();
                     bundle.putInt("ds_id", dataSourceClient.getDs_id());
                     bundle.putLong("last_key", lastSyncedValue);
                     bundle.putInt("limit", limit);
                     prepareAndSend(bundle, MessageType.QUERYHFPRIMARYKEY);
-                    queryHFPrimaryKeyCondition.await(WAIT_TIME, TimeUnit.MILLISECONDS);
+                    semaphoreReceive.tryAcquire(WAIT_TIME, TimeUnit.MILLISECONDS);
+                } catch (InterruptedException e) {
+                    queryHFPrimaryKeyData = null;
                 } catch (Exception e) {
                     queryHFPrimaryKeyData = null;
-                    queryHFPrimaryKeyCondition.signal();
+  //                  semaphoreReceive.release();
+                } finally {
+                    semaphoreOrder.release();
                 }
-                lock.unlock();
                 return queryHFPrimaryKeyData;
-            }
-
-            @Override
-            public void setResultCallback(ResultCallback<ArrayList<RowObject>> callback) {
-
             }
         };
     }
@@ -463,23 +453,22 @@ class DataKitAPIExecute {
             @Override
             public DataTypeLong await() {
                 try {
-                    lock.tryLock(WAIT_TIME, TimeUnit.MILLISECONDS);
+                    querySizeData = null;
+                    semaphoreOrder.acquire();
                     if (!isAlive())
                         throw new DataKitNotFoundException(new Status(Status.ERROR_BOUND));
                     Bundle bundle = new Bundle();
                     prepareAndSend(bundle, MessageType.QUERYSIZE);
-                    querySizeCondition.await(WAIT_TIME, TimeUnit.MILLISECONDS);
+                    semaphoreReceive.tryAcquire(WAIT_TIME, TimeUnit.MILLISECONDS);
+                } catch (InterruptedException e) {
+                    querySizeData = null;
                 } catch (Exception e) {
                     querySizeData = null;
-                    querySizeCondition.signal();
+  //                  semaphoreReceive.release();
+                } finally {
+                    semaphoreOrder.release();
                 }
-                lock.unlock();
                 return querySizeData;
-            }
-
-            @Override
-            public void setResultCallback(ResultCallback<DataTypeLong> callback) {
-
             }
         };
     }
@@ -487,7 +476,8 @@ class DataKitAPIExecute {
 
     public void insert(final DataSourceClient dataSourceClient, final DataType dataType) throws DataKitException {
         try {
-            if (!isAlive() || dataSourceClient==null || dataType==null)
+            semaphoreOrder.acquire();
+            if (!isAlive() || dataSourceClient == null || dataType == null)
                 throw new DataKitNotFoundException(new Status(Status.ERROR_BOUND));
             Bundle bundle = new Bundle();
             bundle.putParcelable(DataType.class.getSimpleName(), dataType);
@@ -495,12 +485,15 @@ class DataKitAPIExecute {
             prepareAndSend(bundle, MessageType.INSERT);
         } catch (Exception e) {
             throw new DataKitException(e.getCause());
+        } finally {
+            semaphoreOrder.release();
         }
     }
 
     public void insertHighFrequency(final DataSourceClient dataSourceClient, final DataTypeDoubleArray dataType) throws DataKitException {
         try {
-            if (!isAlive() || dataSourceClient==null || dataType==null)
+            semaphoreOrder.acquire();
+            if (!isAlive() || dataSourceClient == null || dataType == null)
                 throw new DataKitNotFoundException(new Status(Status.ERROR_BOUND));
             Bundle bundle = new Bundle();
             bundle.putParcelable(DataTypeDoubleArray.class.getSimpleName(), dataType);
@@ -508,8 +501,11 @@ class DataKitAPIExecute {
             prepareAndSend(bundle, MessageType.INSERT_HIGH_FREQUENCY);
         } catch (Exception e) {
             throw new DataKitException(e.getCause());
+        } finally {
+            semaphoreOrder.release();
         }
     }
+
     private DataSource prepareDataSource(DataSourceBuilder dataSourceBuilder) {
         String versionName = null;
         int versionNumber = 0;
@@ -536,14 +532,12 @@ class DataKitAPIExecute {
             sendMessenger = new Messenger(binder);
             isBound = true;
             onConnectionListener.onConnected();
-            Log.d(TAG, "onServiceConnected()...isBound=" + isBound);
         }
 
         @Override
         public void onServiceDisconnected(ComponentName component) {
             sendMessenger = null;
             isBound = false;
-            Log.d(TAG, "onServiceDisconnected()...isBound=" + isBound);
         }
     }
 
@@ -554,80 +548,62 @@ class DataKitAPIExecute {
 
         @Override
         public void handleMessage(Message msg) {
+            lock.lock();
             msg.getData().setClassLoader(Status.class.getClassLoader());
             receivedStatus = msg.getData().getParcelable(Status.class.getSimpleName());
             switch (msg.what) {
                 case MessageType.INTERNAL_ERROR:
+                    Log.e(TAG, "DataKitAPI Internal Error");
                     break;
                 case MessageType.REGISTER:
-                    lock.lock();
                     msg.getData().setClassLoader(DataSourceClient.class.getClassLoader());
                     registerData = msg.getData().getParcelable(DataSourceClient.class.getSimpleName());
-                    registerCondition.signal();
-                    lock.unlock();
+                    semaphoreReceive.release();
                     break;
                 case MessageType.FIND:
-                    lock.lock();
                     msg.getData().setClassLoader(DataSourceClient.class.getClassLoader());
                     findData = msg.getData().getParcelableArrayList(DataSourceClient.class.getSimpleName());
-                    findCondition.signal();
-                    lock.unlock();
+                    semaphoreReceive.release();
                     break;
                 case MessageType.SUBSCRIBE:
-                    lock.lock();
                     msg.getData().setClassLoader(DataType.class.getClassLoader());
                     subscribeData = msg.getData().getParcelable(Status.class.getSimpleName());
-                    subscribeCondition.signal();
-                    lock.unlock();
+                    semaphoreReceive.release();
                     break;
                 case MessageType.UNSUBSCRIBE:
-                    lock.lock();
                     msg.getData().setClassLoader(Status.class.getClassLoader());
                     unsubscribeData = msg.getData().getParcelable(Status.class.getSimpleName());
-                    unsubscribeCondition.signal();
-                    lock.unlock();
+                    semaphoreReceive.release();
                     break;
                 case MessageType.UNREGISTER:
-                    lock.lock();
                     msg.getData().setClassLoader(Status.class.getClassLoader());
                     unregisterData = msg.getData().getParcelable(Status.class.getSimpleName());
-                    unregisterCondition.signal();
-                    lock.unlock();
+                    semaphoreReceive.release();
                     break;
                 case MessageType.QUERY:
-                    lock.lock();
                     msg.getData().setClassLoader(DataType.class.getClassLoader());
                     queryData = msg.getData().getParcelableArrayList(DataType.class.getSimpleName());
-                    queryCondition.signal();
-                    lock.unlock();
+                    semaphoreReceive.release();
                     break;
                 case MessageType.QUERYHFLASTN:
-                    lock.lock();
                     msg.getData().setClassLoader(DataType.class.getClassLoader());
                     queryHFLastNData = msg.getData().getParcelableArrayList(DataType.class.getSimpleName());
-                    queryHFLastNCondition.signal();
-                    lock.unlock();
+                    semaphoreReceive.release();
                     break;
                 case MessageType.QUERYSIZE:
-                    lock.lock();
                     msg.getData().setClassLoader(DataType.class.getClassLoader());
                     querySizeData = msg.getData().getParcelable(DataTypeLong.class.getSimpleName());
-                    querySizeCondition.signal();
-                    lock.unlock();
+                    semaphoreReceive.release();
                     break;
                 case MessageType.QUERYPRIMARYKEY:
-                    lock.lock();
                     msg.getData().setClassLoader(RowObject.class.getClassLoader());
                     queryPrimaryKeyData = msg.getData().getParcelableArrayList(RowObject.class.getSimpleName());
-                    queryPrimaryKeyCondition.signal();
-                    lock.unlock();
+                    semaphoreReceive.release();
                     break;
                 case MessageType.QUERYHFPRIMARYKEY:
-                    lock.lock();
                     msg.getData().setClassLoader(RowObject.class.getClassLoader());
                     queryHFPrimaryKeyData = msg.getData().getParcelableArrayList(RowObject.class.getSimpleName());
-                    queryHFPrimaryKeyCondition.signal();
-                    lock.unlock();
+                    semaphoreReceive.release();
                     break;
                 case MessageType.SUBSCRIBED_DATA:
                     msg.getData().setClassLoader(DataType.class.getClassLoader());
@@ -641,6 +617,7 @@ class DataKitAPIExecute {
                 case MessageType.INSERT_HIGH_FREQUENCY:
                     break;
             }
+            lock.unlock();
         }
     }
 }

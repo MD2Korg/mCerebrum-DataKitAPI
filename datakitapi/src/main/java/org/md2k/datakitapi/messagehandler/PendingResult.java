@@ -28,6 +28,4 @@ package org.md2k.datakitapi.messagehandler;
  */
 public interface PendingResult<R> {
     abstract R await();
-
-    abstract void setResultCallback(ResultCallback<R> callback);
 }
