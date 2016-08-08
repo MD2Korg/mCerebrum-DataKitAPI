@@ -96,13 +96,14 @@ class DataKitAPIExecute {
     private Messenger sendMessenger = null;
     private Messenger replyMessenger = null; //invocation replies are processed by this Messenger
     private OnConnectionListener onConnectionListener;
-    private static final long WAIT_TIME = 5000;
+    private static final long WAIT_TIME = 3000;
 
 
     public DataKitAPIExecute(Context context) {
         this.context = context;
         isConnected = false;
         sessionId = -1;
+        sendMessenger = null;
     }
 
     public boolean isConnected() {
@@ -139,16 +140,26 @@ class DataKitAPIExecute {
 
 
     protected void connect(OnConnectionListener onConnectionListener) throws DataKitException {
-        this.onConnectionListener = onConnectionListener;
-        ds_idOnReceiveListenerHashMap.clear();
-        createThreadRemoteListener();
-        startRemoteService();
-        sessionId = new Random().nextInt();
-        semaphoreReceive = new Semaphore(0, true);
+        try {
+            mutex.lock();
+            this.onConnectionListener = onConnectionListener;
+            ds_idOnReceiveListenerHashMap.clear();
+            sessionId = new Random().nextInt();
+            semaphoreReceive = new Semaphore(0, true);
+            createThreadRemoteListener();
+            startRemoteService();
+        } catch (Exception ignored) {
+        } finally {
+            mutex.unlock();
+        }
+
     }
 
     public void disconnect() {
         try {
+
+            mutex.lock();
+            isConnected = false;
             sessionId = -1;
             ds_idOnReceiveListenerHashMap.clear();
             incomingHandler.removeCallbacks(threadRemoteListener);
@@ -160,9 +171,10 @@ class DataKitAPIExecute {
             } catch (InterruptedException e) {
                 isConnected = false;
             }
+        } catch (Exception e) {
             isConnected = false;
-        }catch (Exception e){
-            isConnected=false;
+        } finally {
+            mutex.unlock();
         }
     }
 
@@ -201,16 +213,16 @@ class DataKitAPIExecute {
         return pendingResult;
     }
 
-    public PendingResult<Status> unsubscribe(final DataSourceClient dataSourceClient) throws DataKitException {
+    public PendingResult<Status> unsubscribe(final int ds_id) throws DataKitException {
         PendingResult<Status> pendingResult = new PendingResult<Status>() {
             @Override
             public Status await() {
                 try {
                     unsubscribeData = null;
                     mutex.tryLock(WAIT_TIME, TimeUnit.MILLISECONDS);
-                    ds_idOnReceiveListenerHashMap.remove(dataSourceClient.getDs_id());
+                    ds_idOnReceiveListenerHashMap.remove(ds_id);
                     Bundle bundle = new Bundle();
-                    bundle.putInt(Constants.RC_DSID, dataSourceClient.getDs_id());
+                    bundle.putInt(Constants.RC_DSID, ds_id);
                     prepareAndSend(bundle, MessageType.UNSUBSCRIBE);
                     semaphoreReceive.tryAcquire(WAIT_TIME, TimeUnit.MILLISECONDS);
                 } catch (Exception e) {
@@ -489,14 +501,14 @@ class DataKitAPIExecute {
         @Override
         public void onServiceConnected(ComponentName component, IBinder binder) {
             sendMessenger = new Messenger(binder);
-            isConnected=true;
+            isConnected = true;
             onConnectionListener.onConnected();
         }
 
         @Override
         public void onServiceDisconnected(ComponentName component) {
             sendMessenger = null;
-            isConnected=false;
+            isConnected = false;
         }
     }
 
@@ -592,13 +604,16 @@ class DataKitAPIExecute {
                     semaphoreReceive.release();
                     break;
                 case MessageType.SUBSCRIBED_DATA:
-                    msg.getData().setClassLoader(DataType.class.getClassLoader());
-                    if (sessionId==-1) subscribeData = null;
-                    else {
+                    try {
+                        if (sessionId == -1) throw new Exception("abc");
+                        msg.getData().setClassLoader(DataType.class.getClassLoader());
                         subscribedData = msg.getData().getParcelable(DataType.class.getSimpleName());
-                        int ds_id = msg.getData().getInt(Constants.RC_DSID);
-                        if (ds_idOnReceiveListenerHashMap.containsKey(ds_id))
-                            ds_idOnReceiveListenerHashMap.get(ds_id).onReceived(subscribedData);
+                        int ds_id = msg.getData().getInt(Constants.RC_DSID, -1);
+                        if (!ds_idOnReceiveListenerHashMap.containsKey(ds_id))
+                            throw new Exception("abc");
+                        ds_idOnReceiveListenerHashMap.get(ds_id).onReceived(subscribedData);
+                    } catch (Exception e) {
+                        disconnect();
                     }
                     break;
             }

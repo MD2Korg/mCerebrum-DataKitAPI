@@ -178,7 +178,7 @@ public class DataKitAPI {
     public Status unsubscribe(DataSourceClient dataSourceClient) throws DataKitException {
         if(!dataKitAPIExecute.isConnected() || dataSourceClient==null)
             throw new DataKitNotFoundException(new Status(Status.ERROR_BOUND));
-        Status status = dataKitAPIExecute.unsubscribe(dataSourceClient).await();
+        Status status = dataKitAPIExecute.unsubscribe(dataSourceClient.getDs_id()).await();
         if(status==null)
             throw new DataKitNotFoundException(new Status(Status.ERROR_BOUND));
         else return status;
