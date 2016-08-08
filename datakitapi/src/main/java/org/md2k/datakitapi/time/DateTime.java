@@ -1,5 +1,7 @@
 package org.md2k.datakitapi.time;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.TimeZone;
 
@@ -64,5 +66,17 @@ public class DateTime {
         String timeStr="";
         timeStr=timeStr+String.format("%02d:%02d:%02d",hour,minute,second);
         return timeStr;
+    }
+    public static String convertTimeStampToDateTime(long timestamp){
+        try {
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTimeInMillis(timestamp);
+            SimpleDateFormat sdf = new SimpleDateFormat("MM-dd-yyyy HH:mm:ss.SSS");
+            Date currenTimeZone = calendar.getTime();
+            return sdf.format(currenTimeZone);
+        } catch (Exception e) {
+        }
+        return "";
+
     }
 }

@@ -27,4 +27,13 @@ package org.md2k.datakitapi;
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 public class Constants {
+    public static final String SERVICE_NAME = "org.md2k.datakit.ServiceDataKit";
+    public static final String PACKAGE_NAME = "org.md2k.datakit";
+    public static final String RC_DSID = "ds_id";
+    public static final String RC_STARTTIMESTAMP = "starttimestamp";
+    public static final String RC_ENDTIMESTAMP = "endtimestamp";
+    public static final String RC_LAST_N_SAMPLE="last_n_sample";
+    public static final String RC_LIMIT = "limit";
+    public static final String RC_LAST_KEY="last_key";
+    public static final String RC_SESSION_ID="session_id";
 }
