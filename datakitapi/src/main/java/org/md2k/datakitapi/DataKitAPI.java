@@ -122,15 +122,6 @@ public class DataKitAPI {
         else return dataTypes;
     }
 
-    public ArrayList<DataType> queryHFlastN(DataSourceClient dataSourceClient, int last_n_sample) throws DataKitException {
-        if(!dataKitAPIExecute.isConnected()  || dataSourceClient == null || last_n_sample == 0)
-            throw new DataKitNotFoundException(new Status(Status.ERROR_BOUND));
-        ArrayList<DataType> dataTypes =  dataKitAPIExecute.queryHFlastN(dataSourceClient, last_n_sample).await();
-        if(dataTypes==null)
-            throw new DataKitNotFoundException(new Status(Status.ERROR_BOUND));
-        else return dataTypes;
-    }
-
     public ArrayList<DataType> query(DataSourceClient dataSourceClient, long starttimestamp, long endtimestamp) throws DataKitException {
         if(!dataKitAPIExecute.isConnected()  || dataSourceClient == null || starttimestamp > endtimestamp)
             throw new DataKitNotFoundException(new Status(Status.ERROR_BOUND));
@@ -144,15 +135,6 @@ public class DataKitAPI {
         if(!dataKitAPIExecute.isConnected() || dataSourceClient == null)
             throw new DataKitNotFoundException(new Status(Status.ERROR_BOUND));
         ArrayList<RowObject> rowObjects =  dataKitAPIExecute.queryFromPrimaryKey(dataSourceClient, lastSyncedKey, limit).await();
-        if(rowObjects==null)
-            throw new DataKitNotFoundException(new Status(Status.ERROR_BOUND));
-        else return rowObjects;
-    }
-
-    public ArrayList<RowObject> queryHFFromPrimaryKey(DataSourceClient dataSourceClient, long lastSyncedKey, int limit) throws DataKitException {
-        if(!dataKitAPIExecute.isConnected() || dataSourceClient == null)
-            throw new DataKitNotFoundException(new Status(Status.ERROR_BOUND));
-        ArrayList<RowObject> rowObjects = dataKitAPIExecute.queryHFFromPrimaryKey(dataSourceClient, lastSyncedKey, limit).await();
         if(rowObjects==null)
             throw new DataKitNotFoundException(new Status(Status.ERROR_BOUND));
         else return rowObjects;

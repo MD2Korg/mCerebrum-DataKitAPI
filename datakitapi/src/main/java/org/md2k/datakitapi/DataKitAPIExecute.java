@@ -70,33 +70,28 @@ import java.util.concurrent.locks.ReentrantLock;
  */
 class DataKitAPIExecute {
     private static final String TAG = DataKitAPIExecute.class.getSimpleName();
-    private boolean isConnected;
+    private static final long WAIT_TIME = 3000;
+    public final ReentrantLock mutex = new ReentrantLock();
     int sessionId = -1;
-
+    HandlerThread threadRemoteListener;
+    IncomingHandler incomingHandler;
+    private boolean isConnected;
     private DataType subscribedData;
-    private ArrayList<RowObject> queryHFPrimaryKeyData;
     private ArrayList<RowObject> queryPrimaryKeyData;
     private DataTypeLong querySizeData;
-    private ArrayList<DataType> queryHFLastNData;
     private ArrayList<DataType> queryData;
     private Status unregisterData;
     private Status unsubscribeData;
     private ArrayList<DataSourceClient> findData;
     private DataSourceClient registerData;
     private Status subscribeData;
-    HandlerThread threadRemoteListener;
-    IncomingHandler incomingHandler;
-
     private Semaphore semaphoreReceive;
-    public final ReentrantLock mutex = new ReentrantLock();
-
     private HashMap<Integer, OnReceiveListener> ds_idOnReceiveListenerHashMap = new HashMap<>();
     private Context context;
     private ServiceConnection connection;//receives callbacks from bind and unbind invocations
     private Messenger sendMessenger = null;
     private Messenger replyMessenger = null; //invocation replies are processed by this Messenger
     private OnConnectionListener onConnectionListener;
-    private static final long WAIT_TIME = 3000;
 
 
     public DataKitAPIExecute(Context context) {
@@ -351,31 +346,6 @@ class DataKitAPIExecute {
         };
     }
 
-    public PendingResult<ArrayList<DataType>> queryHFlastN(final DataSourceClient dataSourceClient, final int last_n_sample) throws DataKitException {
-        return new PendingResult<ArrayList<DataType>>() {
-            @Override
-            public ArrayList<DataType> await() {
-                try {
-                    queryHFLastNData = null;
-                    mutex.tryLock(WAIT_TIME, TimeUnit.MILLISECONDS);
-                    Bundle bundle = new Bundle();
-                    bundle.putInt(Constants.RC_DSID, dataSourceClient.getDs_id());
-                    bundle.putInt(Constants.RC_LAST_N_SAMPLE, last_n_sample);
-                    prepareAndSend(bundle, MessageType.QUERYHFLASTN);
-                    semaphoreReceive.tryAcquire(WAIT_TIME, TimeUnit.MILLISECONDS);
-
-                } catch (Exception e) {
-                    queryHFLastNData = null;
-                    //                  semaphoreReceive.release();
-                } finally {
-                    if (mutex.isLocked())
-                        mutex.unlock();
-                }
-                return queryHFLastNData;
-            }
-        };
-    }
-
     public PendingResult<ArrayList<RowObject>> queryFromPrimaryKey(final DataSourceClient dataSourceClient, final long lastSyncedValue, final int limit) throws DataKitException {
         return new PendingResult<ArrayList<RowObject>>() {
             @Override
@@ -397,30 +367,6 @@ class DataKitAPIExecute {
                         mutex.unlock();
                 }
                 return queryPrimaryKeyData;
-            }
-        };
-    }
-
-    public PendingResult<ArrayList<RowObject>> queryHFFromPrimaryKey(final DataSourceClient dataSourceClient, final long lastSyncedValue, final int limit) throws DataKitException {
-        return new PendingResult<ArrayList<RowObject>>() {
-            @Override
-            public ArrayList<RowObject> await() {
-                try {
-                    queryHFPrimaryKeyData = null;
-                    mutex.tryLock(WAIT_TIME, TimeUnit.MILLISECONDS);
-                    Bundle bundle = new Bundle();
-                    bundle.putInt(Constants.RC_DSID, dataSourceClient.getDs_id());
-                    bundle.putLong(Constants.RC_LAST_KEY, lastSyncedValue);
-                    bundle.putInt(Constants.RC_LIMIT, limit);
-                    prepareAndSend(bundle, MessageType.QUERYHFPRIMARYKEY);
-                    semaphoreReceive.tryAcquire(WAIT_TIME, TimeUnit.MILLISECONDS);
-                } catch (Exception e) {
-                    queryHFPrimaryKeyData = null;
-                } finally {
-                    if (mutex.isLocked())
-                        mutex.unlock();
-                }
-                return queryHFPrimaryKeyData;
             }
         };
     }
@@ -574,13 +520,6 @@ class DataKitAPIExecute {
                         queryData = msg.getData().getParcelableArrayList(DataType.class.getSimpleName());
                     semaphoreReceive.release();
                     break;
-                case MessageType.QUERYHFLASTN:
-                    msg.getData().setClassLoader(DataType.class.getClassLoader());
-                    if (curSessionId != sessionId) queryHFLastNData = null;
-                    else
-                        queryHFLastNData = msg.getData().getParcelableArrayList(DataType.class.getSimpleName());
-                    semaphoreReceive.release();
-                    break;
                 case MessageType.QUERYSIZE:
                     msg.getData().setClassLoader(DataType.class.getClassLoader());
                     if (curSessionId != sessionId) querySizeData = null;
@@ -594,13 +533,6 @@ class DataKitAPIExecute {
                     if (curSessionId != sessionId) queryPrimaryKeyData = null;
                     else
                         queryPrimaryKeyData = msg.getData().getParcelableArrayList(RowObject.class.getSimpleName());
-                    semaphoreReceive.release();
-                    break;
-                case MessageType.QUERYHFPRIMARYKEY:
-                    msg.getData().setClassLoader(RowObject.class.getClassLoader());
-                    if (curSessionId != sessionId) queryHFPrimaryKeyData = null;
-                    else
-                        queryHFPrimaryKeyData = msg.getData().getParcelableArrayList(RowObject.class.getSimpleName());
                     semaphoreReceive.release();
                     break;
                 case MessageType.SUBSCRIBED_DATA:
