@@ -57,7 +57,10 @@ public class DataKitAPI {
 
     public static DataKitAPI getInstance(Context context) {
         if (instance == null) {
+            synchronized (DataKitAPI.class) {
+                if(instance==null)
             instance = new DataKitAPI(context.getApplicationContext());
+        }
         }
         return instance;
     }
@@ -66,7 +69,7 @@ public class DataKitAPI {
         return !(dataKitAPIExecute == null || !dataKitAPIExecute.isConnected());
     }
 
-    public void connect(OnConnectionListener callerOnConnectionListener) throws DataKitException {
+    public synchronized void connect(OnConnectionListener callerOnConnectionListener) throws DataKitException {
         if (!isInstalled(context, Constants.PACKAGE_NAME)) {
             throw new DataKitNotFoundException(new Status(Status.ERROR_NOT_INSTALLED));
         }else if(isConnected()) callerOnConnectionListener.onConnected();
@@ -78,7 +81,7 @@ public class DataKitAPI {
         if(!dataKitAPIExecute.isConnected() || dataSourceBuilder == null)
             throw new DataKitNotFoundException(new Status(Status.ERROR_BOUND));
         ArrayList<DataSourceClient> dataSourceClients = dataKitAPIExecute.find(dataSourceBuilder).await();
-        if(dataSourceClients==null)
+        if(dataSourceClients==null || !dataKitAPIExecute.isConnected())
             throw new DataKitNotFoundException(new Status(Status.ERROR_BOUND));
         else return dataSourceClients;
     }
@@ -99,7 +102,7 @@ public class DataKitAPI {
         if(!dataKitAPIExecute.isConnected() || dataSourceBuilder==null)
             throw new DataKitNotFoundException(new Status(Status.ERROR_BOUND));
         DataSourceClient dataSourceClient = dataKitAPIExecute.register(dataSourceBuilder).await();
-        if(dataSourceClient==null)
+        if(dataSourceClient==null || !dataKitAPIExecute.isConnected())
             throw new DataKitNotFoundException(new Status(Status.ERROR_BOUND));
         else return dataSourceClient;
     }
@@ -108,7 +111,7 @@ public class DataKitAPI {
         if(!dataKitAPIExecute.isConnected() || dataSourceClient == null)
             throw new DataKitNotFoundException(new Status(Status.ERROR_BOUND));
         Status status = dataKitAPIExecute.unregister(dataSourceClient).await();
-        if(status==null)
+        if(status==null || !dataKitAPIExecute.isConnected())
             throw new DataKitNotFoundException(new Status(Status.ERROR_BOUND));
         else return status;
     }
@@ -117,7 +120,7 @@ public class DataKitAPI {
         if(!dataKitAPIExecute.isConnected() || dataSourceClient == null || last_n_sample == 0)
             throw new DataKitNotFoundException(new Status(Status.ERROR_BOUND));
         ArrayList<DataType> dataTypes =  dataKitAPIExecute.query(dataSourceClient, last_n_sample).await();
-        if(dataTypes==null)
+        if(dataTypes==null || !dataKitAPIExecute.isConnected())
             throw new DataKitNotFoundException(new Status(Status.ERROR_BOUND));
         else return dataTypes;
     }
@@ -126,7 +129,7 @@ public class DataKitAPI {
         if(!dataKitAPIExecute.isConnected()  || dataSourceClient == null || starttimestamp > endtimestamp)
             throw new DataKitNotFoundException(new Status(Status.ERROR_BOUND));
         ArrayList<DataType> dataTypes = dataKitAPIExecute.query(dataSourceClient, starttimestamp, endtimestamp).await();
-        if(dataTypes==null)
+        if(dataTypes==null || !dataKitAPIExecute.isConnected())
             throw new DataKitNotFoundException(new Status(Status.ERROR_BOUND));
         else return dataTypes;
     }
@@ -135,7 +138,7 @@ public class DataKitAPI {
         if(!dataKitAPIExecute.isConnected() || dataSourceClient == null)
             throw new DataKitNotFoundException(new Status(Status.ERROR_BOUND));
         ArrayList<RowObject> rowObjects =  dataKitAPIExecute.queryFromPrimaryKey(dataSourceClient, lastSyncedKey, limit).await();
-        if(rowObjects==null)
+        if(rowObjects==null || !dataKitAPIExecute.isConnected())
             throw new DataKitNotFoundException(new Status(Status.ERROR_BOUND));
         else return rowObjects;
     }
@@ -144,7 +147,7 @@ public class DataKitAPI {
         if(!dataKitAPIExecute.isConnected())
             throw new DataKitNotFoundException(new Status(Status.ERROR_BOUND));
         DataTypeLong dataTypeLong= dataKitAPIExecute.querySize().await();
-        if(dataTypeLong==null)
+        if(dataTypeLong==null || !dataKitAPIExecute.isConnected())
             throw new DataKitNotFoundException(new Status(Status.ERROR_BOUND));
         else return dataTypeLong;
     }
@@ -153,7 +156,7 @@ public class DataKitAPI {
         if(!dataKitAPIExecute.isConnected()  || dataSourceClient == null || onReceiveListener == null)
             throw new DataKitNotFoundException(new Status(Status.ERROR_BOUND));
         Status status = dataKitAPIExecute.subscribe(dataSourceClient, onReceiveListener);
-        if(status==null)
+        if(status==null || !dataKitAPIExecute.isConnected())
             throw new DataKitNotFoundException(new Status(Status.ERROR_BOUND));
     }
 
@@ -161,12 +164,13 @@ public class DataKitAPI {
         if(!dataKitAPIExecute.isConnected() || dataSourceClient==null)
             throw new DataKitNotFoundException(new Status(Status.ERROR_BOUND));
         Status status = dataKitAPIExecute.unsubscribe(dataSourceClient.getDs_id()).await();
-        if(status==null)
+        if(status==null || !dataKitAPIExecute.isConnected())
             throw new DataKitNotFoundException(new Status(Status.ERROR_BOUND));
         else return status;
     }
 
-    public void disconnect() {
+    public synchronized void disconnect() {
+        if(dataKitAPIExecute.isConnected())
         dataKitAPIExecute.disconnect();
     }
     private boolean isInstalled(Context context, String packageName) {

@@ -39,7 +39,6 @@ import java.util.HashMap;
 import java.util.Random;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.locks.ReentrantLock;
 
 /*
  * Copyright (c) 2015, The University of Memphis, MD2K Center
@@ -70,13 +69,9 @@ import java.util.concurrent.locks.ReentrantLock;
  */
 class DataKitAPIExecute {
     private static final String TAG = DataKitAPIExecute.class.getSimpleName();
-    private static final long WAIT_TIME = 3000;
-    public final ReentrantLock mutex = new ReentrantLock();
-    int sessionId = -1;
-    HandlerThread threadRemoteListener;
-    IncomingHandler incomingHandler;
     private boolean isConnected;
-    private DataType subscribedData;
+    int sessionId = -1;
+
     private ArrayList<RowObject> queryPrimaryKeyData;
     private DataTypeLong querySizeData;
     private ArrayList<DataType> queryData;
@@ -85,13 +80,20 @@ class DataKitAPIExecute {
     private ArrayList<DataSourceClient> findData;
     private DataSourceClient registerData;
     private Status subscribeData;
+    HandlerThread threadRemoteListener;
+    IncomingHandler incomingHandler;
+
     private Semaphore semaphoreReceive;
-    private HashMap<Integer, OnReceiveListener> ds_idOnReceiveListenerHashMap = new HashMap<>();
+//    private Semaphore semaphoreMutex;
+
+    private HashMap<Integer, OnReceiveListener> ds_idOnReceiveListenerHashMap;
     private Context context;
     private ServiceConnection connection;//receives callbacks from bind and unbind invocations
     private Messenger sendMessenger = null;
     private Messenger replyMessenger = null; //invocation replies are processed by this Messenger
     private OnConnectionListener onConnectionListener;
+    private static final long WAIT_TIME = 5000;
+    private boolean isDisconnecting;
 
 
     public DataKitAPIExecute(Context context) {
@@ -99,10 +101,12 @@ class DataKitAPIExecute {
         isConnected = false;
         sessionId = -1;
         sendMessenger = null;
+        isDisconnecting = false;
+        ds_idOnReceiveListenerHashMap = new HashMap<>();
     }
 
     public boolean isConnected() {
-        return sendMessenger != null && isConnected;
+        return sendMessenger != null && isConnected && sessionId != -1;
     }
 
     private void createThreadRemoteListener() {
@@ -119,16 +123,7 @@ class DataKitAPIExecute {
         intent.putExtra("name", context.getPackageName());
         intent.putExtra("messenger", this.replyMessenger);
         if (!context.bindService(intent, this.connection, Context.BIND_AUTO_CREATE)) {
-            incomingHandler.removeCallbacks(threadRemoteListener);
-            ds_idOnReceiveListenerHashMap.clear();
-            threadRemoteListener.quit();
-            context.unbindService(connection);
-            try {
-                Thread.sleep(1000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-            isConnected = false;
+            disconnect();
             throw new DataKitNotFoundException(new Status(Status.ERROR_BOUND));
         }
     }
@@ -136,41 +131,57 @@ class DataKitAPIExecute {
 
     protected void connect(OnConnectionListener onConnectionListener) throws DataKitException {
         try {
-            mutex.lock();
+            while (isDisconnecting) {
+                try {
+                    Thread.sleep(1000);
+                } catch (Exception ignored) {
+                }
+            }
             this.onConnectionListener = onConnectionListener;
             ds_idOnReceiveListenerHashMap.clear();
             sessionId = new Random().nextInt();
             semaphoreReceive = new Semaphore(0, true);
+//            semaphoreMutex = new Semaphore(1, true);
             createThreadRemoteListener();
             startRemoteService();
         } catch (Exception ignored) {
-        } finally {
-            mutex.unlock();
         }
 
     }
 
-    public void disconnect() {
+    void lock() {
         try {
-
-            mutex.lock();
-            isConnected = false;
-            sessionId = -1;
-            ds_idOnReceiveListenerHashMap.clear();
-            incomingHandler.removeCallbacks(threadRemoteListener);
-            if (threadRemoteListener.isAlive())
-                threadRemoteListener.quit();
-            context.unbindService(connection);
-            try {
-                Thread.sleep(1000);
-            } catch (InterruptedException e) {
-                isConnected = false;
-            }
+            if (!isConnected) return;
+//            semaphoreMutex.acquire();
         } catch (Exception e) {
-            isConnected = false;
-        } finally {
-            mutex.unlock();
+            e.printStackTrace();
         }
+    }
+
+    void unlock() {
+
+//        semaphoreMutex.release();
+    }
+
+    public void disconnect() {
+        isConnected = false;
+        isDisconnecting = true;
+        sessionId = -1;
+        ds_idOnReceiveListenerHashMap.clear();
+        if (threadRemoteListener != null && threadRemoteListener.isAlive())
+            threadRemoteListener.quitSafely();
+        if (threadRemoteListener != null && incomingHandler != null)
+            incomingHandler.removeCallbacks(threadRemoteListener);
+        threadRemoteListener = null;
+        incomingHandler = null;
+//        while (semaphoreMutex.hasQueuedThreads())
+ //           unlock();
+        try {
+            context.unbindService(connection);
+            Thread.sleep(1000);
+        } catch (Exception ignored) {
+        }
+        isDisconnecting = false;
     }
 
 
@@ -190,7 +201,8 @@ class DataKitAPIExecute {
             @Override
             public DataSourceClient await() {
                 try {
-                    mutex.tryLock(WAIT_TIME, TimeUnit.MILLISECONDS);
+                    registerData = null;
+                    lock();
                     DataSource dataSource = prepareDataSource(dataSourceBuilder);
                     Bundle bundle = new Bundle();
                     bundle.putParcelable(DataSource.class.getSimpleName(), dataSource);
@@ -199,8 +211,7 @@ class DataKitAPIExecute {
                 } catch (Exception e) {
                     registerData = null;
                 } finally {
-                    if (mutex.isLocked())
-                        mutex.unlock();
+                    unlock();
                 }
                 return registerData;
             }
@@ -214,17 +225,19 @@ class DataKitAPIExecute {
             public Status await() {
                 try {
                     unsubscribeData = null;
-                    mutex.tryLock(WAIT_TIME, TimeUnit.MILLISECONDS);
+                    lock();
                     ds_idOnReceiveListenerHashMap.remove(ds_id);
                     Bundle bundle = new Bundle();
                     bundle.putInt(Constants.RC_DSID, ds_id);
+                    if (context == null || context.getPackageName() == null)
+                        throw new Exception("abc");
+                    bundle.putString(Constants.PACKAGE_NAME, context.getPackageName());
                     prepareAndSend(bundle, MessageType.UNSUBSCRIBE);
                     semaphoreReceive.tryAcquire(WAIT_TIME, TimeUnit.MILLISECONDS);
                 } catch (Exception e) {
                     unsubscribeData = null;
                 } finally {
-                    if (mutex.isLocked())
-                        mutex.unlock();
+                    unlock();
                 }
                 return unsubscribeData;
             }
@@ -238,7 +251,7 @@ class DataKitAPIExecute {
             public Status await() {
                 try {
                     unregisterData = null;
-                    mutex.tryLock(WAIT_TIME, TimeUnit.MILLISECONDS);
+                    lock();
                     Bundle bundle = new Bundle();
                     bundle.putInt(Constants.RC_DSID, dataSourceClient.getDs_id());
                     prepareAndSend(bundle, MessageType.UNREGISTER);
@@ -246,8 +259,7 @@ class DataKitAPIExecute {
                 } catch (Exception e) {
                     unregisterData = null;
                 } finally {
-                    if (mutex.isLocked())
-                        mutex.unlock();
+                    unlock();
                 }
                 return unregisterData;
             }
@@ -258,17 +270,18 @@ class DataKitAPIExecute {
     public Status subscribe(final DataSourceClient dataSourceClient, OnReceiveListener onReceiveListener) throws DataKitException {
         try {
             subscribeData = null;
-            mutex.tryLock(WAIT_TIME, TimeUnit.MILLISECONDS);
+            lock();
             ds_idOnReceiveListenerHashMap.put(dataSourceClient.getDs_id(), onReceiveListener);
             Bundle bundle = new Bundle();
             bundle.putInt(Constants.RC_DSID, dataSourceClient.getDs_id());
+            bundle.putString(Constants.PACKAGE_NAME, context.getPackageName());
             prepareAndSend(bundle, MessageType.SUBSCRIBE);
             semaphoreReceive.tryAcquire(WAIT_TIME, TimeUnit.MILLISECONDS);
         } catch (Exception e) {
+            Log.e(TAG, "Subscribe error..." + dataSourceClient.getDs_id());
             subscribeData = null;
         } finally {
-            if (mutex.isLocked())
-                mutex.unlock();
+            unlock();
         }
         return subscribeData;
     }
@@ -280,7 +293,7 @@ class DataKitAPIExecute {
             public ArrayList<DataSourceClient> await() {
                 try {
                     findData = null;
-                    mutex.tryLock(WAIT_TIME, TimeUnit.MILLISECONDS);
+                    lock();
                     final DataSource dataSource = dataSourceBuilder.build();
                     Bundle bundle = new Bundle();
                     bundle.putParcelable(DataSource.class.getSimpleName(), dataSource);
@@ -289,8 +302,7 @@ class DataKitAPIExecute {
                 } catch (Exception e) {
                     findData = null;
                 } finally {
-                    if (mutex.isLocked())
-                        mutex.unlock();
+                    unlock();
                 }
                 return findData;
             }
@@ -304,7 +316,7 @@ class DataKitAPIExecute {
             public ArrayList<DataType> await() {
                 try {
                     queryData = null;
-                    mutex.tryLock(WAIT_TIME, TimeUnit.MILLISECONDS);
+                    lock();
                     Bundle bundle = new Bundle();
                     bundle.putInt(Constants.RC_DSID, dataSourceClient.getDs_id());
                     bundle.putLong(Constants.RC_STARTTIMESTAMP, starttimestamp);
@@ -314,8 +326,7 @@ class DataKitAPIExecute {
                 } catch (Exception e) {
                     queryData = null;
                 } finally {
-                    if (mutex.isLocked())
-                        mutex.unlock();
+                    unlock();
                 }
                 return queryData;
             }
@@ -329,7 +340,7 @@ class DataKitAPIExecute {
             public ArrayList<DataType> await() {
                 try {
                     queryData = null;
-                    mutex.tryLock(WAIT_TIME, TimeUnit.MILLISECONDS);
+                    lock();
                     Bundle bundle = new Bundle();
                     bundle.putInt(Constants.RC_DSID, dataSourceClient.getDs_id());
                     bundle.putInt(Constants.RC_LAST_N_SAMPLE, last_n_sample);
@@ -338,8 +349,7 @@ class DataKitAPIExecute {
                 } catch (Exception e) {
                     queryData = null;
                 } finally {
-                    if (mutex.isLocked())
-                        mutex.unlock();
+                    unlock();
                 }
                 return queryData;
             }
@@ -352,7 +362,7 @@ class DataKitAPIExecute {
             public ArrayList<RowObject> await() {
                 try {
                     queryPrimaryKeyData = null;
-                    mutex.tryLock(WAIT_TIME, TimeUnit.MILLISECONDS);
+                    lock();
                     Bundle bundle = new Bundle();
                     bundle.putInt(Constants.RC_DSID, dataSourceClient.getDs_id());
                     bundle.putLong(Constants.RC_LAST_KEY, lastSyncedValue);
@@ -363,8 +373,7 @@ class DataKitAPIExecute {
                 } catch (Exception e) {
                     queryPrimaryKeyData = null;
                 } finally {
-                    if (mutex.isLocked())
-                        mutex.unlock();
+                    unlock();
                 }
                 return queryPrimaryKeyData;
             }
@@ -377,15 +386,14 @@ class DataKitAPIExecute {
             public DataTypeLong await() {
                 try {
                     querySizeData = null;
-                    mutex.tryLock(WAIT_TIME, TimeUnit.MILLISECONDS);
+                    lock();
                     Bundle bundle = new Bundle();
                     prepareAndSend(bundle, MessageType.QUERYSIZE);
                     semaphoreReceive.tryAcquire(WAIT_TIME, TimeUnit.MILLISECONDS);
                 } catch (Exception e) {
                     querySizeData = null;
                 } finally {
-                    if (mutex.isLocked())
-                        mutex.unlock();
+                    unlock();
                 }
                 return querySizeData;
             }
@@ -395,7 +403,7 @@ class DataKitAPIExecute {
 
     public void insert(final DataSourceClient dataSourceClient, final DataType dataType) throws DataKitException {
         try {
-            mutex.tryLock(WAIT_TIME, TimeUnit.MILLISECONDS);
+            lock();
             Bundle bundle = new Bundle();
             bundle.putParcelable(DataType.class.getSimpleName(), dataType);
             bundle.putInt(Constants.RC_DSID, dataSourceClient.getDs_id());
@@ -403,14 +411,13 @@ class DataKitAPIExecute {
         } catch (Exception e) {
             throw new DataKitException(e.getCause());
         } finally {
-            if (mutex.isLocked())
-                mutex.unlock();
+            unlock();
         }
     }
 
     public void insertHighFrequency(final DataSourceClient dataSourceClient, final DataTypeDoubleArray dataType) throws DataKitException {
         try {
-            mutex.tryLock(WAIT_TIME, TimeUnit.MILLISECONDS);
+            lock();
             Bundle bundle = new Bundle();
             bundle.putParcelable(DataTypeDoubleArray.class.getSimpleName(), dataType);
             bundle.putInt(Constants.RC_DSID, dataSourceClient.getDs_id());
@@ -418,8 +425,7 @@ class DataKitAPIExecute {
         } catch (Exception e) {
             throw new DataKitException(e.getCause());
         } finally {
-            if (mutex.isLocked())
-                mutex.unlock();
+            unlock();
         }
     }
 
@@ -472,7 +478,6 @@ class DataKitAPIExecute {
             int curSessionId = msg.arg1;
             switch (msg.what) {
                 case MessageType.INTERNAL_ERROR:
-                    Log.e(TAG, "DataKitAPI Internal Error");
                     break;
                 case MessageType.REGISTER:
                     msg.getData().setClassLoader(DataSourceClient.class.getClassLoader());
@@ -537,15 +542,12 @@ class DataKitAPIExecute {
                     break;
                 case MessageType.SUBSCRIBED_DATA:
                     try {
-                        if (sessionId == -1) throw new Exception("abc");
                         msg.getData().setClassLoader(DataType.class.getClassLoader());
-                        subscribedData = msg.getData().getParcelable(DataType.class.getSimpleName());
+                        DataType subscribedData = msg.getData().getParcelable(DataType.class.getSimpleName());
                         int ds_id = msg.getData().getInt(Constants.RC_DSID, -1);
-                        if (!ds_idOnReceiveListenerHashMap.containsKey(ds_id))
-                            throw new Exception("abc");
-                        ds_idOnReceiveListenerHashMap.get(ds_id).onReceived(subscribedData);
-                    } catch (Exception e) {
-                        disconnect();
+                        if (sessionId != -1 && ds_id != -1 && ds_idOnReceiveListenerHashMap.containsKey(ds_id))
+                            ds_idOnReceiveListenerHashMap.get(ds_id).onReceived(subscribedData);
+                    } catch (Exception ignored) {
                     }
                     break;
             }
