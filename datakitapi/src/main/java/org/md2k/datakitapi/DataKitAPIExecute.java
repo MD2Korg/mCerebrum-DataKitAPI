@@ -92,7 +92,7 @@ class DataKitAPIExecute {
     private Messenger sendMessenger = null;
     private Messenger replyMessenger = null; //invocation replies are processed by this Messenger
     private OnConnectionListener onConnectionListener;
-    private static final long WAIT_TIME = 5000;
+    private static final long WAIT_TIME = 30000;
     private boolean isDisconnecting;
 
 
