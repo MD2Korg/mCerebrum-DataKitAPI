@@ -59,6 +59,7 @@ public class DataTypeDoubleArray extends  DataType implements Parcelable{
     protected DataTypeDoubleArray(Parcel in) {
         super(in);
         sample = in.createDoubleArray();
+
     }
 
     static public DataTypeDoubleArray fromRawBytes(long timestamp, byte[] data) {
