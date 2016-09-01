@@ -13,6 +13,7 @@ import android.os.IBinder;
 import android.os.Looper;
 import android.os.Message;
 import android.os.Messenger;
+import android.os.Parcelable;
 import android.os.RemoteException;
 import android.util.Log;
 
@@ -401,11 +402,11 @@ class DataKitAPIExecute {
     }
 
 
-    public void insert(final DataSourceClient dataSourceClient, final DataType dataType) throws DataKitException {
+    public void insert(final DataSourceClient dataSourceClient, final DataType[] dataTypes) throws DataKitException {
         try {
             lock();
             Bundle bundle = new Bundle();
-            bundle.putParcelable(DataType.class.getSimpleName(), dataType);
+            bundle.putParcelableArray(DataType.class.getSimpleName(), dataTypes);
             bundle.putInt(Constants.RC_DSID, dataSourceClient.getDs_id());
             prepareAndSend(bundle, MessageType.INSERT);
         } catch (Exception e) {
@@ -415,12 +416,12 @@ class DataKitAPIExecute {
         }
     }
 
-    public void insertHighFrequency(final DataSourceClient dataSourceClient, final DataTypeDoubleArray dataType) throws DataKitException {
+    public void insertHighFrequency(int ds_id, final DataTypeDoubleArray[] dataTypes) throws DataKitException {
         try {
             lock();
             Bundle bundle = new Bundle();
-            bundle.putParcelable(DataTypeDoubleArray.class.getSimpleName(), dataType);
-            bundle.putInt(Constants.RC_DSID, dataSourceClient.getDs_id());
+            bundle.putParcelableArray(DataTypeDoubleArray.class.getSimpleName(), dataTypes);
+            bundle.putInt(Constants.RC_DSID, ds_id);
             prepareAndSend(bundle, MessageType.INSERT_HIGH_FREQUENCY);
         } catch (Exception e) {
             throw new DataKitException(e.getCause());
@@ -542,11 +543,14 @@ class DataKitAPIExecute {
                     break;
                 case MessageType.SUBSCRIBED_DATA:
                     try {
-                        msg.getData().setClassLoader(DataType.class.getClassLoader());
-                        DataType subscribedData = msg.getData().getParcelable(DataType.class.getSimpleName());
+                        msg.getData().setClassLoader(DataType[].class.getClassLoader());
+                        Parcelable[] parcelables = msg.getData().getParcelableArray(DataType.class.getSimpleName());
+                        assert parcelables != null;
                         int ds_id = msg.getData().getInt(Constants.RC_DSID, -1);
-                        if (sessionId != -1 && ds_id != -1 && ds_idOnReceiveListenerHashMap.containsKey(ds_id))
-                            ds_idOnReceiveListenerHashMap.get(ds_id).onReceived(subscribedData);
+                        if (sessionId != -1 && ds_id != -1 && ds_idOnReceiveListenerHashMap.containsKey(ds_id)) {
+                            for (Parcelable parcelable : parcelables)
+                                ds_idOnReceiveListenerHashMap.get(ds_id).onReceived((DataType) parcelable);
+                        }
                     } catch (Exception ignored) {
                     }
                     break;
