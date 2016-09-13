@@ -51,6 +51,11 @@ public class DataTypeJSONObject extends DataType implements Parcelable {
         this.sample = sample.toString();
     }
 
+    public DataTypeJSONObject(DataTypeBooleanArray dt) {
+        super(dt);
+        this.sample = dt.sample.toString();
+    }
+
     public DataTypeJSONObject() {
     }
 

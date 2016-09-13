@@ -30,17 +30,35 @@ import android.os.Parcelable;
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 public class DataTypeByteArray extends  DataType implements Parcelable{
-    byte[] sample;
+    public static final Creator<DataTypeByteArray> CREATOR = new Creator<DataTypeByteArray>() {
+        @Override
+        public DataTypeByteArray createFromParcel(Parcel in) {
+            return new DataTypeByteArray(in);
+        }
 
+        @Override
+        public DataTypeByteArray[] newArray(int size) {
+            return new DataTypeByteArray[size];
+        }
+    };
+    byte[] sample;
     public DataTypeByteArray(long timestamp, byte[] sample) {
         super(timestamp);
-        this.sample=sample;
+        this.sample = new byte[sample.length];
+        System.arraycopy(sample, 0, this.sample, 0, sample.length);
     }
-    public DataTypeByteArray(){}
 
+    public DataTypeByteArray() {
+    }
     protected DataTypeByteArray(Parcel in) {
         super(in);
         sample = in.createByteArray();
+    }
+
+    public DataTypeByteArray(DataTypeByteArray dt) {
+        super(dt);
+        this.sample = new byte[dt.sample.length];
+        System.arraycopy(dt.sample, 0, this.sample, 0, sample.length);
     }
 
     @Override
@@ -53,18 +71,6 @@ public class DataTypeByteArray extends  DataType implements Parcelable{
     public int describeContents() {
         return 0;
     }
-
-    public static final Creator<DataTypeByteArray> CREATOR = new Creator<DataTypeByteArray>() {
-        @Override
-        public DataTypeByteArray createFromParcel(Parcel in) {
-            return new DataTypeByteArray(in);
-        }
-
-        @Override
-        public DataTypeByteArray[] newArray(int size) {
-            return new DataTypeByteArray[size];
-        }
-    };
 
     public byte[] getSample(){
         return sample;

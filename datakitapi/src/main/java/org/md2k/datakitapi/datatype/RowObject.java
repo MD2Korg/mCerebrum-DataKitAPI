@@ -49,9 +49,14 @@ public class RowObject implements Parcelable{
 
     public RowObject(long aLong, DataType dt) {
         rowKey = aLong;
-        data = dt;
+        this.data = new DataType(dt);
     }
-    
+
+    public RowObject(RowObject rowObject) {
+        rowKey = rowObject.rowKey;
+        this.data = new DataType(rowObject.data);
+    }
+
     protected RowObject(Parcel in) {
         data = in.readParcelable(DataType.class.getClassLoader());
         rowKey = in.readLong();
