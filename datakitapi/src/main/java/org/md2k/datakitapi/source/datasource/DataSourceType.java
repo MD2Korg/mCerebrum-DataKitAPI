@@ -110,4 +110,11 @@ public class DataSourceType {
     public static final String BLOOD_PRESSURE="BLOOD_PRESSURE";
     public static final String WEIGHT="WEIGHT";
 
+    public static final String ORALB_PRESSURE="ORALB_PRESSURE";
+    public static final String ORALB_CONNECTION="ORALB_CONNECTION";
+    public static final String ORALB_SECTOR="ORALB_SECTOR";
+    public static final String ORALB_BRUSHING_MODE="ORALB_BRUSHING_MODE";
+    public static final String ORALB_BRUSHING_STATE="ORALB_BRUSHING_STATE";
+    public static final String ORALB_BUSHING_TIME="ORALB_BUSHING_TIME";
+
 }
