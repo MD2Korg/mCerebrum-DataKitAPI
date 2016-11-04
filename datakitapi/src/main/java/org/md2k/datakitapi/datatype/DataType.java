@@ -53,6 +53,11 @@ public class DataType implements Parcelable{
         this.offset= DateTime.getTimeZoneOffset();
     }
 
+    public DataType(DataType dt) {
+        this.dateTime = dt.dateTime;
+        this.offset = dt.offset;
+    }
+
     public DataType(){}
 
     protected DataType(Parcel in) {

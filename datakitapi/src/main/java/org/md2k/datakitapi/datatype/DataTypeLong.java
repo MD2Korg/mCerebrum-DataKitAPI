@@ -30,12 +30,28 @@ import android.os.Parcelable;
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 public class DataTypeLong extends  DataType implements Parcelable{
-    long sample;
+    public static final Creator<DataTypeLong> CREATOR = new Creator<DataTypeLong>() {
+        @Override
+        public DataTypeLong createFromParcel(Parcel in) {
+            return new DataTypeLong(in);
+        }
 
+        @Override
+        public DataTypeLong[] newArray(int size) {
+            return new DataTypeLong[size];
+        }
+    };
+    long sample;
     public DataTypeLong(long timestamp, long sample) {
         super(timestamp);
         this.sample=sample;
     }
+
+    public DataTypeLong(DataTypeLong dt) {
+        super(dt);
+        this.sample = dt.sample;
+    }
+
     public DataTypeLong(){}
 
     protected DataTypeLong(Parcel in) {
@@ -53,18 +69,6 @@ public class DataTypeLong extends  DataType implements Parcelable{
     public int describeContents() {
         return 0;
     }
-
-    public static final Creator<DataTypeLong> CREATOR = new Creator<DataTypeLong>() {
-        @Override
-        public DataTypeLong createFromParcel(Parcel in) {
-            return new DataTypeLong(in);
-        }
-
-        @Override
-        public DataTypeLong[] newArray(int size) {
-            return new DataTypeLong[size];
-        }
-    };
 
     public long getSample(){
         return sample;

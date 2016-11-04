@@ -30,12 +30,30 @@ import android.os.Parcelable;
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 public class DataTypeBooleanArray extends DataType implements Parcelable {
-    boolean[] sample;
+    public static final Creator<DataTypeBooleanArray> CREATOR = new Creator<DataTypeBooleanArray>() {
+        @Override
+        public DataTypeBooleanArray createFromParcel(Parcel in) {
+            return new DataTypeBooleanArray(in);
+        }
 
+        @Override
+        public DataTypeBooleanArray[] newArray(int size) {
+            return new DataTypeBooleanArray[size];
+        }
+    };
+    boolean[] sample;
     public DataTypeBooleanArray(long timestamp, boolean[] sample) {
         super(timestamp);
-        this.sample = sample;
+        this.sample = new boolean[sample.length];
+        System.arraycopy(sample, 0, this.sample, 0, sample.length);
     }
+
+    public DataTypeBooleanArray(DataTypeBooleanArray dt) {
+        super(dt);
+        this.sample = new boolean[dt.sample.length];
+        System.arraycopy(dt.sample, 0, this.sample, 0, sample.length);
+    }
+
     public DataTypeBooleanArray(){}
 
     protected DataTypeBooleanArray(Parcel in) {
@@ -53,18 +71,6 @@ public class DataTypeBooleanArray extends DataType implements Parcelable {
     public int describeContents() {
         return 0;
     }
-
-    public static final Creator<DataTypeBooleanArray> CREATOR = new Creator<DataTypeBooleanArray>() {
-        @Override
-        public DataTypeBooleanArray createFromParcel(Parcel in) {
-            return new DataTypeBooleanArray(in);
-        }
-
-        @Override
-        public DataTypeBooleanArray[] newArray(int size) {
-            return new DataTypeBooleanArray[size];
-        }
-    };
 
     public boolean[] getSample() {
         return sample;
