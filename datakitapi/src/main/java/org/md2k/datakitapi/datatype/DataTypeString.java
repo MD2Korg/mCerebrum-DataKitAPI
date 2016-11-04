@@ -30,6 +30,29 @@ import android.os.Parcelable;
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 public class DataTypeString extends  DataType implements Parcelable{
+    String sample;
+
+    public DataTypeString(long timestamp, String sample) {
+        super(timestamp);
+        this.sample=sample;
+    }
+    public DataTypeString(){}
+
+    protected DataTypeString(Parcel in) {
+        super(in);
+        sample = in.readString();
+    }
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        super.writeToParcel(dest, flags);
+        dest.writeString(sample);
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
     public static final Creator<DataTypeString> CREATOR = new Creator<DataTypeString>() {
         @Override
         public DataTypeString createFromParcel(Parcel in) {
@@ -41,34 +64,6 @@ public class DataTypeString extends  DataType implements Parcelable{
             return new DataTypeString[size];
         }
     };
-    String sample;
-    public DataTypeString(long timestamp, String sample) {
-        super(timestamp);
-        this.sample=sample;
-    }
-
-    public DataTypeString(DataTypeString dt) {
-        super(dt);
-        this.sample = dt.sample;
-    }
-
-    public DataTypeString() {
-    }
-    protected DataTypeString(Parcel in) {
-        super(in);
-        sample = in.readString();
-    }
-
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        super.writeToParcel(dest, flags);
-        dest.writeString(sample);
-    }
-
-    @Override
-    public int describeContents() {
-        return 0;
-    }
 
     public String getSample(){
         return sample;

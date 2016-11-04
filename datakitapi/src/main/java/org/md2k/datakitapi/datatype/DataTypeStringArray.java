@@ -30,30 +30,12 @@ import android.os.Parcelable;
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 public class DataTypeStringArray extends DataType implements Parcelable {
-    public static final Creator<DataTypeStringArray> CREATOR = new Creator<DataTypeStringArray>() {
-        @Override
-        public DataTypeStringArray createFromParcel(Parcel in) {
-            return new DataTypeStringArray(in);
-        }
-
-        @Override
-        public DataTypeStringArray[] newArray(int size) {
-            return new DataTypeStringArray[size];
-        }
-    };
     String[] sample;
+
     public DataTypeStringArray(long timestamp, String[] sample) {
         super(timestamp);
-        this.sample = new String[sample.length];
-        System.arraycopy(sample, 0, this.sample, 0, sample.length);
+        this.sample = sample;
     }
-
-    public DataTypeStringArray(DataTypeStringArray dt) {
-        super(dt);
-        this.sample = new String[dt.sample.length];
-        System.arraycopy(dt.sample, 0, sample, 0, dt.sample.length);
-    }
-
     public DataTypeStringArray(){}
 
     protected DataTypeStringArray(Parcel in) {
@@ -71,6 +53,18 @@ public class DataTypeStringArray extends DataType implements Parcelable {
     public int describeContents() {
         return 0;
     }
+
+    public static final Creator<DataTypeStringArray> CREATOR = new Creator<DataTypeStringArray>() {
+        @Override
+        public DataTypeStringArray createFromParcel(Parcel in) {
+            return new DataTypeStringArray(in);
+        }
+
+        @Override
+        public DataTypeStringArray[] newArray(int size) {
+            return new DataTypeStringArray[size];
+        }
+    };
 
     public String[] getSample() {
         return sample;

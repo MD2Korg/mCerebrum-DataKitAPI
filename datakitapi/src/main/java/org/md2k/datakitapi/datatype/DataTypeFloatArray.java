@@ -30,30 +30,12 @@ import android.os.Parcelable;
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 public class DataTypeFloatArray extends  DataType implements Parcelable{
-    public static final Creator<DataTypeFloatArray> CREATOR = new Creator<DataTypeFloatArray>() {
-        @Override
-        public DataTypeFloatArray createFromParcel(Parcel in) {
-            return new DataTypeFloatArray(in);
-        }
-
-        @Override
-        public DataTypeFloatArray[] newArray(int size) {
-            return new DataTypeFloatArray[size];
-        }
-    };
     float[] sample;
+
     public DataTypeFloatArray(long timestamp, float[] sample) {
         super(timestamp);
-        this.sample = new float[sample.length];
-        System.arraycopy(sample, 0, this.sample, 0, sample.length);
+        this.sample=sample;
     }
-
-    public DataTypeFloatArray(DataTypeFloatArray dt) {
-        super(dt);
-        this.sample = new float[dt.sample.length];
-        System.arraycopy(dt.sample, 0, this.sample, 0, sample.length);
-    }
-
     public DataTypeFloatArray(){}
 
     protected DataTypeFloatArray(Parcel in) {
@@ -71,6 +53,18 @@ public class DataTypeFloatArray extends  DataType implements Parcelable{
     public int describeContents() {
         return 0;
     }
+
+    public static final Creator<DataTypeFloatArray> CREATOR = new Creator<DataTypeFloatArray>() {
+        @Override
+        public DataTypeFloatArray createFromParcel(Parcel in) {
+            return new DataTypeFloatArray(in);
+        }
+
+        @Override
+        public DataTypeFloatArray[] newArray(int size) {
+            return new DataTypeFloatArray[size];
+        }
+    };
 
     public float[] getSample(){
         return sample;

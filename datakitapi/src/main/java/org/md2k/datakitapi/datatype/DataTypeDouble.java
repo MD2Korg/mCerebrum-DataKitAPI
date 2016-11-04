@@ -30,28 +30,12 @@ import android.os.Parcelable;
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 public class DataTypeDouble extends DataType implements Parcelable {
-    public static final Creator<DataTypeDouble> CREATOR = new Creator<DataTypeDouble>() {
-        @Override
-        public DataTypeDouble createFromParcel(Parcel in) {
-            return new DataTypeDouble(in);
-        }
-
-        @Override
-        public DataTypeDouble[] newArray(int size) {
-            return new DataTypeDouble[size];
-        }
-    };
     double sample;
+
     public DataTypeDouble(long timestamp, double sample) {
         super(timestamp);
         this.sample = sample;
     }
-
-    public DataTypeDouble(DataTypeDouble dt) {
-        super(dt);
-        this.sample = dt.sample;
-    }
-
     public DataTypeDouble(){}
 
     protected DataTypeDouble(Parcel in) {
@@ -69,6 +53,18 @@ public class DataTypeDouble extends DataType implements Parcelable {
     public int describeContents() {
         return 0;
     }
+
+    public static final Creator<DataTypeDouble> CREATOR = new Creator<DataTypeDouble>() {
+        @Override
+        public DataTypeDouble createFromParcel(Parcel in) {
+            return new DataTypeDouble(in);
+        }
+
+        @Override
+        public DataTypeDouble[] newArray(int size) {
+            return new DataTypeDouble[size];
+        }
+    };
 
     public double getSample() {
         return sample;

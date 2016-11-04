@@ -49,69 +49,12 @@ public class RowObject implements Parcelable{
 
     public RowObject(long aLong, DataType dt) {
         rowKey = aLong;
-        this.data = copyDataTypeObject(dt);
+        data = dt;
     }
-
-    public RowObject(RowObject rowObject) {
-        rowKey = rowObject.rowKey;
-        this.data = copyDataTypeObject(rowObject.data);
-    }
-
+    
     protected RowObject(Parcel in) {
         data = in.readParcelable(DataType.class.getClassLoader());
         rowKey = in.readLong();
-    }
-
-    private DataType copyDataTypeObject(DataType dt) {
-        if (dt instanceof DataTypeBoolean) {
-            return new DataTypeBoolean(dt.getDateTime(), ((DataTypeBoolean) dt).getSample());
-        }
-        if (dt instanceof DataTypeBooleanArray) {
-            return new DataTypeBooleanArray(dt.getDateTime(), ((DataTypeBooleanArray) dt).getSample());
-        }
-        if (dt instanceof DataTypeByte) {
-            return new DataTypeByte(dt.getDateTime(), ((DataTypeByte) dt).getSample());
-        }
-        if (dt instanceof DataTypeByteArray) {
-            return new DataTypeByteArray(dt.getDateTime(), ((DataTypeByteArray) dt).getSample());
-        }
-        if (dt instanceof DataTypeDouble) {
-            return new DataTypeDouble(dt.getDateTime(), ((DataTypeDouble) dt).getSample());
-        }
-        if (dt instanceof DataTypeDoubleArray) {
-            return new DataTypeDoubleArray(dt.getDateTime(), ((DataTypeDoubleArray) dt).getSample());
-        }
-        if (dt instanceof DataTypeFloat) {
-            return new DataTypeFloat(dt.getDateTime(), ((DataTypeFloat) dt).getSample());
-        }
-        if (dt instanceof DataTypeFloatArray) {
-            return new DataTypeFloatArray(dt.getDateTime(), ((DataTypeFloatArray) dt).getSample());
-        }
-        if (dt instanceof DataTypeInt) {
-            return new DataTypeInt(dt.getDateTime(), ((DataTypeInt) dt).getSample());
-        }
-        if (dt instanceof DataTypeIntArray) {
-            return new DataTypeIntArray(dt.getDateTime(), ((DataTypeIntArray) dt).getSample());
-        }
-        if (dt instanceof DataTypeJSONObject) {
-            return new DataTypeJSONObject(dt.getDateTime(), ((DataTypeJSONObject) dt).getSample());
-        }
-        if (dt instanceof DataTypeJSONObjectArray) {
-            return new DataTypeJSONObjectArray(dt.getDateTime(), ((DataTypeJSONObjectArray) dt).getSample());
-        }
-        if (dt instanceof DataTypeLong) {
-            return new DataTypeLong(dt.getDateTime(), ((DataTypeLong) dt).getSample());
-        }
-        if (dt instanceof DataTypeLongArray) {
-            return new DataTypeLongArray(dt.getDateTime(), ((DataTypeLongArray) dt).getSample());
-        }
-        if (dt instanceof DataTypeString) {
-            return new DataTypeString(dt.getDateTime(), ((DataTypeString) dt).getSample());
-        }
-        if (dt instanceof DataTypeStringArray) {
-            return new DataTypeStringArray(dt.getDateTime(), ((DataTypeStringArray) dt).getSample());
-        }
-        return dt;
     }
 
     public DataType toArrayForm() {

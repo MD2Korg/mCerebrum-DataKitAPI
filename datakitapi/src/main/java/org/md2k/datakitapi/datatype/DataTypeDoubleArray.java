@@ -46,20 +46,14 @@ public class DataTypeDoubleArray extends  DataType implements Parcelable{
     double[] sample;
     public DataTypeDoubleArray(long timestamp, double[] sample) {
         super(timestamp);
-        this.sample = new double[sample.length];
-        System.arraycopy(sample, 0, this.sample, 0, sample.length);
-    }
-
-    public DataTypeDoubleArray(DataTypeDoubleArray dt) {
-        super(dt);
-        this.sample = new double[dt.sample.length];
-        System.arraycopy(dt.sample, 0, this.sample, 0, dt.sample.length);
+        this.sample=sample;
     }
 
     public DataTypeDoubleArray(){}
 
     public DataTypeDoubleArray(long dateTime, double sample) {
-        this(dateTime, new double[]{sample});
+        this(dateTime, new double[1]);
+        this.sample[0] = sample;
     }
 
     protected DataTypeDoubleArray(Parcel in) {

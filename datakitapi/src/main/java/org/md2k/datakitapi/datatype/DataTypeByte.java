@@ -30,28 +30,12 @@ import android.os.Parcelable;
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 public class DataTypeByte extends DataType implements Parcelable {
-    public static final Creator<DataTypeByte> CREATOR = new Creator<DataTypeByte>() {
-        @Override
-        public DataTypeByte createFromParcel(Parcel in) {
-            return new DataTypeByte(in);
-        }
-
-        @Override
-        public DataTypeByte[] newArray(int size) {
-            return new DataTypeByte[size];
-        }
-    };
     byte sample;
+
     public DataTypeByte(long timestamp, byte sample) {
         super(timestamp);
         this.sample = sample;
     }
-
-    public DataTypeByte(DataTypeByte dt) {
-        super(dt);
-        this.sample = dt.sample;
-    }
-
     public DataTypeByte(){}
 
     protected DataTypeByte(Parcel in) {
@@ -69,6 +53,18 @@ public class DataTypeByte extends DataType implements Parcelable {
     public int describeContents() {
         return 0;
     }
+
+    public static final Creator<DataTypeByte> CREATOR = new Creator<DataTypeByte>() {
+        @Override
+        public DataTypeByte createFromParcel(Parcel in) {
+            return new DataTypeByte(in);
+        }
+
+        @Override
+        public DataTypeByte[] newArray(int size) {
+            return new DataTypeByte[size];
+        }
+    };
 
     public byte getSample() {
         return sample;

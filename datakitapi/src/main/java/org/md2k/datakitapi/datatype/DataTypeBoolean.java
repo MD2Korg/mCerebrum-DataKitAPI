@@ -30,28 +30,12 @@ import android.os.Parcelable;
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 public class DataTypeBoolean extends  DataType implements Parcelable{
-    public static final Creator<DataTypeBoolean> CREATOR = new Creator<DataTypeBoolean>() {
-        @Override
-        public DataTypeBoolean createFromParcel(Parcel in) {
-            return new DataTypeBoolean(in);
-        }
-
-        @Override
-        public DataTypeBoolean[] newArray(int size) {
-            return new DataTypeBoolean[size];
-        }
-    };
     boolean sample;
+
     public DataTypeBoolean(long timestamp, boolean sample) {
         super(timestamp);
         this.sample=sample;
     }
-
-    public DataTypeBoolean(DataTypeBoolean dt) {
-        super(dt);
-        this.sample = dt.sample;
-    }
-
     public DataTypeBoolean(){}
 
     protected DataTypeBoolean(Parcel in) {
@@ -69,6 +53,18 @@ public class DataTypeBoolean extends  DataType implements Parcelable{
     public int describeContents() {
         return 0;
     }
+
+    public static final Creator<DataTypeBoolean> CREATOR = new Creator<DataTypeBoolean>() {
+        @Override
+        public DataTypeBoolean createFromParcel(Parcel in) {
+            return new DataTypeBoolean(in);
+        }
+
+        @Override
+        public DataTypeBoolean[] newArray(int size) {
+            return new DataTypeBoolean[size];
+        }
+    };
 
     public boolean getSample(){
         return sample;
