@@ -37,4 +37,5 @@ public class PlatformType {
     public static final String OMRON_WEIGHT_SCALE="OMRON_WEIGHT_SCALE";
     public static final String EASYSENSE = "EASYSENSE";
     public static final String MOTION_SENSE = "MOTION_SENSE";
+    public static final String ORALB_BRUSH = "ORALB_BRUSH";
 }
