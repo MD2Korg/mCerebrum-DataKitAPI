@@ -117,4 +117,6 @@ public class DataSourceType {
     public static final String ORALB_BRUSHING_STATE="ORALB_BRUSHING_STATE";
     public static final String ORALB_BUSHING_TIME="ORALB_BUSHING_TIME";
 
+    public static final String ACTIVITY_TYPE="ACTIVITY_TYPE";
+
 }
