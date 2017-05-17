@@ -30,4 +30,5 @@ public class DataSourceId {
     public static final String SMOKING = "SMOKING";
     public static final String EATING = "EATING";
 
+    public static final String SELF_REPORT = "SELF_REPORT";
 }

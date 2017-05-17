@@ -118,5 +118,9 @@ public class DataSourceType {
     public static final String ORALB_BUSHING_TIME="ORALB_BUSHING_TIME";
 
     public static final String ACTIVITY_TYPE="ACTIVITY_TYPE";
+    public static final String LED="LED";
+    public static final String SEQUENCE_NUMBER="SEQUENCE_NUMBER";
 
+    public static final String SMOKING = "SMOKING";
+    public static final String RAW = "RAW";
 }
