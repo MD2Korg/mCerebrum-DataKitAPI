@@ -29,5 +29,5 @@ import org.md2k.datakitapi.datatype.DataType;
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 public interface OnReceiveListener {
-    public abstract void onReceived(DataType dataType);
+    void onReceived(DataType dataType);
 }

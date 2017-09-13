@@ -3,6 +3,7 @@ package org.md2k.datakitapi.time;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Locale;
 import java.util.TimeZone;
 
 /*
@@ -34,6 +35,10 @@ import java.util.TimeZone;
 public class DateTime {
     public static int MILLISECOND = 1;
     public static int NANOSECOND = 2;
+    public final static long SECOND_IN_MILLIS = 1000L;
+    public final static long MINUTE_IN_MILLIS = 60L * 1000L;
+    public final static long HOUR_IN_MILLIS = 60L * 60 * 1000L;
+    public final static long DAY_IN_MILLIS = 24 * 60 * 60 * 1000L;
 
     private static long getDateTimeMillis() {
         return System.currentTimeMillis();
@@ -64,19 +69,56 @@ public class DateTime {
         long minute=timestamp/(60);
         long second=timestamp-(minute*60);
         String timeStr="";
-        timeStr=timeStr+String.format("%02d:%02d:%02d",hour,minute,second);
+        timeStr=timeStr+String.format(Locale.getDefault(), "%02d:%02d:%02d",hour,minute,second);
         return timeStr;
     }
     public static String convertTimeStampToDateTime(long timestamp){
         try {
             Calendar calendar = Calendar.getInstance();
             calendar.setTimeInMillis(timestamp);
-            SimpleDateFormat sdf = new SimpleDateFormat("MM-dd-yyyy HH:mm:ss.SSS");
+            SimpleDateFormat sdf = new SimpleDateFormat("MM-dd-yyyy HH:mm:ss.SSS", Locale.getDefault());
             Date currenTimeZone = calendar.getTime();
             return sdf.format(currenTimeZone);
         } catch (Exception e) {
+            return "";
         }
-        return "";
+    }
+    public static String convertTimeStampToDateTime(long timestamp, String format){
+        try {
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTimeInMillis(timestamp);
+            SimpleDateFormat sdf = new SimpleDateFormat(format, Locale.getDefault());
+            Date currenTimeZone = calendar.getTime();
+            return sdf.format(currenTimeZone);
+        } catch (Exception e) {
+            return "";
+        }
+    }
 
+    public static long getTodayAtInMilliSecond(String time){
+        String[] s = time.split(":");
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.HOUR_OF_DAY, Integer.parseInt(s[0]));
+        calendar.set(Calendar.MINUTE, Integer.parseInt(s[1]));
+        calendar.set(Calendar.SECOND, Integer.parseInt(s[2]));
+        calendar.set(Calendar.MILLISECOND, 0);
+        return calendar.getTimeInMillis();
+    }
+    public static long getTimeInMillis(String time){
+        String timeTemp=time;
+        long timeValue;
+        if(time.startsWith("-") || time.startsWith("+"))
+            timeTemp=time.substring(1);
+        String[] s = timeTemp.split(":");
+        timeValue = Long.parseLong(s[0])*HOUR_IN_MILLIS+Long.parseLong(s[1])*MINUTE_IN_MILLIS+Long.parseLong(s[2])*SECOND_IN_MILLIS;
+        if(time.startsWith("-"))
+            timeValue=-timeValue;
+        return timeValue;
+    }
+
+    public static int getDayOfWeek(long timestamp) {
+        Calendar calender=Calendar.getInstance();
+        calender.setTimeInMillis(timestamp);
+        return calender.get(Calendar.DAY_OF_WEEK);
     }
 }

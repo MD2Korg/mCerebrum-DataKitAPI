@@ -87,6 +87,10 @@ public class DataSourceType {
     public static final String ORG_MD2K_CSTRESS_DATA_RIP_QUALITY = "ORG_MD2K_CSTRESS_DATA_RIP_QUALITY";
     public static final String ORG_MD2K_CSTRESS_DATA_ECG_QUALITY = "ORG_MD2K_CSTRESS_DATA_ECG_QUALITY";
     public static final String ORG_MD2K_CSTRESS_STRESS_EPISODE_CLASSIFICATION = "ORG_MD2K_CSTRESS_STRESS_EPISODE_CLASSIFICATION";
+    public static final String ORG_MD2K_CSTRESS_STRESS_EPISODE_ARRAY_CLASSIFICATION_FULL_EPISODE="ORG_MD2K_CSTRESS_STRESS_EPISODE_ARRAY_CLASSIFICATION_FULL_EPISODE";
+    public static final String ORG_MD2K_CSTRESS_STRESS_EPISODE_START="ORG_MD2K_CSTRESS_STRESS_EPISODE_START";
+    public static final String ORG_MD2K_CSTRESS_STRESS_EPISODE_PEAK="ORG_MD2K_CSTRESS_STRESS_EPISODE_PEAK";
+    public static final String ORG_MD2K_CSTRESS_STRESS_EPISODE_END="ORG_MD2K_CSTRESS_STRESS_EPISODE_END";
     public static final String CSTRESS_FEATURE_VECTOR_RIP = "CSTRESS_FEATURE_VECTOR_RIP";
     public static final String STRESS_RIP_PROBABILITY = "STRESS_RIP_PROBABILITY";
     public static final String STRESS_RIP_LABEL = "STRESS_RIP_LABEL";
@@ -123,4 +127,11 @@ public class DataSourceType {
 
     public static final String SMOKING = "SMOKING";
     public static final String RAW = "RAW";
+    public static final String POST_QUIT = "POST_QUIT";
+    public static final String PRE_QUIT = "PRE_QUIT";
+    public static final String BEACON = "BEACON";
+    public static final String DATA_QUALITY_SUMMARY_MINUTE="DATA_QUALITY_SUMMARY_MINUTE";
+    public static final String DATA_QUALITY_SUMMARY_HOUR="DATA_QUALITY_SUMMARY_HOUR";
+    public static final String DATA_QUALITY_SUMMARY_DAY="DATA_QUALITY_SUMMARY_DAY";
+    public static final String GALVANIC_SKIN_RESPONSE = "GALVANIC_SKIN_RESPONSE";
 }

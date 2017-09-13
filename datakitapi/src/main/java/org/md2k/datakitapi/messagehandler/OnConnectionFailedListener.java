@@ -30,5 +30,5 @@ import org.md2k.datakitapi.status.Status;
  */
 
 public interface OnConnectionFailedListener {
-    public void onConnectionFailed(Status status);
+    void onConnectionFailed(Status status);
 }

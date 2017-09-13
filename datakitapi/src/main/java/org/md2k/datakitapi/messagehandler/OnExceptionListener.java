@@ -29,5 +29,5 @@ import org.md2k.datakitapi.status.Status;
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 public interface OnExceptionListener {
-    public abstract void onException(Status status);
+    void onException(Status status);
 }

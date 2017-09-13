@@ -27,5 +27,5 @@ package org.md2k.datakitapi.messagehandler;
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 public interface ResultCallback<R> {
-    public abstract void onResult(R result);
+    void onResult(R result);
 }

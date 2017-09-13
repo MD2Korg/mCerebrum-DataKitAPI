@@ -36,4 +36,5 @@ public class Constants {
     public static final String RC_LIMIT = "limit";
     public static final String RC_LAST_KEY="last_key";
     public static final String RC_SESSION_ID="session_id";
+    public static final String RC_DATASOURCE_CLIENT = "data_source_client";
 }

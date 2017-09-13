@@ -415,6 +415,19 @@ class DataKitAPIExecute {
             unlock();
         }
     }
+    public void setSummary(final DataSourceClient dataSourceClient, final DataType dataType) throws DataKitException {
+        try {
+            lock();
+            Bundle bundle = new Bundle();
+            bundle.putParcelable(DataType.class.getSimpleName(), dataType);
+            bundle.putParcelable(Constants.RC_DATASOURCE_CLIENT, dataSourceClient);
+            prepareAndSend(bundle, MessageType.SUMMARY);
+        } catch (Exception e) {
+            throw new DataKitException(e.getCause());
+        } finally {
+            unlock();
+        }
+    }
 
     public void insertHighFrequency(int ds_id, final DataTypeDoubleArray[] dataTypes) throws DataKitException {
         try {

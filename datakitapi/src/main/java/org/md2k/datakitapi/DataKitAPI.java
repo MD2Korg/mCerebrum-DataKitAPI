@@ -120,6 +120,16 @@ public class DataKitAPI {
             dataKitAPIExecute.insert(dataSourceClient, dataTypes);
         }
     }
+    public synchronized void setSummary(DataSourceClient dataSourceClient, DataType dataType) throws DataKitException {
+        if (!dataKitAPIExecute.isConnected())
+            throw new DataKitNotFoundException(new Status(Status.ERROR_BOUND));
+        if (dataSourceClient == null || dataType == null)
+            throw new DataKitException(new Status(Status.DATA_INVALID).getStatusMessage());
+        else {
+            dataKitAPIExecute.setSummary(dataSourceClient, dataType);
+        }
+    }
+
     public synchronized void insert(DataSourceClient dataSourceClient, DataType[] dataTypes) throws DataKitException {
         if (!dataKitAPIExecute.isConnected())
             throw new DataKitNotFoundException(new Status(Status.ERROR_BOUND));
