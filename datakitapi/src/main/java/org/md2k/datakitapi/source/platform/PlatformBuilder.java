@@ -2,6 +2,9 @@ package org.md2k.datakitapi.source.platform;
 
 import org.md2k.datakitapi.source.AbstractObjectBuilder;
 
+import java.util.HashMap;
+import java.util.Map;
+
 
 /*
  * Copyright (c) 2015, The University of Memphis, MD2K Center
@@ -53,7 +56,12 @@ public class PlatformBuilder extends AbstractObjectBuilder{
     }
 
     public PlatformBuilder(Platform platform) {
-        this.metadata = platform.getMetadata();
+        this.metadata=new HashMap<>();
+        if(platform.getMetadata()!=null) {
+            for (Map.Entry<String, String> entry : platform.getMetadata().entrySet()) {
+                this.metadata.put(entry.getKey(), entry.getValue());
+            }
+        }
         this.type = platform.getType();
         this.id = platform.getId();
     }

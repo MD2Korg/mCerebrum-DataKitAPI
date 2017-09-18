@@ -1,5 +1,7 @@
 package org.md2k.datakitapi.source.datasource;
 
+import android.util.Log;
+
 import org.md2k.datakitapi.source.application.Application;
 import org.md2k.datakitapi.source.platform.Platform;
 import org.md2k.datakitapi.source.platformapp.PlatformApp;
@@ -7,6 +9,7 @@ import org.md2k.datakitapi.source.AbstractObjectBuilder;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 
 /*
  * Copyright (c) 2015, The University of Memphis, MD2K Center
@@ -93,7 +96,13 @@ public class DataSourceBuilder extends AbstractObjectBuilder {
     }
 
     public DataSourceBuilder(DataSource dataSource) {
-        this.metadata = dataSource.getMetadata();
+        this.metadata=new HashMap<>();
+        if(dataSource.getMetadata()!=null) {
+            for (Map.Entry<String, String> entry : dataSource.getMetadata().entrySet()) {
+                this.metadata.put(entry.getKey(), entry.getValue());
+            }
+        }
+
         this.type = dataSource.getType();
         this.id = dataSource.getId();
         this.platform = dataSource.getPlatform();
