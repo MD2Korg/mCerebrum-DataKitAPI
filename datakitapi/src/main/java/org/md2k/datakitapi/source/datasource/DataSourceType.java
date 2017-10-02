@@ -34,6 +34,7 @@ public class DataSourceType {
     public static final String PRESSURE = "PRESSURE";
     public static final String PROXIMITY = "PROXIMITY";
     public static final String LOCATION = "LOCATION";
+    public static final String GEOFENCE = "GEOFENCE";
 
     public static final String DISTANCE = "DISTANCE";
     public static final String HEART_RATE = "HEART_RATE";
@@ -134,4 +135,6 @@ public class DataSourceType {
     public static final String DATA_QUALITY_SUMMARY_HOUR="DATA_QUALITY_SUMMARY_HOUR";
     public static final String DATA_QUALITY_SUMMARY_DAY="DATA_QUALITY_SUMMARY_DAY";
     public static final String GALVANIC_SKIN_RESPONSE = "GALVANIC_SKIN_RESPONSE";
+    public static final String TOUCH_SCREEN="TOUCH_SCREEN";
+    public static final String WORK_ANNOTATION="WORK_ANNOTATION";
 }
