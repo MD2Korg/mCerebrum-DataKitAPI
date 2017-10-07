@@ -137,4 +137,22 @@ public class DataSourceType {
     public static final String GALVANIC_SKIN_RESPONSE = "GALVANIC_SKIN_RESPONSE";
     public static final String TOUCH_SCREEN="TOUCH_SCREEN";
     public static final String WORK_ANNOTATION="WORK_ANNOTATION";
+
+    /**
+     * For data integration from Cornell
+     */
+    public static final String CU_IS_SCREEN_ON="CU_IS_SCREEN_ON";
+    public static final String CU_AUDIO_FEATURE="CU_AUDIO_FEATURE";
+    public static final String CU_AUDIO_ENERGY="CU_AUDIO_ENERGY";
+    public static final String CU_AUDIO_INFERENCE="CU_AUDIO_INFERENCE";
+
+    public static final String CU_APPUSAGE="CU_APPUSAGE";
+
+    public static final String CU_SMS_NUMBER="CU_SMS_NUMBER";
+    public static final String CU_SMS_TYPE="CU_SMS_NUMBER";
+    public static final String CU_SMS_LENGTH="CU_SMS_LENGTH";
+
+    public static final String CU_CALL_NUMBER="CU_CALL_NUMBER";
+    public static final String CU_CALL_TYPE="CU_CALL_TYPE";
+    public static final String CU_CALL_DURATION="CU_CALL_DURATION";
 }
