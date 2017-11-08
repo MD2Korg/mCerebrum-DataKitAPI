@@ -155,4 +155,5 @@ public class DataSourceType {
     public static final String CU_CALL_NUMBER="CU_CALL_NUMBER";
     public static final String CU_CALL_TYPE="CU_CALL_TYPE";
     public static final String CU_CALL_DURATION="CU_CALL_DURATION";
+    public static String LABEL="LABEL";
 }

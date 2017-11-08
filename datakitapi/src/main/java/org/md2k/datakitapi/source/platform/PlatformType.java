@@ -30,6 +30,8 @@ import org.md2k.datakitapi.Constants;
  */
 public class PlatformType {
     public static final String AUTOSENSE_CHEST = "AUTOSENSE_CHEST";
+    public static final String AUTOSENSE_BLE = "AUTOSENSE_BLE";
+
     public static final String AUTOSENSE_WRIST = "AUTOSENSE_WRIST";
     public static final String MICROSOFT_BAND = "MICROSOFT_BAND";
     public static final String PHONE = "PHONE";
