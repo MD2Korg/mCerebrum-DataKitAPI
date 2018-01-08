@@ -120,7 +120,8 @@ public class DataSourceType {
     public static final String ORALB_SECTOR="ORALB_SECTOR";
     public static final String ORALB_BRUSHING_MODE="ORALB_BRUSHING_MODE";
     public static final String ORALB_BRUSHING_STATE="ORALB_BRUSHING_STATE";
-    public static final String ORALB_BUSHING_TIME="ORALB_BUSHING_TIME";
+    public static final String ORALB_BRUSHING_TIME="ORALB_BRUSHING_TIME";
+    public static final String ORALB_BRUSH_ACCELEROMETER="ORALB_BRUSH_ACCELEROMETER";
 
     public static final String ACTIVITY_TYPE="ACTIVITY_TYPE";
     public static final String LED="LED";
