@@ -1,8 +1,6 @@
-package org.md2k.datakitapi;
-
 /*
- * Copyright (c) 2015, The University of Memphis, MD2K Center
- * - Syed Monowar Hossain <monowar.hossain@gmail.com>
+ * Copyright (c) 2018, The University of Memphis, MD2K Center of Excellence
+ *
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -26,15 +24,61 @@ package org.md2k.datakitapi;
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+
+package org.md2k.datakitapi;
+
+/**
+ * This class provides common constant string values used across the application.
+ */
 public class Constants {
+
+    /**
+     * Name of the service.
+     * <p>
+     *     <code>"org.md2k.datakit.ServiceDataKit"</code>
+     * </p>
+     */
     public static final String SERVICE_NAME = "org.md2k.datakit.ServiceDataKit";
+
+    /**
+     * Name of the package.
+     * <p>
+     *     <code>"org.md2k.datakit"</code>
+     * </p>
+     */
     public static final String PACKAGE_NAME = "org.md2k.datakit";
+
+    /**
+     * datastream identifier
+     */
     public static final String RC_DSID = "ds_id";
+
+    /**
+     *
+     */
     public static final String RC_STARTTIMESTAMP = "starttimestamp";
+    /**
+     *
+     */
     public static final String RC_ENDTIMESTAMP = "endtimestamp";
+    /**
+     *
+     */
     public static final String RC_LAST_N_SAMPLE="last_n_sample";
+    /**
+     *
+     */
     public static final String RC_LIMIT = "limit";
+    /**
+     *
+     */
     public static final String RC_LAST_KEY="last_key";
+    /**
+     *
+     */
     public static final String RC_SESSION_ID="session_id";
+    /**
+     *
+     */
     public static final String RC_DATASOURCE_CLIENT = "data_source_client";
 }

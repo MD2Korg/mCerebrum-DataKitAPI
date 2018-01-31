@@ -1,16 +1,6 @@
-package org.md2k.datakitapi.status;
-
-import android.os.Parcel;
-import android.os.Parcelable;
-
-import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
-import java.util.HashMap;
-import java.util.Map;
-
 /*
- * Copyright (c) 2015, The University of Memphis, MD2K Center
- * - Syed Monowar Hossain <monowar.hossain@gmail.com>
+ * Copyright (c) 2018, The University of Memphis, MD2K Center of Excellence
+ *
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -34,20 +24,31 @@ import java.util.Map;
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+
+package org.md2k.datakitapi.status;
+
+import android.os.Parcel;
+import android.os.Parcelable;
+
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
+import java.util.HashMap;
+import java.util.Map;
+
 public class Status extends Object implements Parcelable {
     int statusCode;
     String statusMessage;
     public static final int SUCCESS = 0;
     public static final int DATASOURCE_EXIST = 1;
-    public static final int DATASOURCE_MULTIPLE_EXIST=2;
+    public static final int DATASOURCE_MULTIPLE_EXIST = 2;
     public static final int DATASOURCE_NOT_EXIST = 3;
-    public static final int DATASOURCE_INVALID =4;
-    public static final int DATASOURCE_ACTIVE =5;
-    public static final int INTERNAL_ERROR =-3;
-    public static final int ALREADY_SUBSCRIBED=7;
-    public static final int ERROR_NOT_INSTALLED=-1;
-    public static final int ERROR_BOUND=-2;
-    public static final int DATA_INVALID=8;
+    public static final int DATASOURCE_INVALID = 4;
+    public static final int DATASOURCE_ACTIVE = 5;
+    public static final int INTERNAL_ERROR = -3;
+    public static final int ALREADY_SUBSCRIBED = 7;
+    public static final int ERROR_NOT_INSTALLED = -1;
+    public static final int ERROR_BOUND = -2;
+    public static final int DATA_INVALID = 8;
 
     private static Map<Integer, String> constantNames = null;
 

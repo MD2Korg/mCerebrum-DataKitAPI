@@ -37,7 +37,7 @@ import org.md2k.datakitapi.source.AbstractObject;
 /**
  * This class creates application objects.
  *
- * TODO: Logan Square JsonObject doesn't seem to be used anywhere... Is it needed and if so, why?
+ * TODO: Learn about json stuff
  */
 @JsonObject(fieldDetectionPolicy = JsonObject.FieldDetectionPolicy.NONPRIVATE_FIELDS)
 public class Application extends AbstractObject implements Parcelable {
