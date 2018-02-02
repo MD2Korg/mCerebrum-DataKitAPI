@@ -34,13 +34,17 @@ import android.os.Parcelable;
  * This class creates <code>DataType</code> objects for samples that have byte data types in an array.
  */
 public class DataTypeByteArray extends  DataType implements Parcelable{
+
+    /**
+     * The data point collected from the data source.
+     */
     byte[] sample;
 
     /**
      * Constructor
      *
      * @param timestamp The timestamp for when the data was collected.
-     * @param sample The data point sampled from the sensor.
+     * @param sample The data point sampled from the data source.
      */
     public DataTypeByteArray(long timestamp, byte[] sample) {
         super(timestamp);

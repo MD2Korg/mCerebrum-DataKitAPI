@@ -34,13 +34,17 @@ import android.os.Parcelable;
  * This class creates <code>DataType</code> objects for samples that have boolean data types in an array.
  */
 public class DataTypeBooleanArray extends DataType implements Parcelable {
+
+    /**
+     * The data point collected from the data source.
+     */
     boolean[] sample;
 
     /**
      * Constructor
      *
      * @param timestamp The timestamp for when the data was collected.
-     * @param sample The data point sampled from the sensor.
+     * @param sample The data point sampled from the data source.
      */
     public DataTypeBooleanArray(long timestamp, boolean[] sample) {
         super(timestamp);
@@ -83,7 +87,7 @@ public class DataTypeBooleanArray extends DataType implements Parcelable {
     }
 
     /**
-     * <code>Creator</code> for <code>DataTypeArray</code> objects.
+     * <code>Creator</code> for <code>DataTypeBooleanArray</code> objects.
      */
     public static final Creator<DataTypeBooleanArray> CREATOR = new Creator<DataTypeBooleanArray>() {
 

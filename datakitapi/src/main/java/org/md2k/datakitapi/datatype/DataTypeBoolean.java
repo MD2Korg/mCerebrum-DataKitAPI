@@ -31,16 +31,20 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 /**
- *
+ * This class creates <code>DataType</code> objects for samples that have a boolean data type.
  */
 public class DataTypeBoolean extends  DataType implements Parcelable{
+
+    /**
+     * The data point collected from the data source.
+     */
     boolean sample;
 
     /**
      * Constructor
      *
      * @param timestamp The timestamp for when the data was collected.
-     * @param sample The data point sampled from the sensor.
+     * @param sample The data point sampled from the data source.
      */
     public DataTypeBoolean(long timestamp, boolean sample) {
         super(timestamp);
@@ -83,7 +87,7 @@ public class DataTypeBoolean extends  DataType implements Parcelable{
     }
 
     /**
-     * <code>Creator</code> for <code>DataType</code> objects.
+     * <code>Creator</code> for <code>DataTypeBoolean</code> objects.
      */
     public static final Creator<DataTypeBoolean> CREATOR = new Creator<DataTypeBoolean>() {
 
@@ -91,7 +95,7 @@ public class DataTypeBoolean extends  DataType implements Parcelable{
          * Creates a new <code>DataTypeBoolean</code> object from a <code>Parcel</code>.
          *
          * @param in The parcel holding the data type.
-         * @return The constructed <code>DataType</code> object
+         * @return The constructed <code>DataTypeBoolean</code> object
          */
         @Override
         public DataTypeBoolean createFromParcel(Parcel in) {
@@ -99,10 +103,10 @@ public class DataTypeBoolean extends  DataType implements Parcelable{
         }
 
         /**
-         * Creates a new array of the specified size for <code>DataType</code> objects.
+         * Creates a new array of the specified size for <code>DataTypeBoolean</code> objects.
          *
-         * @param size The size of the new <code>DataType</code> array.
-         * @return The <code>DataType</code> array.
+         * @param size The size of the new <code>DataTypeBoolean</code> array.
+         * @return The <code>DataTypeBoolean</code> array.
          */
         @Override
         public DataTypeBoolean[] newArray(int size) {

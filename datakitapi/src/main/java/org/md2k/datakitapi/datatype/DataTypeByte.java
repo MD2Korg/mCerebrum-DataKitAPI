@@ -34,19 +34,22 @@ import android.os.Parcelable;
  * This class creates <code>DataType</code> objects for samples that have a byte data type.
  */
 public class DataTypeByte extends DataType implements Parcelable {
+
+    /**
+     * The data point collected from the data source.
+     */
     byte sample;
 
     /**
      * Constructor
      *
      * @param timestamp The timestamp for when the data was collected.
-     * @param sample The data point sampled from the sensor.
+     * @param sample The data point sampled from the data source.
      */
     public DataTypeByte(long timestamp, byte sample) {
         super(timestamp);
         this.sample = sample;
     }
-
 
     /**
      * TODO: Not used. Can remove?
