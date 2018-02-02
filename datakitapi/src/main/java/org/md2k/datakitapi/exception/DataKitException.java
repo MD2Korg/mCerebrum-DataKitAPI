@@ -1,7 +1,6 @@
-package org.md2k.datakitapi.exception;
-
 /*
- * Copyright (c) 2016, The University of Memphis, MD2K Center
+ * Copyright (c) 2018, The University of Memphis, MD2K Center of Excellence
+ *
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -25,15 +24,38 @@ package org.md2k.datakitapi.exception;
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+
+package org.md2k.datakitapi.exception;
+
+/**
+ * Generic <code>DataKitException</code>
+ */
 public class DataKitException extends Exception {
+
+    /**
+     * Constructor with just a cause.
+     *
+     * @param cause What caused the exception to be thrown.
+     */
     public DataKitException(Throwable cause) {
         super(cause);
     }
 
+    /**
+     * Constructor with message and cause
+     *
+     * @param message Message to display when the exception is triggered.
+     * @param cause What caused the exception to be thrown.
+     */
     public DataKitException(String message, Throwable cause) {
         super(message, cause);
     }
 
+    /**
+     * Constructor with just a message.
+     *
+     * @param message Message to display when the exception is triggered.
+     */
     public DataKitException(String message) {
         super(message);
     }

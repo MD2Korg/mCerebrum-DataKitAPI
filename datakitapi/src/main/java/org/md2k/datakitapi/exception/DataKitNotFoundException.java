@@ -1,5 +1,6 @@
-package org.md2k.datakitapi.exception;/*
- * Copyright (c) 2016, The University of Memphis, MD2K Center
+/*
+ * Copyright (c) 2018, The University of Memphis, MD2K Center of Excellence
+ *
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -24,11 +25,25 @@ package org.md2k.datakitapi.exception;/*
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+package org.md2k.datakitapi.exception;
+
 import org.md2k.datakitapi.status.Status;
 
+/**
+ * This exception is thrown when data sources for <code>DataKitAPI</code> to connect to are not found.
+ */
 public class DataKitNotFoundException extends DataKitException {
+
+    /**
+     * Status of <code>DataKitAPI</code> and any data sources.
+     */
     Status status;
 
+    /**
+     * Constructor
+     *
+     * @param status The status of the application.
+     */
     public DataKitNotFoundException(Status status) {
         super(status.getStatusMessage());
         this.status = status;
