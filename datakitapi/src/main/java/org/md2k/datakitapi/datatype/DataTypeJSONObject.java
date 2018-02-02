@@ -46,10 +46,10 @@ public class DataTypeJSONObject extends DataType implements Parcelable {
     public static final Creator<DataTypeJSONObject> CREATOR = new Creator<DataTypeJSONObject>() {
 
         /**
-         * Creates a new <code>DataTypeByte</code> object from a <code>Parcel</code>.
+         * Creates a new <code>DataTypeJSONObject</code> object from a <code>Parcel</code>.
          *
          * @param in The parcel holding the data type.
-         * @return The constructed <code>DataTypeByte</code> object
+         * @return The constructed <code>DataTypeJSONObject</code> object
          */
         @Override
         public DataTypeJSONObject createFromParcel(Parcel in) {
@@ -57,10 +57,10 @@ public class DataTypeJSONObject extends DataType implements Parcelable {
         }
 
         /**
-         * Creates a new array of the specified size for <code>DataTypeByte</code> objects.
+         * Creates a new array of the specified size for <code>DataTypeJSONObject</code> objects.
          *
-         * @param size The size of the new <code>DataTypeByte</code> array.
-         * @return The <code>DataTypeByte</code> array.
+         * @param size The size of the new <code>DataTypeJSONObject</code> array.
+         * @return The <code>DataTypeJSONObject</code> array.
          */
         @Override
         public DataTypeJSONObject[] newArray(int size) {
@@ -91,9 +91,9 @@ public class DataTypeJSONObject extends DataType implements Parcelable {
     }
 
     /**
-     * Constructs a <code>DataTypeByte</code> object from a <code>Parcel</code>.
+     * Constructs a <code>DataTypeJSONObject</code> object from a <code>Parcel</code>.
      *
-     * @param in Parceled <code>DataTypeByte</code> object.
+     * @param in Parceled <code>DataTypeJSONObject</code> object.
      */
     protected DataTypeJSONObject(Parcel in) {
         super(in);
@@ -101,7 +101,7 @@ public class DataTypeJSONObject extends DataType implements Parcelable {
     }
 
     /**
-     * Writes the <code>DataTypeByte</code> to a parcel.
+     * Writes the <code>DataTypeJSONObject</code> to a parcel.
      *
      * @param dest  The parcel to which the application should be written.
      * @param flags Additional flags about how the object should be written.
