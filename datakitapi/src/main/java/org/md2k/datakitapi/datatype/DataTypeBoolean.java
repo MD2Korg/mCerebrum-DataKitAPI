@@ -36,40 +36,83 @@ import android.os.Parcelable;
 public class DataTypeBoolean extends  DataType implements Parcelable{
     boolean sample;
 
+    /**
+     * Constructor
+     *
+     * @param timestamp The timestamp for when the data was collected.
+     * @param sample The data point sampled from the sensor.
+     */
     public DataTypeBoolean(long timestamp, boolean sample) {
         super(timestamp);
         this.sample=sample;
     }
+
+    /**
+     * TODO: Not used. Can remove?
+     */
     public DataTypeBoolean(){}
 
+    /**
+     * Constructs a <code>DataTypeBoolean</code> object from a <code>Parcel</code>.
+     *
+     * @param in Parceled <code>DataTypeBoolean</code> object.
+     */
     protected DataTypeBoolean(Parcel in) {
         super(in);
         sample = in.readByte() != 0;
     }
 
+    /**
+     * Writes the <code>DataTypeBoolean</code> to a parcel.
+     *
+     * @param dest  The parcel to which the application should be written.
+     * @param flags Additional flags about how the object should be written.
+     */
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         super.writeToParcel(dest, flags);
         dest.writeByte((byte) (sample ? 1 : 0));
     }
 
+    /**
+     * @return Always returns 0.
+     */
     @Override
     public int describeContents() {
         return 0;
     }
 
+    /**
+     * <code>Creator</code> for <code>DataType</code> objects.
+     */
     public static final Creator<DataTypeBoolean> CREATOR = new Creator<DataTypeBoolean>() {
+
+        /**
+         * Creates a new <code>DataTypeBoolean</code> object from a <code>Parcel</code>.
+         *
+         * @param in The parcel holding the data type.
+         * @return The constructed <code>DataType</code> object
+         */
         @Override
         public DataTypeBoolean createFromParcel(Parcel in) {
             return new DataTypeBoolean(in);
         }
 
+        /**
+         * Creates a new array of the specified size for <code>DataType</code> objects.
+         *
+         * @param size The size of the new <code>DataType</code> array.
+         * @return The <code>DataType</code> array.
+         */
         @Override
         public DataTypeBoolean[] newArray(int size) {
             return new DataTypeBoolean[size];
         }
     };
 
+    /**
+     * @return The the value of the sample.
+     */
     public boolean getSample(){
         return sample;
     }
