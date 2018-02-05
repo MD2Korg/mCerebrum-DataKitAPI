@@ -1,29 +1,6 @@
-package org.md2k.datakitapi;
-
-import android.content.Context;
-import android.content.pm.PackageManager;
-import android.os.Handler;
-
-import org.md2k.datakitapi.datatype.DataType;
-import org.md2k.datakitapi.datatype.DataTypeDoubleArray;
-import org.md2k.datakitapi.datatype.DataTypeLong;
-import org.md2k.datakitapi.datatype.RowObject;
-import org.md2k.datakitapi.exception.DataKitException;
-import org.md2k.datakitapi.exception.DataKitNotFoundException;
-import org.md2k.datakitapi.messagehandler.OnConnectionListener;
-import org.md2k.datakitapi.messagehandler.OnReceiveListener;
-import org.md2k.datakitapi.source.datasource.DataSourceBuilder;
-import org.md2k.datakitapi.source.datasource.DataSourceClient;
-import org.md2k.datakitapi.status.Status;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-
 /*
- * Copyright (c) 2016, The University of Memphis, MD2K Center
- * - Syed Monowar Hossain <monowar.hossain@gmail.com>
- * - Timothy W. Hnat <twhnat@memphis.edu>
+ * Copyright (c) 2018, The University of Memphis, MD2K Center of Excellence
+ *
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -47,20 +24,71 @@ import java.util.Map;
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+
+package org.md2k.datakitapi;
+
+import android.content.Context;
+import android.content.pm.PackageManager;
+import android.os.Handler;
+
+import org.md2k.datakitapi.datatype.DataType;
+import org.md2k.datakitapi.datatype.DataTypeDoubleArray;
+import org.md2k.datakitapi.datatype.DataTypeLong;
+import org.md2k.datakitapi.datatype.RowObject;
+import org.md2k.datakitapi.exception.DataKitException;
+import org.md2k.datakitapi.exception.DataKitNotFoundException;
+import org.md2k.datakitapi.messagehandler.OnConnectionListener;
+import org.md2k.datakitapi.messagehandler.OnReceiveListener;
+import org.md2k.datakitapi.source.datasource.DataSourceBuilder;
+import org.md2k.datakitapi.source.datasource.DataSourceClient;
+import org.md2k.datakitapi.status.Status;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+
+/**
+ *
+ */
 public class DataKitAPI {
     private static final String TAG = DataKitAPI.class.getSimpleName();
     private static final int BUFFER_SIZE = 1<<13; //8 KB
     private static DataKitAPI instance = null;
     DataKitAPIExecute dataKitAPIExecute;
+
+    /** Android context */
     Context context;
+
+    /** Handler for runnable messages */
     Handler handler;
+
+    /** Milliseconds between high frequency syncing
+     *
+     * <p>
+     *     Default is 1000 milliseconds.
+     * </p>
+     */
     private static final long SYNC_TIME_HF = 1000;
+
+
+    /** HashMap for temporarily storing high frequency data. */
     HashMap<Integer, HFBuffer> hmHFBuffer;
 
+    /** Embedded class for creating <code>HFBuffer</code> objects. */
     class HFBuffer {
+
+        /** ArrayList of data collected from the data source. */
         ArrayList<DataTypeDoubleArray> data;
+
+        /** Size of the ArrayList. */
         int size;
 
+        /** Constructor
+         *
+         * <p>
+         *     Creates a <code>HFBuffer</code> object containing an ArrayList of size 0.
+         * </p>
+         */
         HFBuffer() {
             data = new ArrayList<>();
             size = 0;
@@ -68,6 +96,16 @@ public class DataKitAPI {
     }
 
 
+    /**
+     * Constructor
+     *
+     * <p>
+     *     Calls the <code>DataKitAPIExecute</code> constructor and creates a new <code>Handler</code>
+     *     and a new <code>HFBuffer</code>.
+     * </p>
+     *
+     * @param context Android context
+     */
     private DataKitAPI(Context context) {
         this.context = context;
         dataKitAPIExecute = new DataKitAPIExecute(context);
@@ -75,6 +113,16 @@ public class DataKitAPI {
         hmHFBuffer = new HashMap<>();
     }
 
+    /**
+     * Returns an instance of <code>DataKitAPI</code>.
+     *
+     * <p>
+     *     If an instance does not already exist, one is created.
+     * </p>
+     *
+     * @param context Android context
+     * @return An instance of <code>DataKitAPI</code>
+     */
     public static DataKitAPI getInstance(Context context) {
         if (instance == null) {
             synchronized (DataKitAPI.class) {
@@ -85,10 +133,19 @@ public class DataKitAPI {
         return instance;
     }
 
+    /**
+     * Checks if Data Kit is connected.
+     *
+     * @return Whether Data Kit is connected.
+     */
     public boolean isConnected() {
         return !(dataKitAPIExecute == null || !dataKitAPIExecute.isConnected());
     }
 
+    /**
+     * @param callerOnConnectionListener
+     * @throws DataKitException
+     */
     public synchronized void connect(OnConnectionListener callerOnConnectionListener) throws DataKitException {
         if (!isInstalled(context, Constants.PACKAGE_NAME)) {
             throw new DataKitNotFoundException(new Status(Status.ERROR_NOT_INSTALLED));
@@ -99,22 +156,45 @@ public class DataKitAPI {
         }
     }
 
+    /**
+     * Returns an ArrayList of <code>DataSourceClient</code> objects that match the given
+     * <code>DataSourceBuilder</code>.
+     *
+     * @param dataSourceBuilder
+     * @return An ArrayList of <code>DataSourceClient</code> objects.
+     * @throws DataKitException Thrown if Data Kit is not connected, the builder is null, or the
+     *                          clients are null.
+     */
     public synchronized ArrayList<DataSourceClient> find(DataSourceBuilder dataSourceBuilder) throws DataKitException {
+
         if (!dataKitAPIExecute.isConnected())
             throw new DataKitNotFoundException(new Status(Status.ERROR_BOUND));
+
         if (dataSourceBuilder == null)
             throw new DataKitException(new Status(Status.DATA_INVALID).getStatusMessage());
+
         ArrayList<DataSourceClient> dataSourceClients = dataKitAPIExecute.find(dataSourceBuilder).await();
+
         if (dataSourceClients == null || !dataKitAPIExecute.isConnected())
             throw new DataKitNotFoundException(new Status(Status.ERROR_BOUND));
+
         else return dataSourceClients;
     }
 
+    /**
+     * @param dataSourceClient
+     * @param dataType Type of data to insert.
+     * @throws DataKitException Thrown if Data Kit is not connected and if the <code>DataSourceClient</code>
+     *                          or the <code>DataType</code> are null.
+     */
     public synchronized void insert(DataSourceClient dataSourceClient, DataType dataType) throws DataKitException {
+
         if (!dataKitAPIExecute.isConnected())
             throw new DataKitNotFoundException(new Status(Status.ERROR_BOUND));
+
         if (dataSourceClient == null || dataType == null)
             throw new DataKitException(new Status(Status.DATA_INVALID).getStatusMessage());
+
         else {
             DataType[] dataTypes=new DataType[]{dataType};
             dataKitAPIExecute.insert(dataSourceClient, dataTypes);
@@ -286,6 +366,13 @@ public class DataKitAPI {
         }
     }
 
+    /**
+     * Checks the <code>PackageManager</code> for the given package to see if it is installed.
+     *
+     * @param context Android context
+     * @param packageName Name of the package to check for.
+     * @return Whether the desired package is installed.
+     */
     private boolean isInstalled(Context context, String packageName) {
         PackageManager pm = context.getPackageManager();
         try {
@@ -297,6 +384,10 @@ public class DataKitAPI {
     }
 
     Runnable runnableSyncHF = new Runnable() {
+
+        /**
+         *
+         */
         @Override
         public void run() {
             syncHFDataAll();

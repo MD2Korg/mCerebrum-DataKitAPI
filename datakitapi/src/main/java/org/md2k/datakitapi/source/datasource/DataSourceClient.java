@@ -33,14 +33,14 @@ import android.os.Parcelable;
 import org.md2k.datakitapi.status.Status;
 
 /**
- *
+ * Container object class for data sources.
  */
 public class DataSourceClient implements Parcelable {
 
     /** Data source identifier. */
     private int ds_id;
 
-    /**  */
+    /** Data source for this client. */
     DataSource dataSource;
 
     /** Status of the <code>DataKitAPI</code> as indicated by the <code>Status</code> class. */
@@ -50,7 +50,7 @@ public class DataSourceClient implements Parcelable {
      * Constructor
      *
      * @param ds_id Data source identifier.
-     * @param dataSource
+     * @param dataSource Data source for this client.
      * @param status Status of the <code>DataKitAPI</code> as indicated by the <code>Status</code> class.
      */
     public DataSourceClient(int ds_id, DataSource dataSource, Status status) {
@@ -113,7 +113,7 @@ public class DataSourceClient implements Parcelable {
     }
 
     /**
-     * @return
+     * @return The data source of this client
      */
     public DataSource getDataSource() {
         return dataSource;

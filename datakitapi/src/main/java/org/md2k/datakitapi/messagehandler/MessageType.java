@@ -1,8 +1,6 @@
-package org.md2k.datakitapi.messagehandler;
-
 /*
- * Copyright (c) 2015, The University of Memphis, MD2K Center
- * - Syed Monowar Hossain <monowar.hossain@gmail.com>
+ * Copyright (c) 2018, The University of Memphis, MD2K Center of Excellence
+ *
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -26,20 +24,27 @@ package org.md2k.datakitapi.messagehandler;
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+
+package org.md2k.datakitapi.messagehandler;
+
+/**
+ *
+ */
 public class MessageType {
+
     public static final int CONNECT = 1;
-    public static final int DISCONNECT=2;
+    public static final int DISCONNECT = 2;
     public static final int REGISTER = 3;
     public static final int UNREGISTER = 4;
     public static final int SUBSCRIBE = 5;
     public static final int UNSUBSCRIBE = 6;
     public static final int INSERT = 7;
     public static final int QUERY = 8;
-    public static final int FIND =9;
-    public static final int SUBSCRIBED_DATA=10;
-    public static final int INTERNAL_ERROR=11;
+    public static final int FIND = 9;
+    public static final int SUBSCRIBED_DATA = 10;
+    public static final int INTERNAL_ERROR = 11;
     public static final int QUERYPRIMARYKEY = 12;
     public static final int INSERT_HIGH_FREQUENCY = 13;
     public static final int QUERYSIZE = 14;
-    public static final int SUMMARY =15;
+    public static final int SUMMARY = 15;
 }
