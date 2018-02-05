@@ -337,7 +337,16 @@ public class DataKitAPI {
         else return dataTypeLong;
     }
 
-    public synchronized void subscribe(DataSourceClient dataSourceClient, OnReceiveListener onReceiveListener) throws DataKitException {
+    /**
+     * Subscribes the given <code>DataSourceClient</code> to the given <code>OnReceiveListener</code>.
+     *
+     * @param dataSourceClient The <code>DataSourceClient</code> to subscribe.
+     * @param onReceiveListener The message handler <code>DataSourceClient</code> is subscribing to.
+     * @throws DataKitException Thrown when <code>DataKit</code> isn't connected, when
+     *                          <code>DataSourceClient</code> or <code>onReceiveListener</code> is null.
+     */
+    public synchronized void subscribe(DataSourceClient dataSourceClient, OnReceiveListener onReceiveListener)
+            throws DataKitException {
         if (!dataKitAPIExecute.isConnected())
             throw new DataKitNotFoundException(new Status(Status.ERROR_BOUND));
         if (dataSourceClient == null || onReceiveListener == null)
@@ -347,6 +356,14 @@ public class DataKitAPI {
             throw new DataKitNotFoundException(new Status(Status.ERROR_BOUND));
     }
 
+    /**
+     * Unsubscribes the given <code>DataSourceClient</code> from <code>DataKit</code>.
+     *
+     * @param dataSourceClient The <code>DataSourceClient</code> to unsubscribe.
+     * @return The new status
+     * @throws DataKitException Thrown when <code>DataKit</code> is not connected or
+     *                          <code>dataSourceClient</code> is null.
+     */
     public synchronized Status unsubscribe(DataSourceClient dataSourceClient) throws DataKitException {
         if (!dataKitAPIExecute.isConnected())
             throw new DataKitNotFoundException(new Status(Status.ERROR_BOUND));
@@ -358,6 +375,10 @@ public class DataKitAPI {
         else return status;
     }
 
+    /**
+     * Disconnects <code>DataKit</code> by removing any remaining messages from the Handler, syncing
+     * all the data and calls <code>DataKitAPIExecute.disconnect()</code>.
+     */
     public synchronized void disconnect() {
         if (dataKitAPIExecute.isConnected()) {
             handler.removeCallbacks(runnableSyncHF);
