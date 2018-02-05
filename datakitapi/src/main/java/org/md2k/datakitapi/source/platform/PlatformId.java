@@ -1,10 +1,6 @@
-package org.md2k.datakitapi.source.platform;
-
-import org.md2k.datakitapi.Constants;
-
 /*
- * Copyright (c) 2015, The University of Memphis, MD2K Center
- * - Syed Monowar Hossain <monowar.hossain@gmail.com>
+ * Copyright (c) 2018, The University of Memphis, MD2K Center of Excellence
+ *
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -27,6 +23,23 @@ import org.md2k.datakitapi.Constants;
  * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+package org.md2k.datakitapi.source.platform;
+
+import org.md2k.datakitapi.Constants;
+
+/**
+ * Provides constants used for indicating the position of a wearable device on the body of the user.
+ *
+ * <p>
+ *     Possible positions are:
+ *     <ul>
+ *         <li>Chest</li>
+ *         <li>Left wrist</li>
+ *         <li>Right wrist</li>
+ *     </ul>
+ * </p>
  */
 public class PlatformId {
     public static final String CHEST = "CHEST";
