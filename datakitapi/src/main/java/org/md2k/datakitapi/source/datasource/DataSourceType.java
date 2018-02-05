@@ -337,22 +337,42 @@ public class DataSourceType {
 
 
 
-    /**
-     * For data integration from Cornell
-     */
+    /** Is screen on <p><code>"CU_IS_SCREEN_ON"</code></p><p> For data integration from Cornell </p> */
     public static final String CU_IS_SCREEN_ON = "CU_IS_SCREEN_ON";
+
+    /** Audio feature <p><code>"CU_AUDIO_FEATURE"</code></p><p> For data integration from Cornell </p> */
     public static final String CU_AUDIO_FEATURE = "CU_AUDIO_FEATURE";
+
+    /** Audio energy <p><code>"CU_AUDIO_ENERGY"</code></p><p> For data integration from Cornell </p> */
     public static final String CU_AUDIO_ENERGY = "CU_AUDIO_ENERGY";
+
+    /** Audio inference <p><code>"CU_AUDIO_INFERENCE"</code></p><p> For data integration from Cornell </p> */
     public static final String CU_AUDIO_INFERENCE = "CU_AUDIO_INFERENCE";
 
+
+    /** App usage <p><code>"CU_APPUSAGE"</code></p><p> For data integration from Cornell </p> */
     public static final String CU_APPUSAGE = "CU_APPUSAGE";
 
+
+    /** SMS number <p><code>"CU_SMS_NUMBER"</code></p><p> For data integration from Cornell </p> */
     public static final String CU_SMS_NUMBER = "CU_SMS_NUMBER";
+
+    /** SMS type <p><code>"CU_SMS_NUMBER"</code></p><p> For data integration from Cornell </p> */
     public static final String CU_SMS_TYPE = "CU_SMS_NUMBER";
+
+    /** SMS length <p><code>"CU_SMS_LENGTH"</code></p><p> For data integration from Cornell </p> */
     public static final String CU_SMS_LENGTH = "CU_SMS_LENGTH";
 
+
+    /** Call number <p><code>"CU_CALL_NUMBER"</code></p><p> For data integration from Cornell </p> */
     public static final String CU_CALL_NUMBER = "CU_CALL_NUMBER";
+
+    /** Call type <p><code>"CU_CALL_TYPE"</code></p><p> For data integration from Cornell </p> */
     public static final String CU_CALL_TYPE = "CU_CALL_TYPE";
+
+    /** Call duration <p><code>"CU_CALL_DURATION"</code></p><p> For data integration from Cornell </p> */
     public static final String CU_CALL_DURATION = "CU_CALL_DURATION";
+
+    /** Label <p><code>"LABEL</code></p><p> For data integration from Cornell </p> */
     public static String LABEL = "LABEL";
 }
