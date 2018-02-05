@@ -1,10 +1,6 @@
-package org.md2k.datakitapi.source.platform;
-
-import org.md2k.datakitapi.Constants;
-
 /*
- * Copyright (c) 2015, The University of Memphis, MD2K Center
- * - Syed Monowar Hossain <monowar.hossain@gmail.com>
+ * Copyright (c) 2018, The University of Memphis, MD2K Center of Excellence
+ *
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -27,6 +23,32 @@ import org.md2k.datakitapi.Constants;
  * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+package org.md2k.datakitapi.source.platform;
+
+import org.md2k.datakitapi.Constants;
+
+/**
+ * Provides constants used for indicating the type of device being used as a data source.
+ *
+ * <p>
+ *     Available types are:
+ *     <ul>
+ *         <li>Chest (Auto sensing)</li>
+ *         <li>Low energy Bluetooth (Auto sensing)</li>
+ *         <li>Wrist (Auto sensing)</li>
+ *         <li>Microsoft Band</li>
+ *         <li>Phone</li>
+ *         <li>Omron Blood Pressure</li>
+ *         <li>Omron Weight Scale</li>
+ *         <li>Easysense TODO: Does this refer to the Philips Easysense or something else? </li>
+ *         <li>Motion sensor</li>
+ *         <li>OralB Toothbrush</li>
+ *         <li>Motion Sense with Heart Rate Variability</li>
+ *         <li>Beacon</li>
+ *     </ul>
+ * </p>
  */
 public class PlatformType {
     public static final String AUTOSENSE_CHEST = "AUTOSENSE_CHEST";
