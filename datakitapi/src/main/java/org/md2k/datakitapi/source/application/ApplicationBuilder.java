@@ -30,7 +30,7 @@ package org.md2k.datakitapi.source.application;
 import org.md2k.datakitapi.source.AbstractObjectBuilder;
 
 /**
- *
+ * Builder class for <code>Application</code> objects.
  */
 public class ApplicationBuilder extends AbstractObjectBuilder {
 
@@ -68,6 +68,9 @@ public class ApplicationBuilder extends AbstractObjectBuilder {
         return this;
     }
 
+    /**
+     * TODO: Not used. Can remove?
+     */
     public ApplicationBuilder(){
     }
 
