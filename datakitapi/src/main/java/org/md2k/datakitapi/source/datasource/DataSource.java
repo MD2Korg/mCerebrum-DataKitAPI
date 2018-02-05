@@ -1,21 +1,6 @@
-package org.md2k.datakitapi.source.datasource;
-
-import android.os.Parcel;
-import android.os.Parcelable;
-
-import com.bluelinelabs.logansquare.annotation.JsonObject;
-
-import org.md2k.datakitapi.source.AbstractObject;
-import org.md2k.datakitapi.source.application.Application;
-import org.md2k.datakitapi.source.platform.Platform;
-import org.md2k.datakitapi.source.platformapp.PlatformApp;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-
 /*
- * Copyright (c) 2015, The University of Memphis, MD2K Center
- * - Syed Monowar Hossain <monowar.hossain@gmail.com>
+ * Copyright (c) 2018, The University of Memphis, MD2K Center of Excellence
+ *
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -39,30 +24,79 @@ import java.util.HashMap;
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+
+package org.md2k.datakitapi.source.datasource;
+
+import android.os.Parcel;
+import android.os.Parcelable;
+
+import com.bluelinelabs.logansquare.annotation.JsonObject;
+
+import org.md2k.datakitapi.source.AbstractObject;
+import org.md2k.datakitapi.source.application.Application;
+import org.md2k.datakitapi.source.platform.Platform;
+import org.md2k.datakitapi.source.platformapp.PlatformApp;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+
+/**
+ *
+ */
 @JsonObject(fieldDetectionPolicy = JsonObject.FieldDetectionPolicy.NONPRIVATE_FIELDS)
 public class DataSource extends AbstractObject implements Parcelable {
+
+    /**
+     * <code>Creator</code> for <code>DataSource</code> objects.
+     */
     public static final Creator<DataSource> CREATOR = new Creator<DataSource>() {
+
+        /**
+         * Creates a new <code>DataSource</code> object from a <code>Parcel</code>.
+         *
+         * @param in The parcel holding the application.
+         * @return The reconstructed <code>DataSource</code> object.
+         */
         @Override
         public DataSource createFromParcel(Parcel in) {
             return new DataSource(in);
         }
 
+        /**
+         * Creates a new array of the specified size for <code>DataSource</code> objects.
+         *
+         * @param size The size of the new <code>DataSource</code> array.
+         * @return The <code>DataSource</code> array.
+         */
         @Override
         public DataSource[] newArray(int size) {
             return new DataSource[size];
         }
     };
+
+
     private Platform platform = null;
     private PlatformApp platformApp = null;
     private Application application = null;
     private boolean persistent = true;
     private ArrayList<HashMap<String, String>> dataDescriptors = null;
 
-
+    /**
+     * TODO: Not used. Can remove?
+     */
     public DataSource(){
-
     }
 
+    /**
+     * Constructor
+     *
+     * <p>
+     *     This constructor is called from the <code>ApplicationBuilder</code> class using the
+     *     <code>build()</code> method.
+     * </p>
+     *
+     * @param dataSourceBuilder The builder object for this data source.
+     */
     DataSource(DataSourceBuilder dataSourceBuilder) {
         super(dataSourceBuilder);
         this.platform = dataSourceBuilder.platform;
@@ -72,6 +106,11 @@ public class DataSource extends AbstractObject implements Parcelable {
         this.dataDescriptors = dataSourceBuilder.dataDescriptors;
     }
 
+    /**
+     * Creates an <code>DataSource</code> object from a <code>Parcel</code>.
+     *
+     * @param in Parceled data source data
+     */
     protected DataSource(Parcel in) {
         super(in);
         platform = in.readParcelable(Platform.class.getClassLoader());

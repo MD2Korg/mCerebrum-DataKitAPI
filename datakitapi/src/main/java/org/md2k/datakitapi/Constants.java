@@ -49,36 +49,66 @@ public class Constants {
     public static final String PACKAGE_NAME = "org.md2k.datakit";
 
     /**
-     * datastream identifier
+     * Data source identifier.
+     * <p>
+     *     <code>"ds_id"</code>
+     * </p>
      */
     public static final String RC_DSID = "ds_id";
 
     /**
-     *
+     * Starting timestamp
+     * <p>
+     *     <code>"starttimestamp"</code>
+     * </p>
      */
     public static final String RC_STARTTIMESTAMP = "starttimestamp";
+
     /**
-     *
+     * Ending timestamp
+     * <p>
+     *     <code>"endtimestamp"</code>
+     * </p>
      */
     public static final String RC_ENDTIMESTAMP = "endtimestamp";
+
     /**
-     *
+     * Last n samples
+     * <p>
+     *     <code>"last_n_sample"</code>
+     * </p>
      */
     public static final String RC_LAST_N_SAMPLE="last_n_sample";
+
     /**
-     *
+     * Limit TODO: limit of what?
+     * <p>
+     *     <code>"limit"</code>
+     * </p>
      */
     public static final String RC_LIMIT = "limit";
+
     /**
-     *
+     * Last key TODO: key of what?
+     * <p>
+     *     <code>"last_key"</code>
+     * </p>
      */
     public static final String RC_LAST_KEY="last_key";
+
     /**
-     *
+     * Session identifier
+     * <p>
+     *     <code>"session_id"</code>
+     * </p>
      */
     public static final String RC_SESSION_ID="session_id";
+
     /**
-     *
+     * Data source client
+     * <p>
+     *     <code>"data_source_client"</code>
+     * </p>
      */
     public static final String RC_DATASOURCE_CLIENT = "data_source_client";
 }
