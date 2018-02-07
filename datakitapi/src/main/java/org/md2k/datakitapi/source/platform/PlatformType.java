@@ -35,18 +35,18 @@ import org.md2k.datakitapi.Constants;
  * <p>
  *     Available types are:
  *     <ul>
- *         <li>Chest (Auto sensing)</li>
- *         <li>Low energy Bluetooth (Auto sensing)</li>
- *         <li>Wrist (Auto sensing)</li>
+ *         <li>AutoSense Chest</li>
+ *         <li>AutoSense Bluetooth Low Energy</li>
+ *         <li>AutoSense Wrist</li>
  *         <li>Microsoft Band</li>
  *         <li>Phone</li>
  *         <li>Omron Blood Pressure</li>
  *         <li>Omron Weight Scale</li>
- *         <li>Easysense TODO: Does this refer to the Philips Easysense or something else? </li>
- *         <li>Motion sensor</li>
- *         <li>OralB Toothbrush</li>
- *         <li>Motion Sense with Heart Rate Variability</li>
- *         <li>Beacon</li>
+ *         <li>Easysense</li>
+ *         <li>MotionSense</li>
+ *         <li>Oral-B Toothbrush</li>
+ *         <li>MotionSense with Heart Rate Variability</li>
+ *         <li>RF Beacon (iBeacon)</li>
  *     </ul>
  * </p>
  */

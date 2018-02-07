@@ -102,7 +102,7 @@ public class DataSourceType {
     /** Air pressure sensor <p><code>"AIR_PRESSURE"</code></p> */
     public static final String AIR_PRESSURE = "AIR_PRESSURE";
 
-    /** Respiration rate sensor <p><code>"RR_INTERVAL"</code></p> */
+    /** Interval between R points on an ECG <p><code>"RR_INTERVAL"</code></p> */
     public static final String RR_INTERVAL = "RR_INTERVAL";
 
 
