@@ -52,9 +52,9 @@ public class DataTypeBoolean extends  DataType implements Parcelable{
     }
 
     /**
-     * TODO: Not used. Can remove?
+     * TODO: Testing for breakage.
      */
-    public DataTypeBoolean(){}
+    // public DataTypeBoolean(){}
 
     /**
      * Constructs a <code>DataTypeBoolean</code> object from a <code>Parcel</code>.
