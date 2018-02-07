@@ -48,7 +48,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- *
+ * Handles exception checks and handles outside method calls for <code>DataKitAPIExecute</code>.
  */
 public class DataKitAPI {
     private static final String TAG = DataKitAPI.class.getSimpleName();
@@ -62,7 +62,8 @@ public class DataKitAPI {
     /** Handler for runnable messages */
     Handler handler;
 
-    /** Milliseconds between high frequency syncing
+    /**
+     * Maximum time in milliseconds to wait when transmitting high-frequency data
      *
      * <p>
      *     Default is 1000 milliseconds.
@@ -74,7 +75,7 @@ public class DataKitAPI {
     /** HashMap for temporarily storing high frequency data. */
     HashMap<Integer, HFBuffer> hmHFBuffer;
 
-    /** Embedded class for creating <code>HFBuffer</code> objects. */
+    /** Embedded class for creating high frequency buffer objects. */
     class HFBuffer {
 
         /** ArrayList of data collected from the data source. */
@@ -407,7 +408,7 @@ public class DataKitAPI {
     Runnable runnableSyncHF = new Runnable() {
 
         /**
-         *
+         * Initiates the high-frequency data transmit procedure.
          */
         @Override
         public void run() {

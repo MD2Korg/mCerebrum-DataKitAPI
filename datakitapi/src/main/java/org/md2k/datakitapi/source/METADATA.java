@@ -80,6 +80,6 @@ public class METADATA {
     /** Identification number of the device used to collect the data. */
     public static final String DEVICE_ID="DEVICE_ID";
 
-    /** TODO: What's this? */
+    /** Designates a descriptive statistic. */
     public static final String DESCRIPTIVESTATISTICS = "STATISTIC";
 }
