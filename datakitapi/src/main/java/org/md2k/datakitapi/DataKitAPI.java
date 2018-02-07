@@ -52,7 +52,13 @@ import java.util.Map;
  */
 public class DataKitAPI {
     private static final String TAG = DataKitAPI.class.getSimpleName();
-    private static final int BUFFER_SIZE = 1<<13; //8 KB
+
+    /** Size of the buffer.
+     * <p>
+     *     The buffer size is set to 8KB using a bitwise shift operation.
+     * </p>
+     */
+    private static final int BUFFER_SIZE = 1 << 13; //8 KB
     private static DataKitAPI instance = null;
     DataKitAPIExecute dataKitAPIExecute;
 

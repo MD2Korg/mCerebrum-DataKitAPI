@@ -1,3 +1,30 @@
+/*
+ * Copyright (c) 2018, The University of Memphis, MD2K Center of Excellence
+ *
+ * All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
+ *
+ * * Redistributions of source code must retain the above copyright notice, this
+ * list of conditions and the following disclaimer.
+ *
+ * * Redistributions in binary form must reproduce the above copyright notice,
+ * this list of conditions and the following disclaimer in the documentation
+ * and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
+ * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+ * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+ * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+ * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+ * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
 package org.md2k.datakitapi;
 
 import android.content.ComponentName;
@@ -41,62 +68,94 @@ import java.util.Random;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
 
-/*
- * Copyright (c) 2015, The University of Memphis, MD2K Center
- * - Syed Monowar Hossain <monowar.hossain@gmail.com>
- * - Timothy W. Hnat <twhnat@memphis.edu>
- * All rights reserved.
+/**
  *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions are met:
- *
- * * Redistributions of source code must retain the above copyright notice, this
- * list of conditions and the following disclaimer.
- *
- * * Redistributions in binary form must reproduce the above copyright notice,
- * this list of conditions and the following disclaimer in the documentation
- * and/or other materials provided with the distribution.
- *
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
- * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
- * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
- * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
- * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
- * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
- * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
- * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 class DataKitAPIExecute {
     private static final String TAG = DataKitAPIExecute.class.getSimpleName();
     private boolean isConnected;
+
+    /** Session identifier. <p>Default is -1.</p> */
     int sessionId = -1;
 
+    /**  */
     private ArrayList<RowObject> queryPrimaryKeyData;
+
+    /**  */
     private DataTypeLong querySizeData;
+
+    /**  */
     private ArrayList<DataType> queryData;
+
+    /**  */
     private Status unregisterData;
+
+    /**  */
     private Status unsubscribeData;
+
+    /**  */
     private ArrayList<DataSourceClient> findData;
+
+    /**  */
     private DataSourceClient registerData;
+
+    /**  */
     private Status subscribeData;
+
+    /** Listens for messages from remote threads */
     HandlerThread threadRemoteListener;
+
+    /** Handles incoming messages. */
     IncomingHandler incomingHandler;
 
+    /**  */
     private Semaphore semaphoreReceive;
-//    private Semaphore semaphoreMutex;
 
+    /** Contains <code>ds_id</code>, <code>DataType</code> pairs.
+     * <p>
+     *     <code>OnReceiveListener</code> takes a <code>DataType</code> parameter.
+     * </p>
+     */
     private HashMap<Integer, OnReceiveListener> ds_idOnReceiveListenerHashMap;
+
+    /** Android context. */
     private Context context;
-    private ServiceConnection connection;//receives callbacks from bind and unbind invocations
+
+    /** Receives callbacks from bind and unbind invocations. */
+    private ServiceConnection connection;
+
+    /** Handles outbound messages. */
     private Messenger sendMessenger = null;
-    private Messenger replyMessenger = null; //invocation replies are processed by this Messenger
+
+    /** Processes invocation replies. */
+    private Messenger replyMessenger = null;
+
+    /** Callback interface that listens for <code>DataKit</code> connections. */
     private OnConnectionListener onConnectionListener;
+
+    /** Wait time in milliseconds TODO: for what? */
     private static final long WAIT_TIME = 30000;
+
+    /** Whether <code>DataKit</code> is being disconnected or not. */
     private boolean isDisconnecting;
 
 
+    /**
+     * Constructor
+     *
+     * <p>
+     *     Default values for the fields are as follows:
+     *     <ul>
+     *         <li><code>isConnected</code> is false </li>
+     *         <li><code>sessionId</code> is -1</li>
+     *         <li><code>sendMessenger</code> is null</li>
+     *         <li><code>isDisconnecting</code> is false</li>
+     *         <li><code>ds_idOnReceiveListenerHashMap</code> a new HashMap</li>
+     *     </ul>
+     * </p>
+     *
+     * @param context Android context
+     */
     public DataKitAPIExecute(Context context) {
         this.context = context;
         isConnected = false;
@@ -106,10 +165,17 @@ class DataKitAPIExecute {
         ds_idOnReceiveListenerHashMap = new HashMap<>();
     }
 
+    /**
+     * @return Whether <code>DataKit</code> is connected or not.
+     */
     public boolean isConnected() {
         return sendMessenger != null && isConnected && sessionId != -1;
     }
 
+    /**
+     * Creates a new <code>HandlerThread</code>, assigns it's <code>looper</code> to a new
+     * <code>IncomingHandler</code> which is then passed to a new <code>Messenger</code>.
+     */
     private void createThreadRemoteListener() {
         threadRemoteListener = new HandlerThread("MyHandlerThread");
         threadRemoteListener.start();
@@ -117,6 +183,17 @@ class DataKitAPIExecute {
         this.replyMessenger = new Messenger(incomingHandler);
     }
 
+    /**
+     * Starts a remote service and binds <code>replyMessenger</code> to it.
+     *
+     * <p>
+     *     The service that starts is determined by <code>Constants.PACKAGE_NAME</code>, which defaults
+     *     to <code>"org.md2k.datakit"</code>, and <code>Constants.SERVICE_NAME</code>, which defaults
+     *     to <code>"org.md2k.datakit.ServiceDataKit"</code>.
+     * </p>
+     *
+     * @throws DataKitNotFoundException Thrown if <code>DataKit</code> is disconnected.
+     */
     private void startRemoteService() throws DataKitNotFoundException {
         Intent intent = new Intent();
         intent.setClassName(Constants.PACKAGE_NAME, Constants.SERVICE_NAME);
@@ -130,6 +207,27 @@ class DataKitAPIExecute {
     }
 
 
+    /**
+     * Attempts to connect the caller to <code>DataKit</code>.
+     *
+     * <p>
+     *     If <code>DataKit</code> is disconnecting, the thread should sleep for 1000 milliseconds.
+     *     This is continually tried until <code>DataKit</code> is not disconnecting.
+     *
+     *     When trying to connect the following occurs:
+     *     <ol>
+     *         <li>The <code>onConnectionListener</code> is updated.</li>
+     *         <li>The <code>ds_idOnReceiveListenerHashMap</code> is cleared.</li>
+     *         <li>A new <code>sessionId</code> is randomly generated.</li>
+     *         <li>A new semaphore is created with 0 permits and a true fairness setting.</li>
+     *         <li><code>createThreadRemoteListener()</code> is called.</li>
+     *         <li><code>startRemoteService()</code> is called.</li>
+     *     </ol>
+     * </p>
+     *
+     * @param onConnectionListener Callback interface listening for connection verification.
+     * @throws DataKitException Is ignored.
+     */
     protected void connect(OnConnectionListener onConnectionListener) throws DataKitException {
         try {
             while (isDisconnecting) {
@@ -142,7 +240,6 @@ class DataKitAPIExecute {
             ds_idOnReceiveListenerHashMap.clear();
             sessionId = new Random().nextInt();
             semaphoreReceive = new Semaphore(0, true);
-//            semaphoreMutex = new Semaphore(1, true);
             createThreadRemoteListener();
             startRemoteService();
         } catch (Exception ignored) {
@@ -150,20 +247,43 @@ class DataKitAPIExecute {
 
     }
 
+    /**
+     *
+     */
     void lock() {
         try {
             if (!isConnected) return;
-//            semaphoreMutex.acquire();
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
+    /**
+     *
+     */
     void unlock() {
-
-//        semaphoreMutex.release();
     }
 
+    /**
+     * Disconnects the caller from <code>DataKit</code>.
+     *
+     * <p>
+     *     When disconnecting the following occurs:
+     *     <ol>
+     *         <li><code>isConnected</code> is set to false.</li>
+     *         <li><code>isDisconnecting</code> is set to true.</li>
+     *         <li><code>sessionId</code> is set to -1.</li>
+     *         <li><code>ds_idOnReceiveListenerHashMap</code> is cleared.</li>
+     *         <li>If <code>threadRemoteListener</code> is not null and alive then it calls
+     *         <code>quitSafely()</code></li>
+     *         <li>If <code>threadRemoteListener</code> is null and <code>incomingHandler</code>
+     *         is null, then remaining callbacks are removed.</li>
+     *         <li><code>threadRemoteListener</code> and <code>incomingHandler</code> are then set
+     *         to null.</li>
+     *         <li>The remote service is unbound and <code>isDisconnecting</code> is set to false.</li>
+     *     </ol>
+     * </p>
+     */
     public void disconnect() {
         isConnected = false;
         isDisconnecting = true;
@@ -175,8 +295,6 @@ class DataKitAPIExecute {
             incomingHandler.removeCallbacks(threadRemoteListener);
         threadRemoteListener = null;
         incomingHandler = null;
-//        while (semaphoreMutex.hasQueuedThreads())
- //           unlock();
         try {
             context.unbindService(connection);
             Thread.sleep(1000);
@@ -186,6 +304,13 @@ class DataKitAPIExecute {
     }
 
 
+    /**
+     * Constructs a message and sends it to <code>DataKit</code>.
+     *
+     * @param bundle
+     * @param messageType Type of message being sent.
+     * @throws RemoteException Thrown when the message is not sent successfully
+     */
     private void prepareAndSend(Bundle bundle, int messageType) throws RemoteException {
 
         Message message = Message.obtain(null, 0, 0, 0);
@@ -197,6 +322,11 @@ class DataKitAPIExecute {
     }
 
 
+    /**
+     * @param dataSourceBuilder Builder object of the data source to register
+     * @return
+     * @throws DataKitException
+     */
     public PendingResult<DataSourceClient> register(final DataSourceBuilder dataSourceBuilder) throws DataKitException {
         PendingResult<DataSourceClient> pendingResult = new PendingResult<DataSourceClient>() {
             @Override
@@ -220,6 +350,13 @@ class DataKitAPIExecute {
         return pendingResult;
     }
 
+    /**
+     * Unsubscribes the given data source identifier from <code>DataKit</code>.
+     *
+     * @param ds_id Data source identifier to unsubscribe.
+     * @return The status of the application after the data source is unsubscribed.
+     * @throws DataKitException Thrown if the <code>context</code> or it's package name are null.
+     */
     public PendingResult<Status> unsubscribe(final int ds_id) throws DataKitException {
         PendingResult<Status> pendingResult = new PendingResult<Status>() {
             @Override
@@ -246,6 +383,13 @@ class DataKitAPIExecute {
         return pendingResult;
     }
 
+    /**
+     * Unregisters the given data source from <code>DataKit</code>.
+     *
+     * @param dataSourceClient Data source to unregister.
+     * @return The status of the application after the data source is unregistered.
+     * @throws DataKitException
+     */
     public PendingResult<Status> unregister(final DataSourceClient dataSourceClient) throws DataKitException {
         PendingResult<Status> pendingResult = new PendingResult<Status>() {
             @Override
@@ -268,6 +412,14 @@ class DataKitAPIExecute {
         return pendingResult;
     }
 
+    /**
+     * Subscribes the given data source to <code>DataKit</code>.
+     *
+     * @param dataSourceClient Data source to subscribe to <code>DataKit</code>.
+     * @param onReceiveListener Callback listening for receipt of the subscription.
+     * @return The status of the application after the data source is subscribed.
+     * @throws DataKitException
+     */
     public Status subscribe(final DataSourceClient dataSourceClient, OnReceiveListener onReceiveListener) throws DataKitException {
         try {
             subscribeData = null;
@@ -288,6 +440,13 @@ class DataKitAPIExecute {
     }
 
 
+    /**
+     * Finds the desired data sources in the database.
+     *
+     * @param dataSourceBuilder Builder object for the desired data source
+     * @return ArrayList of <code>DataSourceClient</code> objects.
+     * @throws DataKitException
+     */
     public PendingResult<ArrayList<DataSourceClient>> find(final DataSourceBuilder dataSourceBuilder) throws DataKitException {
         PendingResult<ArrayList<DataSourceClient>> pendingResult = new PendingResult<ArrayList<DataSourceClient>>() {
             @Override
@@ -311,7 +470,18 @@ class DataKitAPIExecute {
         return pendingResult;
     }
 
-    public PendingResult<ArrayList<DataType>> query(final DataSourceClient dataSourceClient, final long starttimestamp, final long endtimestamp) throws DataKitException {
+    /**
+     * Queries the database for samples from the given data source during the given time frame.
+     *
+     * @param dataSourceClient Data source of the samples
+     * @param starttimestamp Beginning of the desired time frame.
+     * @param endtimestamp End of the desired time frame.
+     * @return An ArrayList of data types matching the query.
+     * @throws DataKitException
+     */
+    public PendingResult<ArrayList<DataType>> query(final DataSourceClient dataSourceClient,
+                                                    final long starttimestamp,
+                                                    final long endtimestamp) throws DataKitException {
         return new PendingResult<ArrayList<DataType>>() {
             @Override
             public ArrayList<DataType> await() {
@@ -334,7 +504,16 @@ class DataKitAPIExecute {
         };
     }
 
-    public PendingResult<ArrayList<DataType>> query(final DataSourceClient dataSourceClient, final int last_n_sample) throws DataKitException {
+    /**
+     * Queries the database for the latest number of samples from the desired data source.
+     *
+     * @param dataSourceClient Data source of the desired samples.
+     * @param last_n_sample Last n samples, n being a nonzero positive integer.
+     * @return An ArrayList of data types matching the query.
+     * @throws DataKitException
+     */
+    public PendingResult<ArrayList<DataType>> query(final DataSourceClient dataSourceClient,
+                                                    final int last_n_sample) throws DataKitException {
 
         return new PendingResult<ArrayList<DataType>>() {
             @Override
@@ -357,7 +536,18 @@ class DataKitAPIExecute {
         };
     }
 
-    public PendingResult<ArrayList<RowObject>> queryFromPrimaryKey(final DataSourceClient dataSourceClient, final long lastSyncedValue, final int limit) throws DataKitException {
+    /**
+     * Queries the database for certain rows.
+     *
+     * @param dataSourceClient Data source of desired samples
+     * @param lastSyncedValue Key of the desired row.
+     * @param limit Number of rows to return.
+     * @return An ArrayList of rows from the database.
+     * @throws DataKitException
+     */
+    public PendingResult<ArrayList<RowObject>> queryFromPrimaryKey(final DataSourceClient dataSourceClient,
+                                                                   final long lastSyncedValue,
+                                                                   final int limit) throws DataKitException {
         return new PendingResult<ArrayList<RowObject>>() {
             @Override
             public ArrayList<RowObject> await() {
@@ -381,6 +571,12 @@ class DataKitAPIExecute {
         };
     }
 
+    /**
+     * Determines the size of the query in number of columns.
+     *
+     * @return The size of the query.
+     * @throws DataKitException
+     */
     public PendingResult<DataTypeLong> querySize() throws DataKitException {
         return new PendingResult<DataTypeLong>() {
             @Override
@@ -402,6 +598,13 @@ class DataKitAPIExecute {
     }
 
 
+    /**
+     * Bundles a data source and it's samples and sends it to <code>DataKit</code>.
+     *
+     * @param dataSourceClient Data source to insert.
+     * @param dataTypes Array of data types to insert.
+     * @throws DataKitException
+     */
     public void insert(final DataSourceClient dataSourceClient, final DataType[] dataTypes) throws DataKitException {
         try {
             lock();
@@ -415,6 +618,14 @@ class DataKitAPIExecute {
             unlock();
         }
     }
+
+    /**
+     * Set the summary of the given data source.
+     *
+     * @param dataSourceClient Data source whose summary is being set.
+     * @param dataType
+     * @throws DataKitException
+     */
     public void setSummary(final DataSourceClient dataSourceClient, final DataType dataType) throws DataKitException {
         try {
             lock();
@@ -429,6 +640,13 @@ class DataKitAPIExecute {
         }
     }
 
+    /**
+     * Bundles high frequency samples and sends them to <code>DataKit</code>.
+     *
+     * @param ds_id Data source identifier.
+     * @param dataTypes Array of high frequency samples.
+     * @throws DataKitException
+     */
     public void insertHighFrequency(int ds_id, final DataTypeDoubleArray[] dataTypes) throws DataKitException {
         try {
             lock();
@@ -443,6 +661,12 @@ class DataKitAPIExecute {
         }
     }
 
+    /**
+     * Configures and builds the <code>Application</code> of the <code>DataSource</code>.
+     *
+     * @param dataSourceBuilder Builder for the desired data source.
+     * @return The desired data source.
+     */
     private DataSource prepareDataSource(DataSourceBuilder dataSourceBuilder) {
         String versionName = null;
         int versionNumber = 0;
@@ -456,14 +680,27 @@ class DataKitAPIExecute {
         ApplicationBuilder applicationBuilder;
         if (dataSourceBuilder.build().getApplication() == null)
             applicationBuilder = new ApplicationBuilder();
+
         else
             applicationBuilder = new ApplicationBuilder(dataSourceBuilder.build().getApplication());
-        Application application = applicationBuilder.setId(context.getPackageName()).setMetadata(METADATA.VERSION_NAME, versionName).setMetadata(METADATA.VERSION_NUMBER, String.valueOf(versionNumber)).build();
+        Application application = applicationBuilder.setId(context.getPackageName())
+                                                    .setMetadata(METADATA.VERSION_NAME, versionName)
+                                                    .setMetadata(METADATA.VERSION_NUMBER, String.valueOf(versionNumber))
+                                                    .build();
         dataSourceBuilder = dataSourceBuilder.setApplication(application);
         return dataSourceBuilder.build();
     }
 
+    /**
+     * Nested class for managing the remote service connection.
+     */
     private class RemoteServiceConnection implements ServiceConnection {
+        /**
+         * Creates a new <code>Messenger</code> for the connected service.
+         *
+         * @param component Identifier for the desired component.
+         * @param binder For binding the service's <code>Messenger</code> to the caller.
+         */
         @Override
         public void onServiceConnected(ComponentName component, IBinder binder) {
             sendMessenger = new Messenger(binder);
@@ -471,6 +708,11 @@ class DataKitAPIExecute {
             onConnectionListener.onConnected();
         }
 
+        /**
+         * Sets the service's <code>Messenger</code> to null.
+         *
+         * @param component Identifier for the desired component.
+         */
         @Override
         public void onServiceDisconnected(ComponentName component) {
             sendMessenger = null;
@@ -478,11 +720,29 @@ class DataKitAPIExecute {
         }
     }
 
+    /**
+     * Nested class for handling incoming messages.
+     */
     private class IncomingHandler extends Handler {
+
+        /**
+         * Constructor
+         *
+         * @param looper Looper to be bound to this handler.
+         */
         IncomingHandler(Looper looper) {
             super(looper);
         }
 
+        /**
+         * Determines what code to execute based on the incoming message's type.
+         *
+         * <p>
+         *     TODO: Enumerate and explain each case.
+         * </p>
+         *
+         * @param msg Received message.
+         */
         @Override
         public void handleMessage(Message msg) {
             if (!isConnected()) {

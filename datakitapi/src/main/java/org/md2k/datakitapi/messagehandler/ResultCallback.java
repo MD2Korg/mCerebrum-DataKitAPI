@@ -28,6 +28,8 @@
 package org.md2k.datakitapi.messagehandler;
 
 /**
+ * An interface for receiving a <code>Result</code> from a <code>PendingResult</code> as an asynchronous callback.
+ *
  * @param <R> Generic result.
  */
 public interface ResultCallback<R> {

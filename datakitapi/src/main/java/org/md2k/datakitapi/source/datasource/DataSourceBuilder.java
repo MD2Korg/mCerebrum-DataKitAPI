@@ -43,19 +43,24 @@ import java.util.Map;
  */
 public class DataSourceBuilder extends AbstractObjectBuilder {
 
-    /** Platform the data source collects data from. */
+    /** Platform application the data source collects data from. */
     public Platform platform = null;
 
     /**  */
     public PlatformApp platformApp = null;
 
-    /**  */
+    /** Android application */
     public Application application = null;
 
     /** Whether the data source is persistent. */
     public boolean persistent = true;
 
-    /**  */
+    /** List of data descriptors as sets of tuples
+     *
+     * <p>
+     *     The tuples describe the individual values of the data points.
+     * </p>
+     */
     public ArrayList<HashMap<String,String>> dataDescriptors=null;
 
 
