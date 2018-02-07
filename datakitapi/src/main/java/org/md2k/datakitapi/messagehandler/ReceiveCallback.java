@@ -27,6 +27,15 @@
 
 package org.md2k.datakitapi.messagehandler;
 
+/**
+ * Callback interface for receiving a result.
+ *
+ * @param <R> Generic result.
+ */
 public interface ReceiveCallback<R> {
+
+    /**
+     * @param receive The result that was received.
+     */
     void onReceive(R receive);
 }

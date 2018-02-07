@@ -135,7 +135,7 @@ public class DataKitAPI {
     }
 
     /**
-     * Checks if Data Kit is connected.
+     * Checks if Data Kit is connected to the calling application.
      *
      * @return Whether Data Kit is connected.
      */
@@ -144,8 +144,10 @@ public class DataKitAPI {
     }
 
     /**
-     * @param callerOnConnectionListener
-     * @throws DataKitException
+     * Connects <code>DataKit</code> to an outside calling application.
+     *
+     * @param callerOnConnectionListener Callback for connection verification.
+     * @throws DataKitException Thrown when <code>DataKit</code> is not installed.
      */
     public synchronized void connect(OnConnectionListener callerOnConnectionListener) throws DataKitException {
         if (!isInstalled(context, Constants.PACKAGE_NAME)) {
@@ -161,7 +163,7 @@ public class DataKitAPI {
      * Returns an ArrayList of <code>DataSourceClient</code> objects that match the given
      * <code>DataSourceBuilder</code>.
      *
-     * @param dataSourceBuilder
+     * @param dataSourceBuilder Builder object for the desired <code>DataSourceClient</code> objects.
      * @return An ArrayList of <code>DataSourceClient</code> objects.
      * @throws DataKitException Thrown if Data Kit is not connected, the builder is null, or the
      *                          clients are null.
@@ -183,9 +185,11 @@ public class DataKitAPI {
     }
 
     /**
-     * @param dataSourceClient
+     * Inserts data into <code>DataKit</code>.
+     *
+     * @param dataSourceClient Data source to insert.
      * @param dataType Type of data to insert.
-     * @throws DataKitException Thrown if Data Kit is not connected and if the <code>DataSourceClient</code>
+     * @throws DataKitException Thrown if <code>DataKit</code> is not connected and if the <code>DataSourceClient</code>
      *                          or the <code>DataType</code> are null.
      */
     public synchronized void insert(DataSourceClient dataSourceClient, DataType dataType) throws DataKitException {
@@ -201,6 +205,14 @@ public class DataKitAPI {
             dataKitAPIExecute.insert(dataSourceClient, dataTypes);
         }
     }
+
+    /**
+     * Sets the summary for the given data in <code>DataKit</code>.
+     *
+     * @param dataSourceClient Data source to summarize.
+     * @param dataType Type of the data in <code>dataSourceClient</code>.
+     * @throws DataKitException Thrown if <code>DataKit</code> is not connected or the data is invalid.
+     */
     public synchronized void setSummary(DataSourceClient dataSourceClient, DataType dataType) throws DataKitException {
         if (!dataKitAPIExecute.isConnected())
             throw new DataKitNotFoundException(new Status(Status.ERROR_BOUND));
@@ -211,6 +223,13 @@ public class DataKitAPI {
         }
     }
 
+    /**
+     * Inserts an array of data into <code>DataKit</code>.
+     *
+     * @param dataSourceClient Data source to insert.
+     * @param dataTypes Array of <code>DataType</code> objects.
+     * @throws DataKitException Thrown if <code>DataKit</code> is not connected or the data is invalid.
+     */
     public synchronized void insert(DataSourceClient dataSourceClient, DataType[] dataTypes) throws DataKitException {
         if (!dataKitAPIExecute.isConnected())
             throw new DataKitNotFoundException(new Status(Status.ERROR_BOUND));
@@ -218,7 +237,16 @@ public class DataKitAPI {
             throw new DataKitException(new Status(Status.DATA_INVALID).getStatusMessage());
         else dataKitAPIExecute.insert(dataSourceClient, dataTypes);
     }
-    public synchronized void insertHighFrequency(final DataSourceClient dataSourceClient, final DataTypeDoubleArray[] dataType) throws DataKitException {
+
+    /**
+     * Inserts the given data source into a high frequency buffer.
+     *
+     * @param dataSourceClient Data source to insert.
+     * @param dataType Double array of <code>DataType</code> objects.
+     * @throws DataKitException Thrown if <code>DataKit</code> is not connected or the data is invalid.
+     */
+    public synchronized void insertHighFrequency(final DataSourceClient dataSourceClient,
+                                                 final DataTypeDoubleArray[] dataType) throws DataKitException {
         if (!dataKitAPIExecute.isConnected())
             throw new DataKitNotFoundException(new Status(Status.ERROR_BOUND));
         if (dataSourceClient == null || dataType == null)
@@ -229,7 +257,15 @@ public class DataKitAPI {
         }
     }
 
-    public synchronized void insertHighFrequency(final DataSourceClient dataSourceClient, final DataTypeDoubleArray dataType) throws DataKitException {
+    /**
+     * Inserts the given data source into a high frequency buffer.
+     *
+     * @param dataSourceClient Data source to insert.
+     * @param dataType Double array of <code>DataType</code> objects.
+     * @throws DataKitException Thrown if <code>DataKit</code> is not connected or the data is invalid.
+     */
+    public synchronized void insertHighFrequency(final DataSourceClient dataSourceClient,
+                                                 final DataTypeDoubleArray dataType) throws DataKitException {
         if (!dataKitAPIExecute.isConnected())
             throw new DataKitNotFoundException(new Status(Status.ERROR_BOUND));
         if (dataSourceClient == null || dataType == null)
@@ -238,6 +274,17 @@ public class DataKitAPI {
             addToBuffer(dataSourceClient.getDs_id(), dataType);
     }
 
+    /**
+     * Adds the data type array to the buffer.
+     *
+     * <p>
+     *     If the buffer doesn't have enough room for the array to be stored, then it is first synced
+     *     with <code>DataKit</code>.
+     * </p>
+     *
+     * @param ds_id Data source identifier.
+     * @param dataTypeDoubleArray Array of <code>DataType</code> objects to add to the buffer.
+     */
     synchronized void addToBuffer(int ds_id, DataTypeDoubleArray dataTypeDoubleArray) {
         HFBuffer hfBuffer;
         if (hmHFBuffer.containsKey(ds_id))
@@ -245,15 +292,20 @@ public class DataKitAPI {
         else
             hfBuffer = new HFBuffer();
 
-        if(hfBuffer.size+dataTypeDoubleArray.getSample().length*8>=BUFFER_SIZE){
+        if(hfBuffer.size + dataTypeDoubleArray.getSample().length * 8 >= BUFFER_SIZE){
             syncHFData(ds_id);
-            hfBuffer=hmHFBuffer.get(ds_id);
+            hfBuffer = hmHFBuffer.get(ds_id);
         }
         hfBuffer.data.add(dataTypeDoubleArray);
         hfBuffer.size += dataTypeDoubleArray.getSample().length * 8;
         hmHFBuffer.put(ds_id, hfBuffer);
     }
 
+    /**
+     * Transfers the buffer data to an array and sends it to <code>DataKit</code>.
+     *
+     * @param ds_id Data source identifier.
+     */
     synchronized void syncHFData(int ds_id) {
         HFBuffer hfBuffer = hmHFBuffer.get(ds_id);
         if (hfBuffer.size == 0) return;
@@ -269,72 +321,148 @@ public class DataKitAPI {
         }
     }
 
+    /**
+     * Iterates through the entire buffer hashMap and syncs all entries to <code>DataKit</code>.
+     */
     synchronized void syncHFDataAll() {
         for (Map.Entry<Integer, HFBuffer> entry : hmHFBuffer.entrySet())
             syncHFData(entry.getKey());
     }
 
+    /**
+     * Registers a <code>DataSourceClient</code> with <code>DataKit</code> and returns that object.
+     *
+     * @param dataSourceBuilder Builder object of the desired <code>DataSourceClient</code>.
+     * @return The registered <code>DataSourceClient</code>.
+     * @throws DataKitException Thrown when <code>DataKit</code> is not installed or the data is invalid.
+     */
     public synchronized DataSourceClient register(final DataSourceBuilder dataSourceBuilder) throws DataKitException {
         if (!dataKitAPIExecute.isConnected())
             throw new DataKitNotFoundException(new Status(Status.ERROR_BOUND));
+
         if (dataSourceBuilder == null)
             throw new DataKitException(new Status(Status.DATA_INVALID).getStatusMessage());
+
         DataSourceClient dataSourceClient = dataKitAPIExecute.register(dataSourceBuilder).await();
+
         if (dataSourceClient == null || !dataKitAPIExecute.isConnected())
             throw new DataKitNotFoundException(new Status(Status.ERROR_BOUND));
+
         else return dataSourceClient;
     }
 
+    /**
+     * Unregisters the given data source from <code>DataKit</code>.
+     *
+     * @param dataSourceClient The data source to unregister.
+     * @return The status of the unregistering operation.
+     * @throws DataKitException Thrown when <code>DataKit</code> is not installed or the data is invalid.
+     */
     public synchronized Status unregister(final DataSourceClient dataSourceClient) throws DataKitException {
         if (!dataKitAPIExecute.isConnected())
             throw new DataKitNotFoundException(new Status(Status.ERROR_BOUND));
+
         if (dataSourceClient == null)
             throw new DataKitException(new Status(Status.DATA_INVALID).getStatusMessage());
+
         Status status = dataKitAPIExecute.unregister(dataSourceClient).await();
+
         if (status == null || !dataKitAPIExecute.isConnected())
             throw new DataKitNotFoundException(new Status(Status.ERROR_BOUND));
+
         else return status;
     }
 
-    public synchronized ArrayList<DataType> query(final DataSourceClient dataSourceClient, final int last_n_sample) throws DataKitException {
+    /**
+     * Queries <code>DataKit</code> for the last given number of sample from the given data source.
+     *
+     * @param dataSourceClient The data source whose data is being queried for.
+     * @param last_n_sample Last n samples to retrieve, n is a nonzero positive integer.
+     * @return An arrayList of the query results.
+     * @throws DataKitException Thrown when <code>DataKit</code> is not installed or the data is invalid.
+     */
+    public synchronized ArrayList<DataType> query(final DataSourceClient dataSourceClient,
+                                                  final int last_n_sample) throws DataKitException {
         if (!dataKitAPIExecute.isConnected())
             throw new DataKitNotFoundException(new Status(Status.ERROR_BOUND));
+
         if (dataSourceClient == null || last_n_sample == 0)
             throw new DataKitException(new Status(Status.DATA_INVALID).getStatusMessage());
+
         ArrayList<DataType> dataTypes = dataKitAPIExecute.query(dataSourceClient, last_n_sample).await();
+
         if (dataTypes == null || !dataKitAPIExecute.isConnected())
             throw new DataKitNotFoundException(new Status(Status.ERROR_BOUND));
+
         else return dataTypes;
     }
 
-    public synchronized ArrayList<DataType> query(DataSourceClient dataSourceClient, long starttimestamp, long endtimestamp) throws DataKitException {
+    /**
+     * Queries <code>DataKit</code> for samples from the given data source within the given time window.
+     *
+     * @param dataSourceClient The data source whose data is being queried for.
+     * @param starttimestamp The starting timestamp for the desired sampling window.
+     * @param endtimestamp The ending timestamp for the desired sampling window.
+     * @return An arrayList of the query results.
+     * @throws DataKitException Thrown when <code>DataKit</code> is not installed or the data is invalid.
+     */
+    public synchronized ArrayList<DataType> query(DataSourceClient dataSourceClient,
+                                                  long starttimestamp, long endtimestamp) throws DataKitException {
         if (!dataKitAPIExecute.isConnected())
             throw new DataKitNotFoundException(new Status(Status.ERROR_BOUND));
+
         if (dataSourceClient == null || starttimestamp > endtimestamp)
             throw new DataKitException(new Status(Status.DATA_INVALID).getStatusMessage());
+
         ArrayList<DataType> dataTypes = dataKitAPIExecute.query(dataSourceClient, starttimestamp, endtimestamp).await();
+
         if (dataTypes == null || !dataKitAPIExecute.isConnected())
             throw new DataKitNotFoundException(new Status(Status.ERROR_BOUND));
+
         else return dataTypes;
     }
 
-    public synchronized ArrayList<RowObject> queryFromPrimaryKey(DataSourceClient dataSourceClient, long lastSyncedKey, int limit) throws DataKitException {
+    /**
+     * Queries for rows from the database corresponding to the given <code>DataSourceClient</code>
+     * and <code>lastSyncedKey</code>.
+     *
+     * @param dataSourceClient The data source whose data is being queried for.
+     * @param lastSyncedKey Most recent key that was synce to <code>DataKit</code>.
+     * @param limit Number of rows to return.
+     * @return An arrayList of the query results.
+     * @throws DataKitException Thrown when <code>DataKit</code> is not installed or the data is invalid.
+     */
+    public synchronized ArrayList<RowObject> queryFromPrimaryKey(DataSourceClient dataSourceClient,
+                                                                 long lastSyncedKey, int limit) throws DataKitException {
         if (!dataKitAPIExecute.isConnected())
             throw new DataKitNotFoundException(new Status(Status.ERROR_BOUND));
+
         if (dataSourceClient == null)
             throw new DataKitException(new Status(Status.DATA_INVALID).getStatusMessage());
+
         ArrayList<RowObject> rowObjects = dataKitAPIExecute.queryFromPrimaryKey(dataSourceClient, lastSyncedKey, limit).await();
+
         if (rowObjects == null || !dataKitAPIExecute.isConnected())
             throw new DataKitNotFoundException(new Status(Status.ERROR_BOUND));
+
         else return rowObjects;
     }
 
+    /**
+     * Queries <code>DataKit</code> for the size of the database.
+     *
+     * @return The number of columns in the database.
+     * @throws DataKitException Thrown when <code>DataKit</code> is not installed or the data is invalid.
+     */
     public synchronized DataTypeLong querySize() throws DataKitException {
         if (!dataKitAPIExecute.isConnected())
             throw new DataKitNotFoundException(new Status(Status.ERROR_BOUND));
+
         DataTypeLong dataTypeLong = dataKitAPIExecute.querySize().await();
+
         if (dataTypeLong == null || !dataKitAPIExecute.isConnected())
             throw new DataKitNotFoundException(new Status(Status.ERROR_BOUND));
+
         else return dataTypeLong;
     }
 
@@ -346,13 +474,15 @@ public class DataKitAPI {
      * @throws DataKitException Thrown when <code>DataKit</code> isn't connected, when
      *                          <code>DataSourceClient</code> or <code>onReceiveListener</code> is null.
      */
-    public synchronized void subscribe(DataSourceClient dataSourceClient, OnReceiveListener onReceiveListener)
-            throws DataKitException {
+    public synchronized void subscribe(DataSourceClient dataSourceClient, OnReceiveListener onReceiveListener) throws DataKitException {
         if (!dataKitAPIExecute.isConnected())
             throw new DataKitNotFoundException(new Status(Status.ERROR_BOUND));
+
         if (dataSourceClient == null || onReceiveListener == null)
             throw new DataKitException(new Status(Status.DATA_INVALID).getStatusMessage());
+
         Status status = dataKitAPIExecute.subscribe(dataSourceClient, onReceiveListener);
+
         if (status == null || !dataKitAPIExecute.isConnected())
             throw new DataKitNotFoundException(new Status(Status.ERROR_BOUND));
     }
@@ -368,11 +498,15 @@ public class DataKitAPI {
     public synchronized Status unsubscribe(DataSourceClient dataSourceClient) throws DataKitException {
         if (!dataKitAPIExecute.isConnected())
             throw new DataKitNotFoundException(new Status(Status.ERROR_BOUND));
+
         if (dataSourceClient == null)
             throw new DataKitException(new Status(Status.DATA_INVALID).getStatusMessage());
+
         Status status = dataKitAPIExecute.unsubscribe(dataSourceClient.getDs_id()).await();
+
         if (status == null || !dataKitAPIExecute.isConnected())
             throw new DataKitNotFoundException(new Status(Status.ERROR_BOUND));
+
         else return status;
     }
 

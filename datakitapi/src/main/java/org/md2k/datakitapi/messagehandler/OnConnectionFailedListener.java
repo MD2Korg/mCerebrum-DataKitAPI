@@ -29,6 +29,14 @@ package org.md2k.datakitapi.messagehandler;
 
 import org.md2k.datakitapi.status.Status;
 
+/**
+ * Callback interface for failed connections.
+ */
 public interface OnConnectionFailedListener {
+
+
+    /**
+     * @param status Status of <code>DataKitAPI</code> and any data sources.
+     */
     void onConnectionFailed(Status status);
 }

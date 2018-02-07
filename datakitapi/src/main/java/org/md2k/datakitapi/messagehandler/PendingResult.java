@@ -27,6 +27,15 @@
 
 package org.md2k.datakitapi.messagehandler;
 
+/**
+ * Callback interface for pending results.
+ *
+ * @param <R> Generic result.
+ */
 public interface PendingResult<R> {
+
+    /**
+     * @return The result.
+     */
     R await();
 }

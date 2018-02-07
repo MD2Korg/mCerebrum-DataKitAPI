@@ -29,6 +29,13 @@ package org.md2k.datakitapi.messagehandler;
 
 import org.md2k.datakitapi.datatype.DataType;
 
+/**
+ * Callback interface for receiving data types.
+ */
 public interface OnReceiveListener {
+
+    /**
+     * @param dataType The data type that was received.
+     */
     void onReceived(DataType dataType);
 }

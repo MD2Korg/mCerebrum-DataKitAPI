@@ -27,6 +27,13 @@
 
 package org.md2k.datakitapi.messagehandler;
 
+/**
+ * @param <R> Generic result.
+ */
 public interface ResultCallback<R> {
+
+    /**
+     * @param result
+     */
     void onResult(R result);
 }

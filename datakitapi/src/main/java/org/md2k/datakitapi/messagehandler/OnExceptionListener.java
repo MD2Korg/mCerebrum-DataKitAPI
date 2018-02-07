@@ -29,6 +29,13 @@ package org.md2k.datakitapi.messagehandler;
 
 import org.md2k.datakitapi.status.Status;
 
+/**
+ * Callback interface for exceptions.
+ */
 public interface OnExceptionListener {
+
+    /**
+     * @param status Status of <code>DataKitAPI</code> and any data sources.
+     */
     void onException(Status status);
 }

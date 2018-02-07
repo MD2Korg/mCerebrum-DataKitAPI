@@ -37,7 +37,7 @@ import org.json.JSONObject;
 
 
 /**
- *
+ * Object representing a row from the <code>DataKit</code>database.
  */
 public class RowObject implements Parcelable{
 

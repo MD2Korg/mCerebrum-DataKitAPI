@@ -27,6 +27,9 @@
 
 package org.md2k.datakitapi.messagehandler;
 
+/**
+ * Callback interface for connection verification.
+ */
 public interface OnConnectionListener {
     void onConnected();
 }
