@@ -53,7 +53,7 @@ public class DataSourceType {
     /** Location sensor <p><code>"LOCATION"</code></p> */
     public static final String LOCATION = "LOCATION";
 
-    /** Geofence sensor <p><code>"GEOFENCE"</code></p> */
+    /** Geofence <p><code>"GEOFENCE"</code></p> */
     public static final String GEOFENCE = "GEOFENCE";
 
     /** Distance sensor <p><code>"DISTANCE"</code></p> */
@@ -71,7 +71,7 @@ public class DataSourceType {
     /** Pace sensor <p><code>"PACE"</code></p> */
     public static final String PACE = "PACE";
 
-    /** Motion type sensor <p><code>"MOTION_TYPE"</code></p> */
+    /** Motion type interface <p><code>"MOTION_TYPE"</code></p> */
     public static final String MOTION_TYPE = "MOTION_TYPE";
 
     /** Ultraviolet radiation sensor <p><code>"ULTRA_VIOLET_RADIATION"</code></p> */
@@ -81,7 +81,8 @@ public class DataSourceType {
     public static final String BAND_CONTACT = "BAND_CONTACT";
 
     /** Calorie burn sensor <p><code>"CALORIE_BURN"</code></p>  */
-    public static final String CALORIE_BURN = "CALORIE_BURN";
+    // TODO: Fix spelling of calorie.
+    public static final String CALORY_BURN = "CALORY_BURN";
 
     /** Electrocardiography sensor <p><code>"ECG"</code></p>*/
     public static final String ECG = "ECG";
@@ -111,16 +112,16 @@ public class DataSourceType {
     /** Skin temperature sensor <p><code>"SKIN_TEMPERATURE"</code></p> */
     public static final String SKIN_TEMPERATURE = "SKIN_TEMPERATURE";
 
-    /** Battery usage sensor <p><code>"BATTERY"</code></p> */
+    /** Battery usage <p><code>"BATTERY"</code></p> */
     public static final String BATTERY = "BATTERY";
 
-    /** CPU usage sensor <p><code>"CPU"</code></p> */
+    /** CPU usage <p><code>"CPU"</code></p> */
     public static final String CPU = "CPU";
 
-    /** Memory usage sensor <p><code>"MEMORY"</code></p> */
+    /** Memory usage <p><code>"MEMORY"</code></p> */
     public static final String MEMORY = "MEMORY";
 
-    /** Autosense sensor <p><code>"AUTOSENSE"</code></p> */
+    /** Autosense device <p><code>"AUTOSENSE"</code></p> */
     public static final String AUTOSENSE = "AUTOSENSE";
 
     /** X axis of the accelerometer <p><code>"ACCELEROMETER_X"</code></p> */
@@ -141,7 +142,7 @@ public class DataSourceType {
     /** Z axis of the gyroscope <p><code>"GYROSCOPE_Z"</code></p> */
     public static final String GYROSCOPE_Z = "GYROSCOPE_Z";
 
-    /** TODO: Not sure what sensor this is... <p><code>"EMA"</code></p> */
+    /** Ecological Momentary Assessment <p><code>"EMA"</code></p> */
     public static final String EMA = "EMA";
 
     /** Status <p><code>"STATUS"</code></p> */
@@ -162,10 +163,10 @@ public class DataSourceType {
     /** User information <p><code>"USER_INFO"</code></p> */
     public static final String USER_INFO = "USER_INFO";
 
-    /** Sleep sensor <p><code>"SLEEP"</code></p> */
+    /** Sleep time <p><code>"SLEEP"</code></p> */
     public static final String SLEEP = "SLEEP";
 
-    /** Wakeup sensor <p><code>"WAKEUP"</code></p> */
+    /** Wakeup time <p><code>"WAKEUP"</code></p> */
     public static final String WAKEUP = "WAKEUP";
 
     /** Day start <p><code>"DAY_START"</code></p> */
@@ -240,11 +241,11 @@ public class DataSourceType {
     public static final String PUFFMARKER_SMOKING_EPISODE = "PUFFMARKER_SMOKING_EPISODE";
 
 
-    /** Request of a smoking episode <p><code>"PUFFMARKER_SMOKING_EPISODE"</code></p> */
-    public static final String NOTIFICATION_REQUEST = "PUFFMARKER_SMOKING_EPISODE";
+    /** Request of a notification <p><code>"NOTIFICATION_REQUEST"</code></p> */
+    public static final String NOTIFICATION_REQUEST = "NOTIFICATION_REQUEST";
 
-    /** Acknowledgement of a smoking episode <p><code>"PUFFMARKER_SMOKING_EPISODE"</code></p> */
-    public static final String NOTIFICATION_ACKNOWLEDGE = "PUFFMARKER_SMOKING_EPISODE";
+    /** Acknowledgement of a notification <p><code>"NOTIFICATION_ACKNOWLEDGE"</code></p> */
+    public static final String NOTIFICATION_ACKNOWLEDGE = "NOTIFICATION_ACKNOWLEDGE";
 
     /** Notification response <p><code>"NOTIFICATION_RESPONSE"</code></p> */
     public static final String NOTIFICATION_RESPONSE = "NOTIFICATION_RESPONSE";
