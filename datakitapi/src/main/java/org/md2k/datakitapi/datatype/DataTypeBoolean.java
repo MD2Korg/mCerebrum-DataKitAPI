@@ -48,13 +48,8 @@ public class DataTypeBoolean extends  DataType implements Parcelable{
      */
     public DataTypeBoolean(long timestamp, boolean sample) {
         super(timestamp);
-        this.sample=sample;
+        this.sample = sample;
     }
-
-    /**
-     * TODO: Testing for breakage.
-     */
-    // public DataTypeBoolean(){}
 
     /**
      * Constructs a <code>DataTypeBoolean</code> object from a <code>Parcel</code>.
@@ -87,6 +82,13 @@ public class DataTypeBoolean extends  DataType implements Parcelable{
     }
 
     /**
+     * @return The the value of the sample.
+     */
+    public boolean getSample(){
+        return sample;
+    }
+
+    /**
      * <code>Creator</code> for <code>DataTypeBoolean</code> objects.
      */
     public static final Creator<DataTypeBoolean> CREATOR = new Creator<DataTypeBoolean>() {
@@ -113,11 +115,4 @@ public class DataTypeBoolean extends  DataType implements Parcelable{
             return new DataTypeBoolean[size];
         }
     };
-
-    /**
-     * @return The the value of the sample.
-     */
-    public boolean getSample(){
-        return sample;
-    }
 }

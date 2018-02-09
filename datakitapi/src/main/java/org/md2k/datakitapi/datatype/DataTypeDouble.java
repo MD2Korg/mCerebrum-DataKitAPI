@@ -52,11 +52,6 @@ public class DataTypeDouble extends DataType implements Parcelable {
     }
 
     /**
-     * TODO: Not used. Can remove?
-     */
-    public DataTypeDouble(){}
-
-    /**
      * Constructs a <code>DataTypeDouble</code> object from a <code>Parcel</code>.
      *
      * @param in Parceled <code>DataTypeDouble</code> object.
@@ -86,6 +81,14 @@ public class DataTypeDouble extends DataType implements Parcelable {
         return 0;
     }
 
+
+    /**
+     * @return The the value of the sample.
+     */
+    public double getSample() {
+        return sample;
+    }
+
     /**
      * <code>Creator</code> for <code>DataTypeDouble</code> objects.
      */
@@ -113,11 +116,4 @@ public class DataTypeDouble extends DataType implements Parcelable {
             return new DataTypeDouble[size];
         }
     };
-
-    /**
-     * @return The the value of the sample.
-     */
-    public double getSample() {
-        return sample;
-    }
 }

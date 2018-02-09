@@ -40,6 +40,64 @@ import org.md2k.datakitapi.time.DateTime;
 @JsonObject(fieldDetectionPolicy = JsonObject.FieldDetectionPolicy.NONPRIVATE_FIELDS)
 public class DataType implements Parcelable{
 
+    /** The timestamp for when the data was collected */
+    long dateTime;
+
+    /** The amount of time in milliseconds to add to UTC to get standard time in this time zone. */
+    long offset;
+
+    /**
+     * Constructor
+     */
+    public DataType(){}
+
+    /**
+     * Constructs a <code>DataType</code> object with a <code>dataTime</code>.
+     *
+     * @param dateTime The timestamp for when the data was collected.
+     */
+    public DataType(long dateTime) {
+        this.dateTime = dateTime;
+        this.offset = DateTime.getTimeZoneOffset();
+    }
+
+    /**
+     * Constructs a <code>DataType</code> object from a <code>Parcel</code>.
+     *
+     * @param in Parceled <code>DataType</code> object.
+     */
+    protected DataType(Parcel in) {
+        dateTime = in.readLong();
+        offset = in.readLong();
+    }
+
+    /**
+     * @return Always returns 0.
+     */
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    /**
+     * Writes the <code>DataType</code> to a parcel.
+     *
+     * @param dest The parcel to which the application should be written.
+     * @param flags Additional flags about how the object should be written.
+     */
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeLong(dateTime);
+        dest.writeLong(offset);
+    }
+
+    /**
+     * @return The timestamp of the <code>DataType</code>.
+     */
+    public long getDateTime() {
+        return dateTime;
+    }
+
     /**
      * <code>Creator</code> for <code>DataType</code> objects.
      */
@@ -67,62 +125,4 @@ public class DataType implements Parcelable{
             return new DataType[size];
         }
     };
-
-    /** The timestamp for when the data was collected */
-    long dateTime;
-
-    /** The amount of time in milliseconds to add to UTC to get standard time in this time zone. */
-    long offset;
-
-    /**
-     * Constructs a <code>DataType</code> object with a <code>dataTime</code>.
-     *
-     * @param dateTime The timestamp for when the data was collected.
-     */
-    public DataType(long dateTime) {
-        this.dateTime = dateTime;
-        this.offset= DateTime.getTimeZoneOffset();
-    }
-
-    /**
-     * TODO: Not used. Can remove?
-     */
-    public DataType(){}
-
-    /**
-     * Constructs a <code>DataType</code> object from a <code>Parcel</code>.
-     *
-     * @param in Parceled <code>DataType</code> object.
-     */
-    protected DataType(Parcel in) {
-        dateTime = in.readLong();
-        offset = in.readLong();
-    }
-
-    /**
-     * @return The timestamp of the <code>DataType</code>.
-     */
-    public long getDateTime() {
-        return dateTime;
-    }
-
-    /**
-     * @return Always returns 0.
-     */
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    /**
-     * Writes the <code>DataType</code> to a parcel.
-     *
-     * @param dest The parcel to which the application should be written.
-     * @param flags Additional flags about how the object should be written.
-     */
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        dest.writeLong(dateTime);
-        dest.writeLong(offset);
-    }
 }

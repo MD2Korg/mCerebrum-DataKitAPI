@@ -48,13 +48,8 @@ public class DataTypeLong extends  DataType implements Parcelable{
      */
     public DataTypeLong(long timestamp, long sample) {
         super(timestamp);
-        this.sample=sample;
+        this.sample = sample;
     }
-
-    /**
-     * TODO: Not used. Can remove?
-     */
-    public DataTypeLong(){}
 
     /**
      * Constructs a <code>DataTypeLong</code> object from a <code>Parcel</code>.
@@ -87,6 +82,13 @@ public class DataTypeLong extends  DataType implements Parcelable{
     }
 
     /**
+     * @return The the value of the sample.
+     */
+    public long getSample(){
+        return sample;
+    }
+
+    /**
      * <code>Creator</code> for <code>DataTypeLong</code> objects.
      */
     public static final Creator<DataTypeLong> CREATOR = new Creator<DataTypeLong>() {
@@ -113,11 +115,4 @@ public class DataTypeLong extends  DataType implements Parcelable{
             return new DataTypeLong[size];
         }
     };
-
-    /**
-     * @return The the value of the sample.
-     */
-    public long getSample(){
-        return sample;
-    }
 }

@@ -52,11 +52,6 @@ public class DataTypeByteArray extends  DataType implements Parcelable{
     }
 
     /**
-     * TODO: Not used. Can remove?
-     */
-    public DataTypeByteArray(){}
-
-    /**
      * Constructs a <code>DataTypeByteArray</code> object from a <code>Parcel</code>.
      *
      * @param in Parceled <code>DataTypeByteArray</code> object.
@@ -87,6 +82,11 @@ public class DataTypeByteArray extends  DataType implements Parcelable{
     }
 
     /**
+     * @return The the value of the sample.
+     */
+    public byte[] getSample(){ return sample; }
+
+    /**
      * <code>Creator</code> for <code>DataTypeByteArray</code> objects.
      */
     public static final Creator<DataTypeByteArray> CREATOR = new Creator<DataTypeByteArray>() {
@@ -113,11 +113,4 @@ public class DataTypeByteArray extends  DataType implements Parcelable{
             return new DataTypeByteArray[size];
         }
     };
-
-    /**
-     * @return The the value of the sample.
-     */
-    public byte[] getSample(){
-        return sample;
-    }
 }

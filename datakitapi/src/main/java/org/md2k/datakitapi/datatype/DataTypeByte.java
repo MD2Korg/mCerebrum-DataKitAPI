@@ -52,11 +52,6 @@ public class DataTypeByte extends DataType implements Parcelable {
     }
 
     /**
-     * TODO: Not used. Can remove?
-     */
-    public DataTypeByte(){}
-
-    /**
      * Constructs a <code>DataTypeByte</code> object from a <code>Parcel</code>.
      *
      * @param in Parceled <code>DataTypeByte</code> object.
@@ -87,6 +82,13 @@ public class DataTypeByte extends DataType implements Parcelable {
     }
 
     /**
+     * @return The the value of the sample.
+     */
+    public byte getSample() {
+        return sample;
+    }
+
+    /**
      * <code>Creator</code> for <code>DataTypeByte</code> objects.
      */
     public static final Creator<DataTypeByte> CREATOR = new Creator<DataTypeByte>() {
@@ -113,11 +115,4 @@ public class DataTypeByte extends DataType implements Parcelable {
             return new DataTypeByte[size];
         }
     };
-
-    /**
-     * @return The the value of the sample.
-     */
-    public byte getSample() {
-        return sample;
-    }
 }

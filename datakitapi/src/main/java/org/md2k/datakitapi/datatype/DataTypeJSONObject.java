@@ -39,36 +39,6 @@ import com.google.gson.JsonParser;
 public class DataTypeJSONObject extends DataType implements Parcelable {
 
     /**
-     * <code>Creator</code> for <code>DataTypeJSONObject</code> objects.
-     *
-     * TODO: Consider putting this block (lines 45 - 68) down to the bottom of the class to be consistant with the other classes.
-     */
-    public static final Creator<DataTypeJSONObject> CREATOR = new Creator<DataTypeJSONObject>() {
-
-        /**
-         * Creates a new <code>DataTypeJSONObject</code> object from a <code>Parcel</code>.
-         *
-         * @param in The parcel holding the data type.
-         * @return The constructed <code>DataTypeJSONObject</code> object
-         */
-        @Override
-        public DataTypeJSONObject createFromParcel(Parcel in) {
-            return new DataTypeJSONObject(in);
-        }
-
-        /**
-         * Creates a new array of the specified size for <code>DataTypeJSONObject</code> objects.
-         *
-         * @param size The size of the new <code>DataTypeJSONObject</code> array.
-         * @return The <code>DataTypeJSONObject</code> array.
-         */
-        @Override
-        public DataTypeJSONObject[] newArray(int size) {
-            return new DataTypeJSONObject[size];
-        }
-    };
-
-    /**
      * The data point collected from the data source.
      */
     String sample;
@@ -82,12 +52,6 @@ public class DataTypeJSONObject extends DataType implements Parcelable {
     public DataTypeJSONObject(long timestamp, JsonObject sample) {
         super(timestamp);
         this.sample = sample.toString();
-    }
-
-    /**
-     * TODO: Not used. Can remove?
-     */
-    public DataTypeJSONObject() {
     }
 
     /**
@@ -126,4 +90,32 @@ public class DataTypeJSONObject extends DataType implements Parcelable {
     public JsonObject getSample() {
         return new JsonParser().parse(sample).getAsJsonObject();
     }
+
+    /**
+     * <code>Creator</code> for <code>DataTypeJSONObject</code> objects.
+     */
+    public static final Creator<DataTypeJSONObject> CREATOR = new Creator<DataTypeJSONObject>() {
+
+        /**
+         * Creates a new <code>DataTypeJSONObject</code> object from a <code>Parcel</code>.
+         *
+         * @param in The parcel holding the data type.
+         * @return The constructed <code>DataTypeJSONObject</code> object
+         */
+        @Override
+        public DataTypeJSONObject createFromParcel(Parcel in) {
+            return new DataTypeJSONObject(in);
+        }
+
+        /**
+         * Creates a new array of the specified size for <code>DataTypeJSONObject</code> objects.
+         *
+         * @param size The size of the new <code>DataTypeJSONObject</code> array.
+         * @return The <code>DataTypeJSONObject</code> array.
+         */
+        @Override
+        public DataTypeJSONObject[] newArray(int size) {
+            return new DataTypeJSONObject[size];
+        }
+    };
 }

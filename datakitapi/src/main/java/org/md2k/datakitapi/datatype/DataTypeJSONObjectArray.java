@@ -39,36 +39,6 @@ import com.google.gson.JsonParser;
 public class DataTypeJSONObjectArray extends DataType implements Parcelable {
 
     /**
-     * <code>Creator</code> for <code>DataTypeJSONObjectArray</code> objects.
-     *
-     * TODO: Consider putting this block (lines 45 - 68) down to the bottom of the class to be consistant with the other classes.
-     */
-    public static final Creator<DataTypeJSONObjectArray> CREATOR = new Creator<DataTypeJSONObjectArray>() {
-
-        /**
-         * Creates a new <code>DataTypeJSONObjectArray</code> object from a <code>Parcel</code>.
-         *
-         * @param in The parcel holding the data type.
-         * @return The constructed <code>DataTypeJSONObjectArray</code> object
-         */
-        @Override
-        public DataTypeJSONObjectArray createFromParcel(Parcel in) {
-            return new DataTypeJSONObjectArray(in);
-        }
-
-        /**
-         * Creates a new array of the specified size for <code>DataTypeJSONObjectArray</code> objects.
-         *
-         * @param size The size of the new <code>DataTypeJSONObjectArray</code> array.
-         * @return The <code>DataTypeJSONObjectArray</code> array.
-         */
-        @Override
-        public DataTypeJSONObjectArray[] newArray(int size) {
-            return new DataTypeJSONObjectArray[size];
-        }
-    };
-
-    /**
      * The data point collected from the data source.
      */
     JsonArray sample;
@@ -82,12 +52,6 @@ public class DataTypeJSONObjectArray extends DataType implements Parcelable {
     public DataTypeJSONObjectArray(long timestamp, JsonArray sample) {
         super(timestamp);
         this.sample = sample;
-    }
-
-    /**
-     * TODO: Not used. Can remove?
-     */
-    public DataTypeJSONObjectArray() {
     }
 
     /**
@@ -126,4 +90,32 @@ public class DataTypeJSONObjectArray extends DataType implements Parcelable {
     public JsonArray getSample() {
         return sample;
     }
+
+    /**
+     * <code>Creator</code> for <code>DataTypeJSONObjectArray</code> objects.
+     */
+    public static final Creator<DataTypeJSONObjectArray> CREATOR = new Creator<DataTypeJSONObjectArray>() {
+
+        /**
+         * Creates a new <code>DataTypeJSONObjectArray</code> object from a <code>Parcel</code>.
+         *
+         * @param in The parcel holding the data type.
+         * @return The constructed <code>DataTypeJSONObjectArray</code> object
+         */
+        @Override
+        public DataTypeJSONObjectArray createFromParcel(Parcel in) {
+            return new DataTypeJSONObjectArray(in);
+        }
+
+        /**
+         * Creates a new array of the specified size for <code>DataTypeJSONObjectArray</code> objects.
+         *
+         * @param size The size of the new <code>DataTypeJSONObjectArray</code> array.
+         * @return The <code>DataTypeJSONObjectArray</code> array.
+         */
+        @Override
+        public DataTypeJSONObjectArray[] newArray(int size) {
+            return new DataTypeJSONObjectArray[size];
+        }
+    };
 }

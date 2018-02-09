@@ -52,11 +52,6 @@ public class DataTypeBooleanArray extends DataType implements Parcelable {
     }
 
     /**
-     * TODO: Not used. Can remove?
-     */
-    public DataTypeBooleanArray(){}
-
-    /**
      * Constructs a <code>DataTypeBooleanArray</code> object from a <code>Parcel</code>.
      *
      * @param in Parceled <code>DataTypeBooleanArray</code> object.
@@ -87,6 +82,13 @@ public class DataTypeBooleanArray extends DataType implements Parcelable {
     }
 
     /**
+     * @return The the value of the sample.
+     */
+    public boolean[] getSample() {
+        return sample;
+    }
+
+    /**
      * <code>Creator</code> for <code>DataTypeBooleanArray</code> objects.
      */
     public static final Creator<DataTypeBooleanArray> CREATOR = new Creator<DataTypeBooleanArray>() {
@@ -113,11 +115,4 @@ public class DataTypeBooleanArray extends DataType implements Parcelable {
             return new DataTypeBooleanArray[size];
         }
     };
-
-    /**
-     * @return The the value of the sample.
-     */
-    public boolean[] getSample() {
-        return sample;
-    }
 }

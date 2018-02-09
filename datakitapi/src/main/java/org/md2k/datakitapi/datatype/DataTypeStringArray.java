@@ -52,11 +52,6 @@ public class DataTypeStringArray extends DataType implements Parcelable {
     }
 
     /**
-     * TODO: Not used. Can remove?
-     */
-    public DataTypeStringArray(){}
-
-    /**
      * Constructs a <code>DataTypeStringArray</code> object from a <code>Parcel</code>.
      *
      * @param in Parceled <code>DataTypeStringArray</code> object.
@@ -86,6 +81,14 @@ public class DataTypeStringArray extends DataType implements Parcelable {
         return 0;
     }
 
+
+    /**
+     * @return The the value of the sample.
+     */
+    public String[] getSample() {
+        return sample;
+    }
+
     /**
      * <code>Creator</code> for <code>DataTypeStringArray</code> objects.
      */
@@ -113,11 +116,4 @@ public class DataTypeStringArray extends DataType implements Parcelable {
             return new DataTypeStringArray[size];
         }
     };
-
-    /**
-     * @return The the value of the sample.
-     */
-    public String[] getSample() {
-        return sample;
-    }
 }

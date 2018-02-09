@@ -52,11 +52,6 @@ public class DataTypeFloatArray extends  DataType implements Parcelable{
     }
 
     /**
-     * TODO: Not used. Can remove?
-     */
-    public DataTypeFloatArray(){}
-
-    /**
      * Constructs a <code>DataTypeFloatArray</code> object from a <code>Parcel</code>.
      *
      * @param in Parceled <code>DataTypeFloatArray</code> object.
@@ -87,6 +82,13 @@ public class DataTypeFloatArray extends  DataType implements Parcelable{
     }
 
     /**
+     * @return The the value of the sample.
+     */
+    public float[] getSample(){
+        return sample;
+    }
+
+    /**
      * <code>Creator</code> for <code>DataTypeFloatArray</code> objects.
      */
     public static final Creator<DataTypeFloatArray> CREATOR = new Creator<DataTypeFloatArray>() {
@@ -113,11 +115,4 @@ public class DataTypeFloatArray extends  DataType implements Parcelable{
             return new DataTypeFloatArray[size];
         }
     };
-
-    /**
-     * @return The the value of the sample.
-     */
-    public float[] getSample(){
-        return sample;
-    }
 }

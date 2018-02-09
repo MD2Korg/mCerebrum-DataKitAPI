@@ -52,11 +52,6 @@ public class DataTypeLongArray extends DataType implements Parcelable {
     }
 
     /**
-     * TODO: Not used. Can remove?
-     */
-    public DataTypeLongArray(){}
-
-    /**
      * Constructs a <code>DataTypeLongArray</code> object from a <code>Parcel</code>.
      *
      * @param in Parceled <code>DataTypeLongArray</code> object.
@@ -87,6 +82,13 @@ public class DataTypeLongArray extends DataType implements Parcelable {
     }
 
     /**
+     * @return The the value of the sample.
+     */
+    public long[] getSample() {
+        return sample;
+    }
+
+    /**
      * <code>Creator</code> for <code>DataTypeLongArray</code> objects.
      */
     public static final Creator<DataTypeLongArray> CREATOR = new Creator<DataTypeLongArray>() {
@@ -113,11 +115,4 @@ public class DataTypeLongArray extends DataType implements Parcelable {
             return new DataTypeLongArray[size];
         }
     };
-
-    /**
-     * @return The the value of the sample.
-     */
-    public long[] getSample() {
-        return sample;
-    }
 }

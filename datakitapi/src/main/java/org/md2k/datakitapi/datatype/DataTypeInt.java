@@ -52,11 +52,6 @@ public class DataTypeInt extends  DataType implements Parcelable{
     }
 
     /**
-     * TODO: Not used. Can remove?
-     */
-    public DataTypeInt(){}
-
-    /**
      * Constructs a <code>DataTypeInt</code> object from a <code>Parcel</code>.
      *
      * @param in Parceled <code>DataTypeInt</code> object.
@@ -87,6 +82,13 @@ public class DataTypeInt extends  DataType implements Parcelable{
     }
 
     /**
+     * @return The the value of the sample.
+     */
+    public int getSample(){
+        return sample;
+    }
+
+    /**
      * <code>Creator</code> for <code>DataTypeInt</code> objects.
      */
     public static final Creator<DataTypeInt> CREATOR = new Creator<DataTypeInt>() {
@@ -113,11 +115,4 @@ public class DataTypeInt extends  DataType implements Parcelable{
             return new DataTypeInt[size];
         }
     };
-
-    /**
-     * @return The the value of the sample.
-     */
-    public int getSample(){
-        return sample;
-    }
 }

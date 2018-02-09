@@ -38,36 +38,6 @@ import java.nio.ByteBuffer;
 public class DataTypeDoubleArray extends  DataType implements Parcelable{
 
     /**
-     * <code>Creator</code> for <code>DataTypeDouble</code> objects.
-     *
-     * TODO: Consider putting this block (lines 45 - 68) down to the bottom of the class to be consistant with the other classes.
-     */
-    public static final Creator<DataTypeDoubleArray> CREATOR = new Creator<DataTypeDoubleArray>() {
-
-        /**
-         * Creates a new <code>DataTypeDouble</code> object from a <code>Parcel</code>.
-         *
-         * @param in The parcel holding the data type.
-         * @return The constructed <code>DataTypeDouble</code> object
-         */
-        @Override
-        public DataTypeDoubleArray createFromParcel(Parcel in) {
-            return new DataTypeDoubleArray(in);
-        }
-
-        /**
-         * Creates a new array of the specified size for <code>DataTypeDouble</code> objects.
-         *
-         * @param size The size of the new <code>DataTypeDouble</code> array.
-         * @return The <code>DataTypeDouble</code> array.
-         */
-        @Override
-        public DataTypeDoubleArray[] newArray(int size) {
-            return new DataTypeDoubleArray[size];
-        }
-    };
-
-    /**
      * The data point collected from the data source.
      */
     double[] sample;
@@ -80,14 +50,8 @@ public class DataTypeDoubleArray extends  DataType implements Parcelable{
      */
     public DataTypeDoubleArray(long timestamp, double[] sample) {
         super(timestamp);
-        this.sample=sample;
+        this.sample = sample;
     }
-
-    /**
-     * TODO: Not used. Can remove?
-     */
-    public DataTypeDoubleArray(){}
-
 
     /**
      * Constructor
@@ -108,23 +72,6 @@ public class DataTypeDoubleArray extends  DataType implements Parcelable{
     protected DataTypeDoubleArray(Parcel in) {
         super(in);
         sample = in.createDoubleArray();
-
-    }
-
-    /**
-     * Constructs a <code>DataTypeDoubleArray</code> from a byte array.
-     *
-     * @param timestamp The timestamp for when the data was collected.
-     * @param data The byte array to construct from.
-     * @return The new <code>DataTypeDoubleArray</code>.
-     */
-    static public DataTypeDoubleArray fromRawBytes(long timestamp, byte[] data) {
-
-        double[] sample = new double[data.length / 8];
-        for (int i = 0; i < sample.length; i++) {
-            sample[i] = ByteBuffer.wrap(data, i * 8, 8).getDouble();
-        }
-        return new DataTypeDoubleArray(timestamp, sample);
 
     }
 
@@ -167,8 +114,50 @@ public class DataTypeDoubleArray extends  DataType implements Parcelable{
         for (int i = 0; i < sample.length; i++) {
             ByteBuffer.wrap(data, i * 8, 8).putDouble(sample[i]);
         }
-
         return data;
     }
 
+    /**
+     * Constructs a <code>DataTypeDoubleArray</code> from a byte array.
+     *
+     * @param timestamp The timestamp for when the data was collected.
+     * @param data The byte array to construct from.
+     * @return The new <code>DataTypeDoubleArray</code>.
+     */
+    static public DataTypeDoubleArray fromRawBytes(long timestamp, byte[] data) {
+
+        double[] sample = new double[data.length / 8];
+        for (int i = 0; i < sample.length; i++) {
+            sample[i] = ByteBuffer.wrap(data, i * 8, 8).getDouble();
+        }
+        return new DataTypeDoubleArray(timestamp, sample);
+    }
+
+    /**
+     * <code>Creator</code> for <code>DataTypeDouble</code> objects.
+     */
+    public static final Creator<DataTypeDoubleArray> CREATOR = new Creator<DataTypeDoubleArray>() {
+
+        /**
+         * Creates a new <code>DataTypeDouble</code> object from a <code>Parcel</code>.
+         *
+         * @param in The parcel holding the data type.
+         * @return The constructed <code>DataTypeDouble</code> object
+         */
+        @Override
+        public DataTypeDoubleArray createFromParcel(Parcel in) {
+            return new DataTypeDoubleArray(in);
+        }
+
+        /**
+         * Creates a new array of the specified size for <code>DataTypeDouble</code> objects.
+         *
+         * @param size The size of the new <code>DataTypeDouble</code> array.
+         * @return The <code>DataTypeDouble</code> array.
+         */
+        @Override
+        public DataTypeDoubleArray[] newArray(int size) {
+            return new DataTypeDoubleArray[size];
+        }
+    };
 }

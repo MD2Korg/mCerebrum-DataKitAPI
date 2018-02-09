@@ -48,13 +48,8 @@ public class DataTypeIntArray extends  DataType implements Parcelable{
      */
     public DataTypeIntArray(long timestamp, int[] sample) {
         super(timestamp);
-        this.sample=sample;
+        this.sample = sample;
     }
-
-    /**
-     * TODO: Not used. Can remove?
-     */
-    public DataTypeIntArray(){}
 
     /**
      * Constructs a <code>DataTypeByteArray</code> object from a <code>Parcel</code>.
@@ -87,6 +82,13 @@ public class DataTypeIntArray extends  DataType implements Parcelable{
     }
 
     /**
+     * @return The the value of the sample.
+     */
+    public int[] getSample(){
+        return sample;
+    }
+
+    /**
      * <code>Creator</code> for <code>DataTypeByteArray</code> objects.
      */
     public static final Creator<DataTypeIntArray> CREATOR = new Creator<DataTypeIntArray>() {
@@ -113,12 +115,4 @@ public class DataTypeIntArray extends  DataType implements Parcelable{
             return new DataTypeIntArray[size];
         }
     };
-
-    /**
-     * @return The the value of the sample.
-     */
-    public int[] getSample(){
-        return sample;
-    }
-
 }

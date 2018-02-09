@@ -48,13 +48,8 @@ public class DataTypeString extends  DataType implements Parcelable{
      */
     public DataTypeString(long timestamp, String sample) {
         super(timestamp);
-        this.sample=sample;
+        this.sample = sample;
     }
-
-    /**
-     * TODO: Not used. Can remove?
-     */
-    public DataTypeString(){}
 
     /**
      * Constructs a <code>DataTypeString</code> object from a <code>Parcel</code>.
@@ -87,6 +82,13 @@ public class DataTypeString extends  DataType implements Parcelable{
     }
 
     /**
+     * @return The the value of the sample.
+     */
+    public String getSample(){
+        return sample;
+    }
+
+    /**
      * <code>Creator</code> for <code>DataTypeString</code> objects.
      */
     public static final Creator<DataTypeString> CREATOR = new Creator<DataTypeString>() {
@@ -113,11 +115,4 @@ public class DataTypeString extends  DataType implements Parcelable{
             return new DataTypeString[size];
         }
     };
-
-    /**
-     * @return The the value of the sample.
-     */
-    public String getSample(){
-        return sample;
-    }
 }

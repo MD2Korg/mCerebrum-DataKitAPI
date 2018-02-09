@@ -42,34 +42,6 @@ import org.json.JSONObject;
 public class RowObject implements Parcelable{
 
     /**
-     * <code>Creator</code> for <code>RowObject</code> objects.
-     */
-    public static final Creator<RowObject> CREATOR = new Creator<RowObject>() {
-
-        /**
-         * Creates a new <code>RowObject</code> object from a <code>Parcel</code>.
-         *
-         * @param in The parcel holding the data type.
-         * @return The constructed <code>RowObject</code> object
-         */
-        @Override
-        public RowObject createFromParcel(Parcel in) {
-            return new RowObject(in);
-        }
-
-        /**
-         * Creates a new array of the specified size for <code>RowObject</code> objects.
-         *
-         * @param size The size of the new <code>RowObject</code> array.
-         * @return The <code>RowObject</code> array.
-         */
-        @Override
-        public RowObject[] newArray(int size) {
-            return new RowObject[size];
-        }
-    };
-
-    /**
      * The <code>DataType</code> object for this <code>RowObject</code>.
      */
     public DataType data;
@@ -98,6 +70,26 @@ public class RowObject implements Parcelable{
     protected RowObject(Parcel in) {
         data = in.readParcelable(DataType.class.getClassLoader());
         rowKey = in.readLong();
+    }
+
+    /**
+     * @return Always returns 0.
+     */
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    /**
+     * Writes the <code>RowObject</code> and it's key to a parcel.
+     *
+     * @param dest  The parcel to which the application should be written.
+     * @param flags Additional flags about how the object should be written.
+     */
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeParcelable(data, flags);
+        dest.writeLong(rowKey);
     }
 
     /**
@@ -138,26 +130,6 @@ public class RowObject implements Parcelable{
             return new DataTypeJSONObjectArray(this.data.getDateTime(), jo);
         }
         return this.data;
-    }
-
-    /**
-     * @return Always returns 0.
-     */
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    /**
-     * Writes the <code>RowObject</code> and it's key to a parcel.
-     *
-     * @param dest  The parcel to which the application should be written.
-     * @param flags Additional flags about how the object should be written.
-     */
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        dest.writeParcelable(data, flags);
-        dest.writeLong(rowKey);
     }
 
     /**
@@ -241,8 +213,34 @@ public class RowObject implements Parcelable{
                 result += "," + i.toString();
             }
         }
-
         return result;
-
     }
+
+    /**
+     * <code>Creator</code> for <code>RowObject</code> objects.
+     */
+    public static final Creator<RowObject> CREATOR = new Creator<RowObject>() {
+
+        /**
+         * Creates a new <code>RowObject</code> object from a <code>Parcel</code>.
+         *
+         * @param in The parcel holding the data type.
+         * @return The constructed <code>RowObject</code> object
+         */
+        @Override
+        public RowObject createFromParcel(Parcel in) {
+            return new RowObject(in);
+        }
+
+        /**
+         * Creates a new array of the specified size for <code>RowObject</code> objects.
+         *
+         * @param size The size of the new <code>RowObject</code> array.
+         * @return The <code>RowObject</code> array.
+         */
+        @Override
+        public RowObject[] newArray(int size) {
+            return new RowObject[size];
+        }
+    };
 }

@@ -52,11 +52,6 @@ public class DataTypeFloat extends  DataType implements Parcelable{
     }
 
     /**
-     * TODO: Not used. Can remove?
-     */
-    public DataTypeFloat(){}
-
-    /**
      * Constructs a <code>DataTypeFloat</code> object from a <code>Parcel</code>.
      *
      * @param in Parceled <code>DataTypeFloat</code> object.
@@ -87,6 +82,13 @@ public class DataTypeFloat extends  DataType implements Parcelable{
     }
 
     /**
+     * @return The the value of the sample.
+     */
+    public float getSample(){
+        return sample;
+    }
+
+    /**
      * <code>Creator</code> for <code>DataTypeFloat</code> objects.
      */
     public static final Creator<DataTypeFloat> CREATOR = new Creator<DataTypeFloat>() {
@@ -113,11 +115,4 @@ public class DataTypeFloat extends  DataType implements Parcelable{
             return new DataTypeFloat[size];
         }
     };
-
-    /**
-     * @return The the value of the sample.
-     */
-    public float getSample(){
-        return sample;
-    }
 }
