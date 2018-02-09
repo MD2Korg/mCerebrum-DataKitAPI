@@ -33,6 +33,21 @@ import org.md2k.datakitapi.source.AbstractObjectBuilder;
  * Builder class for <code>Application</code> objects.
  */
 public class ApplicationBuilder extends AbstractObjectBuilder {
+    /**
+     * Constructor
+     */
+    public ApplicationBuilder(){}
+
+    /**
+     * Constructs a new <code>ApplicationBuilder</code> from an <code>Application</code>.
+     *
+     * @param application The application to be built
+     */
+    public ApplicationBuilder(Application application){
+        this.metadata = application.getMetadata();
+        this.type = application.getType();
+        this.id = application.getId();
+    }
 
     /**
      * Sets the type of the <code>ApplicationBuilder</code>.
@@ -66,23 +81,6 @@ public class ApplicationBuilder extends AbstractObjectBuilder {
     public ApplicationBuilder setMetadata(String key, String value) {
         super.setMetadata(key, value);
         return this;
-    }
-
-    /**
-     * TODO: Not used. Can remove?
-     */
-    public ApplicationBuilder(){
-    }
-
-    /**
-     * Constructor
-     *
-     * @param application The application to be built
-     */
-    public ApplicationBuilder(Application application){
-        this.metadata = application.getMetadata();
-        this.type = application.getType();
-        this.id = application.getId();
     }
 
     /**

@@ -42,7 +42,13 @@ import org.md2k.datakitapi.Constants;
  * </p>
  */
 public class PlatformId {
+
+    /** Default is <code>"CHEST"</code>. */
     public static final String CHEST = "CHEST";
+
+    /** Default is <code>"LEFT_WRIST"</code>. */
     public static final String LEFT_WRIST = "LEFT_WRIST";
+
+    /** Default is <code>"RIGHT_WRIST"</code>. */
     public static final String RIGHT_WRIST = "RIGHT_WRIST";
 }

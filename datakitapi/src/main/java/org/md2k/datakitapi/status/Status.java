@@ -101,6 +101,28 @@ public class Status extends Object implements Parcelable {
     private static Map<Integer, String> constantNames = null;
 
     /**
+     * Constructor
+     *
+     * @param statusCode The <code>statusCode</code> for this particular <code>status</code>.
+     *                   Also determines the <code>statusMessage</code>.
+     */
+    public Status(int statusCode){
+        this.statusCode = statusCode;
+        this.statusMessage = getStatusCodeString(statusCode);
+    }
+
+    /**
+     * Constructor
+     *
+     * @param statusCode The <code>statusCode</code> for this particular <code>status</code>.
+     * @param statusMessage The <code>statusMessage</code> for this particular <code>status</code>.
+     */
+    public Status(int statusCode, String statusMessage) {
+        this.statusCode = statusCode;
+        this.statusMessage = statusMessage;
+    }
+
+    /**
      * Constructs a <code>Status</code> object from a <code>Parcel</code>.
      *
      * @param in Parceled <code>DataType</code> object.
@@ -111,41 +133,52 @@ public class Status extends Object implements Parcelable {
     }
 
     /**
-     * <code>Creator</code> for <code>Status</code> objects.
+     * Writes the <code>status</code> to a parcel.
+     *
+     * @param dest The parcel to which the application should be written.
+     * @param flags Additional flags about how the object should be written.
      */
-    public static final Creator<Status> CREATOR = new Creator<Status>() {
-
-        /**
-         * Creates a new <code>Status</code> object from a <code>Parcel</code>.
-         *
-         * @param in The parcel holding the status.
-         * @return The constructed <code>Status</code> object.
-         */
-        @Override
-        public Status createFromParcel(Parcel in) {
-            return new Status(in);
-        }
-
-        /**
-         * Creates a new array of the specified size for <code>Status</code> objects.
-         *
-         * @param size The size of the new <code>Status</code> array.
-         * @return The <code>Status</code> array.
-         */
-        @Override
-        public Status[] newArray(int size) {
-            return new Status[size];
-        }
-    };
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeInt(statusCode);
+        dest.writeString(statusMessage);
+    }
 
     /**
-     * TODO: Is this actually needed?
-     *
-     * @param statusCode The <code>statusCode</code> for this particular <code>status</code>.
-     * @return The <code>statusMessage</code> for this particualr <code>status</code>.
+     * @return Always returns 0.
      */
-    public static String generateStatusString(int statusCode) {
-        return getStatusCodeString(statusCode);
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    /**
+     * Returns the message associated with the calling <code>status</code>.
+     *
+     * @return The message for the status.
+     */
+    public String getStatusMessage(){
+        return statusMessage;
+    }
+
+
+    /**
+     * Returns the <code>status</code> object itself.
+     *
+     * @return The calling <code>status</code> object.
+     */
+    public Status getStatus(){
+        return this;
+    }
+
+
+    /**
+     * Returns the <code>statusCode</code> as an integer.
+     *
+     * @return The <code>statusCode</code> for the calling <code>status</code>.
+     */
+    public int getStatusCode() {
+        return statusCode;
     }
 
     /**
@@ -192,74 +225,40 @@ public class Status extends Object implements Parcelable {
     }
 
     /**
-     * Constructor
-     *
-     * TODO: Is this still needed?
-     * @param statusCode The <code>statusCode</code> for this particular <code>status</code>.
-     * @param statusMessage The <code>statusMessage</code> for this particular <code>status</code>.
-     */
-    public Status(int statusCode, String statusMessage) {
-        this.statusCode = statusCode;
-        this.statusMessage = statusMessage;
-    }
-
-    /**
-     * Constructor
+     * Generates a string describing the status.
      *
      * @param statusCode The <code>statusCode</code> for this particular <code>status</code>.
-     *                   Also determines the <code>statusMessage</code>.
+     * @return The <code>statusMessage</code> for this particualr <code>status</code>.
      */
-    public Status(int statusCode){
-        this.statusCode = statusCode;
-        this.statusMessage = getStatusCodeString(statusCode);
+    public static String generateStatusString(int statusCode) {
+        return getStatusCodeString(statusCode);
     }
 
     /**
-     * Returns the message associated with the calling <code>status</code>.
-     *
-     * @return The message for the status.
+     * <code>Creator</code> for <code>Status</code> objects.
      */
-    public String getStatusMessage(){
-        return statusMessage;
-    }
+    public static final Creator<Status> CREATOR = new Creator<Status>() {
 
+        /**
+         * Creates a new <code>Status</code> object from a <code>Parcel</code>.
+         *
+         * @param in The parcel holding the status.
+         * @return The constructed <code>Status</code> object.
+         */
+        @Override
+        public Status createFromParcel(Parcel in) {
+            return new Status(in);
+        }
 
-    /**
-     * TODO: Is this actually needed?
-     *
-     * @return The calling <code>status</code> object.
-     */
-    public Status getStatus(){
-        return this;
-    }
-
-
-    /**
-     * TODO: Is this actually needed?
-     *
-     * @return The <code>statusCode</code> for the calling <code>status</code>.
-     */
-    public int getStatusCode() {
-        return statusCode;
-    }
-
-    /**
-     * @return Always returns 0.
-     */
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    /**
-     * Writes the <code>status</code> to a parcel.
-     *
-     * @param dest The parcel to which the application should be written.
-     * @param flags Additional flags about how the object should be written.
-     */
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        dest.writeInt(statusCode);
-        dest.writeString(statusMessage);
-    }
+        /**
+         * Creates a new array of the specified size for <code>Status</code> objects.
+         *
+         * @param size The size of the new <code>Status</code> array.
+         * @return The <code>Status</code> array.
+         */
+        @Override
+        public Status[] newArray(int size) {
+            return new Status[size];
+        }
+    };
 }

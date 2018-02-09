@@ -73,14 +73,6 @@ public class RowObject implements Parcelable{
     }
 
     /**
-     * @return Always returns 0.
-     */
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    /**
      * Writes the <code>RowObject</code> and it's key to a parcel.
      *
      * @param dest  The parcel to which the application should be written.
@@ -90,6 +82,14 @@ public class RowObject implements Parcelable{
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeParcelable(data, flags);
         dest.writeLong(rowKey);
+    }
+
+    /**
+     * @return Always returns 0.
+     */
+    @Override
+    public int describeContents() {
+        return 0;
     }
 
     /**

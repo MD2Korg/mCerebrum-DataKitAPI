@@ -71,6 +71,48 @@ public class DataSourceClient implements Parcelable {
     }
 
     /**
+     * Writes the <code>DataSourceClient</code> to a <code>parcel</code>.
+     *
+     * @param dest The parcel to which the application should be written.
+     * @param flags Additional flags about how the object should be written.
+     */
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeInt(ds_id);
+        dest.writeParcelable(dataSource, flags);
+        dest.writeParcelable(status, flags);
+    }
+
+    /**
+     * @return Always returns 0.
+     */
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    /**
+     * @return The data source identifier.
+     */
+    public int getDs_id() {
+        return ds_id;
+    }
+
+    /**
+     * @return Status of the <code>DataKitAPI</code> as indicated by the <code>Status</code> class.
+     */
+    public Status getStatus() {
+        return status;
+    }
+
+    /**
+     * @return The data source of this client
+     */
+    public DataSource getDataSource() {
+        return dataSource;
+    }
+
+    /**
      * <code>Creator</code> for <code>DataSourceClient</code> objects.
      */
     public static final Creator<DataSourceClient> CREATOR = new Creator<DataSourceClient>() {
@@ -97,46 +139,4 @@ public class DataSourceClient implements Parcelable {
             return new DataSourceClient[size];
         }
     };
-
-    /**
-     * @return The data source identifier.
-     */
-    public int getDs_id() {
-        return ds_id;
-    }
-
-    /**
-     * @return Status of the <code>DataKitAPI</code> as indicated by the <code>Status</code> class.
-     */
-    public Status getStatus() {
-        return status;
-    }
-
-    /**
-     * @return The data source of this client
-     */
-    public DataSource getDataSource() {
-        return dataSource;
-    }
-
-    /**
-     * @return Always returns 0.
-     */
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    /**
-     * Writes the <code>DataSourceClient</code> to a <code>parcel</code>.
-     *
-     * @param dest The parcel to which the application should be written.
-     * @param flags Additional flags about how the object should be written.
-     */
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        dest.writeInt(ds_id);
-        dest.writeParcelable(dataSource, flags);
-        dest.writeParcelable(status, flags);
-    }
 }

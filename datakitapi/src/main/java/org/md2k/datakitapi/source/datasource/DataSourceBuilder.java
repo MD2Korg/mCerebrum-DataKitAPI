@@ -65,6 +65,32 @@ public class DataSourceBuilder extends AbstractObjectBuilder {
 
 
     /**
+     * Constructor
+     */
+    public DataSourceBuilder() {}
+
+    /**
+     * Constructs a new <code>DataSourceBuilder</code> from a <code>DataSource</code> object.
+     *
+     * @param dataSource The object to build from.
+     */
+    public DataSourceBuilder(DataSource dataSource) {
+        this.metadata = new HashMap<>();
+        if(dataSource.getMetadata()!= null) {
+            for (Map.Entry<String, String> entry : dataSource.getMetadata().entrySet()) {
+                this.metadata.put(entry.getKey(), entry.getValue());
+            }
+        }
+        this.type = dataSource.getType();
+        this.id = dataSource.getId();
+        this.platform = dataSource.getPlatform();
+        this.platformApp = dataSource.getPlatformApp();
+        this.application = dataSource.getApplication();
+        this.persistent = dataSource.isPersistent();
+        this.dataDescriptors = dataSource.getDataDescriptors();
+    }
+
+    /**
      * Sets the type of the <code>DataSourceBuilder</code>.
      *
      * @param type Type of the desired object.
@@ -172,33 +198,4 @@ public class DataSourceBuilder extends AbstractObjectBuilder {
     public DataSource build() {
         return new DataSource(this);
     }
-
-    /**
-     * TODO: Not used. Can remove?
-     */
-    public DataSourceBuilder() {
-    }
-
-    /**
-     * Creates a new <code>DataSourceBuilder</code> from a <code>DataSource</code> object.
-     *
-     * @param dataSource The object to build from.
-     */
-    public DataSourceBuilder(DataSource dataSource) {
-        this.metadata = new HashMap<>();
-        if(dataSource.getMetadata()!= null) {
-            for (Map.Entry<String, String> entry : dataSource.getMetadata().entrySet()) {
-                this.metadata.put(entry.getKey(), entry.getValue());
-            }
-        }
-
-        this.type = dataSource.getType();
-        this.id = dataSource.getId();
-        this.platform = dataSource.getPlatform();
-        this.platformApp = dataSource.getPlatformApp();
-        this.application = dataSource.getApplication();
-        this.persistent = dataSource.isPersistent();
-        this.dataDescriptors = dataSource.getDataDescriptors();
-    }
-
 }

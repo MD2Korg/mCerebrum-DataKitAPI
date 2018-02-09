@@ -40,8 +40,12 @@ package org.md2k.datakitapi.source.datasource;
  * </p>
  */
 public class DataSourceId {
+    /** Default is <code>"SMOKING"</code>. */
     public static final String SMOKING = "SMOKING";
+
+    /** Default is <code>"EATING"</code>. */
     public static final String EATING = "EATING";
 
+    /** Default is <code>"SELF_REPORT"</code>. */
     public static final String SELF_REPORT = "SELF_REPORT";
 }

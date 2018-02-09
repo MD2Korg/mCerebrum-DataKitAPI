@@ -34,10 +34,57 @@ import com.bluelinelabs.logansquare.annotation.JsonObject;
 import org.md2k.datakitapi.source.AbstractObject;
 
 /**
- *
+ * This class creates <code>PlatformApp</code> objects with information about wearable device
+ * applications used as data sources.
  */
 @JsonObject(fieldDetectionPolicy = JsonObject.FieldDetectionPolicy.NONPRIVATE_FIELDS)
 public class PlatformApp extends AbstractObject implements Parcelable{
+    /**
+     * Constructor
+     */
+    public PlatformApp(){}
+
+    /**
+     * Constructor
+     *
+     * <p>
+     *     This constructor is called from the <code>PlatformAppBuilder</code> class using the
+     *     <code>build()</code> method.
+     * </p>
+     *
+     * @param platformAppBuilder The builder object for this data source.
+     */
+    PlatformApp(PlatformAppBuilder platformAppBuilder){
+        super(platformAppBuilder);
+    }
+
+    /**
+     * Creates an <code>PlatformApp</code> object from a <code>Parcel</code>.
+     *
+     * @param in Parceled <code>PlatformApp</code> data
+     */
+    protected PlatformApp(Parcel in) {
+        super(in);
+    }
+
+    /**
+     * Writes the <code>PlatformApp</code> object to a <code>parcel</code>.
+     *
+     * @param dest  The parcel to which the application should be written.
+     * @param flags Additional flags about how the object should be written.
+     */
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        super.writeToParcel(dest, flags);
+    }
+
+    /**
+     * @return Always returns 0.
+     */
+    @Override
+    public int describeContents() {
+        return 0;
+    }
 
     /**
      * <code>Creator</code> for <code>PlatformApp</code> objects.
@@ -66,54 +113,4 @@ public class PlatformApp extends AbstractObject implements Parcelable{
             return new PlatformApp[size];
         }
     };
-
-
-    /**
-     * Constructor
-     *
-     * <p>
-     *     This constructor is called from the <code>PlatformAppBuilder</code> class using the
-     *     <code>build()</code> method.
-     * </p>
-     *
-     * @param platformAppBuilder The builder object for this data source.
-     */
-    PlatformApp(PlatformAppBuilder platformAppBuilder){
-        super(platformAppBuilder);
-    }
-
-    /**
-     * TODO: Not used. Can remove?
-     */
-    public PlatformApp(){
-    }
-
-    /**
-     * Creates an <code>PlatformApp</code> object from a <code>Parcel</code>.
-     *
-     * @param in Parceled <code>PlatformApp</code> data
-     */
-    protected PlatformApp(Parcel in) {
-        super(in);
-    }
-
-    /**
-     * Writes the <code>PlatformApp</code> object to a <code>parcel</code>.
-     *
-     * @param dest  The parcel to which the application should be written.
-     * @param flags Additional flags about how the object should be written.
-     */
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        super.writeToParcel(dest, flags);
-    }
-
-
-    /**
-     * @return Always returns 0.
-     */
-    @Override
-    public int describeContents() {
-        return 0;
-    }
 }

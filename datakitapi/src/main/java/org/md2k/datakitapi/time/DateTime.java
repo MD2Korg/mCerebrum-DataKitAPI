@@ -38,10 +38,10 @@ import java.util.TimeZone;
  */
 public class DateTime {
 
-    /** TODO: Not used. Can remove? */
+    /** Integer representing a millisecond. <p>Set to 1.</p> */
     public static int MILLISECOND = 1;
 
-    /** TODO: Not used. Can remove? */
+    /** Integer representing a nanosecond. <p>Set to 2.</p> */
     public static int NANOSECOND = 2;
 
     /** Number of milliseconds in a second */

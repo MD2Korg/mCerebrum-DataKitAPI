@@ -38,6 +38,27 @@ import java.util.Map;
 public class PlatformBuilder extends AbstractObjectBuilder{
 
     /**
+     * Constructor
+     */
+    public PlatformBuilder() {}
+
+    /**
+     * Constructs a builder object from an existing platform object.
+     *
+     * @param platform The object to build from.
+     */
+    public PlatformBuilder(Platform platform) {
+        this.metadata=new HashMap<>();
+        if(platform.getMetadata()!=null) {
+            for (Map.Entry<String, String> entry : platform.getMetadata().entrySet()) {
+                this.metadata.put(entry.getKey(), entry.getValue());
+            }
+        }
+        this.type = platform.getType();
+        this.id = platform.getId();
+    }
+
+    /**
      * Sets the type of the builder object.
      *
      * @param type Type of the desired object.
@@ -76,30 +97,5 @@ public class PlatformBuilder extends AbstractObjectBuilder{
      *
      * @return The completed platform object.
      */
-    public Platform build() {
-        return new Platform(this);
-    }
-
-    /**
-     * TODO: Not used. Can remove?
-     */
-    public PlatformBuilder() {
-    }
-
-    /**
-     * Constructs a builder object from an existing platform object.
-     *
-     * @param platform The object to build from.
-     */
-    public PlatformBuilder(Platform platform) {
-        this.metadata=new HashMap<>();
-        if(platform.getMetadata()!=null) {
-            for (Map.Entry<String, String> entry : platform.getMetadata().entrySet()) {
-                this.metadata.put(entry.getKey(), entry.getValue());
-            }
-        }
-        this.type = platform.getType();
-        this.id = platform.getId();
-    }
-
+    public Platform build() { return new Platform(this); }
 }

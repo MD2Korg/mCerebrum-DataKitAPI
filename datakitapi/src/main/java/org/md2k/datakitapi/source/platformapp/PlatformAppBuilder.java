@@ -33,6 +33,21 @@ import org.md2k.datakitapi.source.AbstractObjectBuilder;
  * Builder class for <code>platformApp</code> objects.
  */
 public class PlatformAppBuilder extends AbstractObjectBuilder{
+    /**
+     * Constructor
+     */
+    public PlatformAppBuilder() {}
+
+    /**
+     * Constructs a builder object from an existing platform object.
+     *
+     * @param platformApp The object to build from.
+     */
+    public PlatformAppBuilder(PlatformApp platformApp) {
+        this.metadata = platformApp.getMetadata();
+        this.type = platformApp.getType();
+        this.id = platformApp.getId();
+    }
 
     /**
      * Sets the type of the builder object.
@@ -76,22 +91,4 @@ public class PlatformAppBuilder extends AbstractObjectBuilder{
     public PlatformApp build() {
         return new PlatformApp(this);
     }
-
-    /**
-     * TODO: Not used. Can remove?
-     */
-    public PlatformAppBuilder() {
-    }
-
-    /**
-     * Constructs a builder object from an existing platform object.
-     *
-     * @param platformApp The object to build from.
-     */
-    public PlatformAppBuilder(PlatformApp platformApp) {
-        this.metadata = platformApp.getMetadata();
-        this.type = platformApp.getType();
-        this.id = platformApp.getId();
-    }
-
 }

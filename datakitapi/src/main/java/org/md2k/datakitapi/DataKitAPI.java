@@ -58,7 +58,7 @@ public class DataKitAPI {
      *     The buffer size is set to 8KB using a bitwise shift operation.
      * </p>
      */
-    private static final int BUFFER_SIZE = 1 << 13; //8 KB
+    private static final int BUFFER_SIZE = 1 << 13;
     private static DataKitAPI instance = null;
     DataKitAPIExecute dataKitAPIExecute;
 
@@ -158,7 +158,10 @@ public class DataKitAPI {
     public synchronized void connect(OnConnectionListener callerOnConnectionListener) throws DataKitException {
         if (!isInstalled(context, Constants.PACKAGE_NAME)) {
             throw new DataKitNotFoundException(new Status(Status.ERROR_NOT_INSTALLED));
-        } else if (isConnected()) callerOnConnectionListener.onConnected();
+        }
+        else if (isConnected())
+            callerOnConnectionListener.onConnected();
+
         else {
             dataKitAPIExecute.connect(callerOnConnectionListener);
             handler.postDelayed(runnableSyncHF,SYNC_TIME_HF);
@@ -222,8 +225,10 @@ public class DataKitAPI {
     public synchronized void setSummary(DataSourceClient dataSourceClient, DataType dataType) throws DataKitException {
         if (!dataKitAPIExecute.isConnected())
             throw new DataKitNotFoundException(new Status(Status.ERROR_BOUND));
+
         if (dataSourceClient == null || dataType == null)
             throw new DataKitException(new Status(Status.DATA_INVALID).getStatusMessage());
+
         else {
             dataKitAPIExecute.setSummary(dataSourceClient, dataType);
         }
@@ -239,8 +244,10 @@ public class DataKitAPI {
     public synchronized void insert(DataSourceClient dataSourceClient, DataType[] dataTypes) throws DataKitException {
         if (!dataKitAPIExecute.isConnected())
             throw new DataKitNotFoundException(new Status(Status.ERROR_BOUND));
+
         if (dataSourceClient == null || dataTypes == null)
             throw new DataKitException(new Status(Status.DATA_INVALID).getStatusMessage());
+
         else dataKitAPIExecute.insert(dataSourceClient, dataTypes);
     }
 
@@ -255,8 +262,10 @@ public class DataKitAPI {
                                                  final DataTypeDoubleArray[] dataType) throws DataKitException {
         if (!dataKitAPIExecute.isConnected())
             throw new DataKitNotFoundException(new Status(Status.ERROR_BOUND));
+
         if (dataSourceClient == null || dataType == null)
             throw new DataKitException(new Status(Status.DATA_INVALID).getStatusMessage());
+
         else {
             for (DataTypeDoubleArray aDataType : dataType)
                 addToBuffer(dataSourceClient.getDs_id(), aDataType);
@@ -274,8 +283,10 @@ public class DataKitAPI {
                                                  final DataTypeDoubleArray dataType) throws DataKitException {
         if (!dataKitAPIExecute.isConnected())
             throw new DataKitNotFoundException(new Status(Status.ERROR_BOUND));
+
         if (dataSourceClient == null || dataType == null)
             throw new DataKitException(new Status(Status.DATA_INVALID).getStatusMessage());
+
         else
             addToBuffer(dataSourceClient.getDs_id(), dataType);
     }
@@ -314,17 +325,20 @@ public class DataKitAPI {
      */
     synchronized void syncHFData(int ds_id) {
         HFBuffer hfBuffer = hmHFBuffer.get(ds_id);
-        if (hfBuffer.size == 0) return;
+        if (hfBuffer.size == 0)
+            return;
         DataTypeDoubleArray[] dataTypeDoubleArrays = new DataTypeDoubleArray[hfBuffer.data.size()];
+
         for (int i = 0; i < hfBuffer.data.size(); i++)
             dataTypeDoubleArrays[i] = hfBuffer.data.get(i);
+
         hfBuffer.data.clear();
         hfBuffer.size = 0;
         hmHFBuffer.put(ds_id, hfBuffer);
         try {
             dataKitAPIExecute.insertHighFrequency(ds_id, dataTypeDoubleArrays);
-        } catch (DataKitException ignored) {
         }
+        catch (DataKitException ignored) {}
     }
 
     /**

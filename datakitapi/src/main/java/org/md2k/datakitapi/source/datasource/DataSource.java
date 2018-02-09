@@ -41,39 +41,11 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
- *
+ * Creates <code>DataSource</code> objects containing information about the platform and application
+ * the data was collected from.
  */
 @JsonObject(fieldDetectionPolicy = JsonObject.FieldDetectionPolicy.NONPRIVATE_FIELDS)
 public class DataSource extends AbstractObject implements Parcelable {
-
-    /**
-     * <code>Creator</code> for <code>DataSource</code> objects.
-     */
-    public static final Creator<DataSource> CREATOR = new Creator<DataSource>() {
-
-        /**
-         * Creates a new <code>DataSource</code> object from a <code>Parcel</code>.
-         *
-         * @param in The parcel holding the application.
-         * @return The reconstructed <code>DataSource</code> object.
-         */
-        @Override
-        public DataSource createFromParcel(Parcel in) {
-            return new DataSource(in);
-        }
-
-        /**
-         * Creates a new array of the specified size for <code>DataSource</code> objects.
-         *
-         * @param size The size of the new <code>DataSource</code> array.
-         * @return The <code>DataSource</code> array.
-         */
-        @Override
-        public DataSource[] newArray(int size) {
-            return new DataSource[size];
-        }
-    };
-
 
     private Platform platform = null;
     private PlatformApp platformApp = null;
@@ -82,7 +54,7 @@ public class DataSource extends AbstractObject implements Parcelable {
     private ArrayList<HashMap<String, String>> dataDescriptors = null;
 
     /**
-     * TODO: Not used. Can remove?
+     * Constructor
      */
     public DataSource(){
     }
@@ -137,6 +109,12 @@ public class DataSource extends AbstractObject implements Parcelable {
         }
     }
 
+    /**
+     * Writes the <code>DataSource</code> object to a <code>Parcel</code>.
+     *
+     * @param dest  The parcel to which the application should be written.
+     * @param flags Additional flags about how the object should be written.
+     */
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         super.writeToParcel(dest, flags);
@@ -163,36 +141,91 @@ public class DataSource extends AbstractObject implements Parcelable {
         }
     }
 
+    /**
+     * @return Always returns 0.
+     */
     @Override
     public int describeContents() {
         return 0;
     }
 
-    public DataSourceBuilder toDataSourceBuilder() {
-        DataSourceBuilder dataSourceBuilder = super.toDataSourceBuilder();
-        dataSourceBuilder = dataSourceBuilder.
-                setPlatform(platform).setPlatformApp(platformApp).setApplication(application).setPersistent(persistent).setDataDescriptors(dataDescriptors);
-        return dataSourceBuilder;
-    }
-
+    /**
+     * @return The platform the data source uses.
+     */
     public Platform getPlatform() {
         return platform;
     }
 
+    /**
+     * @return The platform application the data source uses.
+     */
     public PlatformApp getPlatformApp() {
         return platformApp;
     }
 
+    /**
+     * @return The application the data source uses.
+     */
     public Application getApplication() {
         return application;
     }
 
+    /**
+     * @return Whether the data source is persistent or not.
+     */
     public boolean isPersistent() {
         return persistent;
     }
 
+    /**
+     * @return An arrayList of hashMaps containing descriptors of the data.
+     */
     public ArrayList<HashMap<String, String>> getDataDescriptors() {
         return dataDescriptors;
     }
+
+    /**
+     * Sets the fields of a <code>DataSourceBuilder</code> object based on the caller.
+     *
+     * @return A completed <code>DataSourceBuilder</code> object.
+     */
+    public DataSourceBuilder toDataSourceBuilder() {
+        DataSourceBuilder dataSourceBuilder = super.toDataSourceBuilder();
+        dataSourceBuilder = dataSourceBuilder
+                .setPlatform(platform)
+                .setPlatformApp(platformApp)
+                .setApplication(application)
+                .setPersistent(persistent)
+                .setDataDescriptors(dataDescriptors);
+        return dataSourceBuilder;
+    }
+
+    /**
+     * <code>Creator</code> for <code>DataSource</code> objects.
+     */
+    public static final Creator<DataSource> CREATOR = new Creator<DataSource>() {
+
+        /**
+         * Creates a new <code>DataSource</code> object from a <code>Parcel</code>.
+         *
+         * @param in The parcel holding the application.
+         * @return The reconstructed <code>DataSource</code> object.
+         */
+        @Override
+        public DataSource createFromParcel(Parcel in) {
+            return new DataSource(in);
+        }
+
+        /**
+         * Creates a new array of the specified size for <code>DataSource</code> objects.
+         *
+         * @param size The size of the new <code>DataSource</code> array.
+         * @return The <code>DataSource</code> array.
+         */
+        @Override
+        public DataSource[] newArray(int size) {
+            return new DataSource[size];
+        }
+    };
 }
 

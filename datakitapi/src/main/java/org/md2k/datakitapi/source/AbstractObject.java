@@ -53,12 +53,19 @@ public class AbstractObject implements Parcelable{
 
     /**
      * Constructor
-     *
-     * TODO: Does nothing. Can remove?
      */
-    public AbstractObject(){
-    }
+    public AbstractObject(){}
 
+    /**
+     * Constructor
+     *
+     * @param abstractObjectBuilder Builder for the desired <code>AbstractObject</code>.
+     */
+    public AbstractObject(AbstractObjectBuilder abstractObjectBuilder) {
+        this.type = abstractObjectBuilder.type;
+        this.id = abstractObjectBuilder.id;
+        this.metadata = abstractObjectBuilder.metadata;
+    }
 
     /**
      * Constructs a <code>AbstractObject</code> object from a <code>Parcel</code>.
@@ -77,34 +84,6 @@ public class AbstractObject implements Parcelable{
             }
         }
     }
-
-    /**
-     * <code>Creator</code> for <code>AbstractObject</code> objects.
-     */
-    public static final Creator<AbstractObject> CREATOR = new Creator<AbstractObject>() {
-
-        /**
-         * Creates a new <code>AbstractObject</code> object from a <code>Parcel</code>.
-         *
-         * @param in The parcel holding the data type.
-         * @return The constructed <code>AbstractObject</code> object
-         */
-        @Override
-        public AbstractObject createFromParcel(Parcel in) {
-            return new AbstractObject(in);
-        }
-
-        /**
-         * Creates a new array of the specified size for <code>AbstractObject</code> objects.
-         *
-         * @param size The size of the new <code>AbstractObject</code> array.
-         * @return The <code>AbstractObject</code> array.
-         */
-        @Override
-        public AbstractObject[] newArray(int size) {
-            return new AbstractObject[size];
-        }
-    };
 
     /**
      * @return The type of the <code>AbstractObject</code>.
@@ -145,25 +124,6 @@ public class AbstractObject implements Parcelable{
     }
 
     /**
-     * Constructor
-     *
-     * @param abstractObjectBuilder Builder for the desired <code>AbstractObject</code>.
-     */
-    public AbstractObject(AbstractObjectBuilder abstractObjectBuilder) {
-        this.type = abstractObjectBuilder.type;
-        this.id = abstractObjectBuilder.id;
-        this.metadata = abstractObjectBuilder.metadata;
-    }
-
-    /**
-     * @return Always returns 0.
-     */
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    /**
      * Writes the <code>AbstractObject</code> to a parcel.
      *
      * @param dest The parcel to which the application should be written.
@@ -183,4 +143,40 @@ public class AbstractObject implements Parcelable{
             }
         }
     }
+
+    /**
+     * @return Always returns 0.
+     */
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    /**
+     * <code>Creator</code> for <code>AbstractObject</code> objects.
+     */
+    public static final Creator<AbstractObject> CREATOR = new Creator<AbstractObject>() {
+
+        /**
+         * Creates a new <code>AbstractObject</code> object from a <code>Parcel</code>.
+         *
+         * @param in The parcel holding the data type.
+         * @return The constructed <code>AbstractObject</code> object
+         */
+        @Override
+        public AbstractObject createFromParcel(Parcel in) {
+            return new AbstractObject(in);
+        }
+
+        /**
+         * Creates a new array of the specified size for <code>AbstractObject</code> objects.
+         *
+         * @param size The size of the new <code>AbstractObject</code> array.
+         * @return The <code>AbstractObject</code> array.
+         */
+        @Override
+        public AbstractObject[] newArray(int size) {
+            return new AbstractObject[size];
+        }
+    };
 }

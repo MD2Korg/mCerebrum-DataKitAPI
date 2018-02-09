@@ -73,7 +73,7 @@ public class Constants {
     public static final String RC_ENDTIMESTAMP = "endtimestamp";
 
     /**
-     * Last n samples
+     * Last n samples synced to <code>DataKit</code>.
      * <p>
      *     <code>"last_n_sample"</code>
      * </p>
@@ -81,7 +81,7 @@ public class Constants {
     public static final String RC_LAST_N_SAMPLE="last_n_sample";
 
     /**
-     * Limit TODO: limit of what?
+     * Number of rows to return from <code>DataKit</code>.
      * <p>
      *     <code>"limit"</code>
      * </p>
@@ -89,7 +89,7 @@ public class Constants {
     public static final String RC_LIMIT = "limit";
 
     /**
-     * Last key TODO: key of what?
+     * Last key synced to <code>DataKit</code>.
      * <p>
      *     <code>"last_key"</code>
      * </p>

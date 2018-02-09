@@ -72,14 +72,6 @@ public class DataType implements Parcelable{
     }
 
     /**
-     * @return Always returns 0.
-     */
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    /**
      * Writes the <code>DataType</code> to a parcel.
      *
      * @param dest The parcel to which the application should be written.
@@ -89,6 +81,14 @@ public class DataType implements Parcelable{
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeLong(dateTime);
         dest.writeLong(offset);
+    }
+
+    /**
+     * @return Always returns 0.
+     */
+    @Override
+    public int describeContents() {
+        return 0;
     }
 
     /**

@@ -44,7 +44,6 @@ public abstract class AbstractObjectBuilder {
     /** HashMap of the object's metadata. */
     protected HashMap<String,String> metadata = new HashMap<>();
 
-
     /**
      * Sets the <code>type</code> field of the builder object and then returns the object.
      *
@@ -70,8 +69,8 @@ public abstract class AbstractObjectBuilder {
      */
     public AbstractObjectBuilder setMetadata(String key, String value){
         this.metadata.put(key,value);
-        return this; }
-
+        return this;
+    }
 
     /**
      * Sets the <code>metadata</code> field of the builder object and then returns the object.
@@ -80,7 +79,7 @@ public abstract class AbstractObjectBuilder {
      * @return The changed builder object.
      */
     public AbstractObjectBuilder setMetadata(HashMap<String,String> metadata){
-        this.metadata=metadata;
-        return this; }
-
+        this.metadata = metadata;
+        return this;
+    }
 }

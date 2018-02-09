@@ -34,7 +34,6 @@ import org.md2k.datakitapi.status.Status;
  */
 public interface OnConnectionFailedListener {
 
-
     /**
      * @param status Status of <code>DataKitAPI</code> and any data sources.
      */

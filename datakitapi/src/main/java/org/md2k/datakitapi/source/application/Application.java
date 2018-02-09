@@ -36,39 +36,13 @@ import org.md2k.datakitapi.source.AbstractObject;
 
 /**
  * This class creates application objects.
- *
- * TODO: Learn about json stuff
  */
 @JsonObject(fieldDetectionPolicy = JsonObject.FieldDetectionPolicy.NONPRIVATE_FIELDS)
 public class Application extends AbstractObject implements Parcelable {
-
     /**
-     * <code>Creator</code> for <code>Application</code> objects.
+     * Constructor
      */
-    public static final Creator<Application> CREATOR = new Creator<Application>() {
-
-        /**
-         * Creates a new <code>Application</code> object from a <code>Parcel</code>.
-         *
-         * @param in The parcel holding the application.
-         * @return The reconstructed <code>Application</code> object.
-         */
-        @Override
-        public Application createFromParcel(Parcel in) {
-            return new Application(in);
-        }
-
-        /**
-         * Creates a new array of the specified size for <code>Application</code> objects.
-         *
-         * @param size The size of the new <code>Application</code> array.
-         * @return The <code>Application</code> array.
-         */
-        @Override
-        public Application[] newArray(int size) {
-            return new Application[size];
-        }
-    };
+    public Application(){}
 
     /**
      * Constructor
@@ -82,12 +56,6 @@ public class Application extends AbstractObject implements Parcelable {
      */
     Application(ApplicationBuilder applicationBuilder) {
         super(applicationBuilder);
-    }
-
-    /**
-     * TODO: Not used. Can remove?
-     */
-    public Application(){
     }
 
     /**
@@ -117,4 +85,32 @@ public class Application extends AbstractObject implements Parcelable {
     public int describeContents() {
         return 0;
     }
+
+    /**
+     * <code>Creator</code> for <code>Application</code> objects.
+     */
+    public static final Creator<Application> CREATOR = new Creator<Application>() {
+
+        /**
+         * Creates a new <code>Application</code> object from a <code>Parcel</code>.
+         *
+         * @param in The parcel holding the application.
+         * @return The reconstructed <code>Application</code> object.
+         */
+        @Override
+        public Application createFromParcel(Parcel in) {
+            return new Application(in);
+        }
+
+        /**
+         * Creates a new array of the specified size for <code>Application</code> objects.
+         *
+         * @param size The size of the new <code>Application</code> array.
+         * @return The <code>Application</code> array.
+         */
+        @Override
+        public Application[] newArray(int size) {
+            return new Application[size];
+        }
+    };
 }

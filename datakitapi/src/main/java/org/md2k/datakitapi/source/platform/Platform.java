@@ -40,34 +40,10 @@ import org.md2k.datakitapi.source.AbstractObject;
  */
 @JsonObject(fieldDetectionPolicy = JsonObject.FieldDetectionPolicy.NONPRIVATE_FIELDS)
 public class Platform extends AbstractObject implements Parcelable {
-
     /**
-     * <code>Creator</code> for <code>Platform</code> objects.
+     * Constructor
      */
-    public static final Creator<Platform> CREATOR = new Creator<Platform>() {
-
-        /**
-         * Creates a new <code>Platform</code> object from a <code>Parcel</code>.
-         *
-         * @param in The parcel holding the Platform.
-         * @return The reconstructed <code>Platform</code> object.
-         */
-        @Override
-        public Platform createFromParcel(Parcel in) {
-            return new Platform(in);
-        }
-
-        /**
-         * Creates a new array of the specified size for <code>Platform</code> objects.
-         *
-         * @param size The size of the new <code>Platform</code> array.
-         * @return The <code>Platform</code> array.
-         */
-        @Override
-        public Platform[] newArray(int size) {
-            return new Platform[size];
-        }
-    };
+    public Platform(){}
 
     /**
      * Constructor
@@ -81,12 +57,6 @@ public class Platform extends AbstractObject implements Parcelable {
      */
     Platform(PlatformBuilder platformBuilder) {
         super(platformBuilder);
-    }
-
-    /**
-     * TODO: Not used. Can remove?
-     */
-    public Platform(){
     }
 
     /**
@@ -116,4 +86,32 @@ public class Platform extends AbstractObject implements Parcelable {
     public int describeContents() {
         return 0;
     }
+
+    /**
+     * <code>Creator</code> for <code>Platform</code> objects.
+     */
+    public static final Creator<Platform> CREATOR = new Creator<Platform>() {
+
+        /**
+         * Creates a new <code>Platform</code> object from a <code>Parcel</code>.
+         *
+         * @param in The parcel holding the Platform.
+         * @return The reconstructed <code>Platform</code> object.
+         */
+        @Override
+        public Platform createFromParcel(Parcel in) {
+            return new Platform(in);
+        }
+
+        /**
+         * Creates a new array of the specified size for <code>Platform</code> objects.
+         *
+         * @param size The size of the new <code>Platform</code> array.
+         * @return The <code>Platform</code> array.
+         */
+        @Override
+        public Platform[] newArray(int size) {
+            return new Platform[size];
+        }
+    };
 }

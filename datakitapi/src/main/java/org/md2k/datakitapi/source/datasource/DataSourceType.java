@@ -327,7 +327,7 @@ public class DataSourceType {
     /** Data quality summary for the day <p><code>"DATA_QUALITY_SUMMARY_DAY"</code></p> */
     public static final String DATA_QUALITY_SUMMARY_DAY = "DATA_QUALITY_SUMMARY_DAY";
 
-    /** Galvanic skin responce sensor <p><code>"GALVANIC_SKIN_RESPONSE"</code></p> */
+    /** Galvanic skin response sensor <p><code>"GALVANIC_SKIN_RESPONSE"</code></p> */
     public static final String GALVANIC_SKIN_RESPONSE = "GALVANIC_SKIN_RESPONSE";
 
     /** Touchscreen sensor <p><code>"TOUCH_SCREEN"</code></p> */

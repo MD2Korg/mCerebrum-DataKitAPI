@@ -69,37 +69,39 @@ import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
 
 /**
- *
+ * Executes calls to <code>DataKit</code>.
  */
 class DataKitAPIExecute {
+    /** Time in milliseconds that a thread should sleep while waiting for other processes to terminate. */
+    public static final int THREAD_SLEEP_MILLI = 1000;
     private static final String TAG = DataKitAPIExecute.class.getSimpleName();
     private boolean isConnected;
 
     /** Session identifier. <p>Default is -1.</p> */
     int sessionId = -1;
 
-    /**  */
+    /** ArrayList of <code>RowObject</code>s matching the primary key query. */
     private ArrayList<RowObject> queryPrimaryKeyData;
 
-    /**  */
+    /** Size of a query. */
     private DataTypeLong querySizeData;
 
-    /**  */
+    /** ArrayList of data types matching the query. */
     private ArrayList<DataType> queryData;
 
-    /**  */
+    /** Status after a data source has been unregistered. */
     private Status unregisterData;
 
-    /**  */
+    /** Status after a data source has been unsubscribed. */
     private Status unsubscribeData;
 
-    /**  */
+    /** ArrayList of <code>DataSourceClient</code>s to be found. */
     private ArrayList<DataSourceClient> findData;
 
-    /**  */
+    /** The registered <code>DataSourceClient</code>. */
     private DataSourceClient registerData;
 
-    /**  */
+    /** Status after a data source that been subscribed. */
     private Status subscribeData;
 
     /** Listens for messages from remote threads */
@@ -108,11 +110,12 @@ class DataKitAPIExecute {
     /** Handles incoming messages. */
     IncomingHandler incomingHandler;
 
-    /**  */
+    /** Semaphore that waits for receipt of a permit. */
     private Semaphore semaphoreReceive;
 
     /** Contains <code>ds_id</code>, <code>DataType</code> pairs.
      * <p>
+     *     Contains all currently subscribed <code>DataType</code>s.
      *     <code>OnReceiveListener</code> takes a <code>DataType</code> parameter.
      * </p>
      */
@@ -133,7 +136,12 @@ class DataKitAPIExecute {
     /** Callback interface that listens for <code>DataKit</code> connections. */
     private OnConnectionListener onConnectionListener;
 
-    /** Wait time in milliseconds TODO: for what? */
+    /** Wait time for <code>semaphoreReceive</code> in milliseconds.
+     *
+     * <p>
+     *     Default is 30,000 milliseconds.
+     * </p>
+     */
     private static final long WAIT_TIME = 30000;
 
     /** Whether <code>DataKit</code> is being disconnected or not. */
@@ -179,7 +187,9 @@ class DataKitAPIExecute {
     private void createThreadRemoteListener() {
         threadRemoteListener = new HandlerThread("MyHandlerThread");
         threadRemoteListener.start();
+
         incomingHandler = new IncomingHandler(threadRemoteListener.getLooper());
+
         this.replyMessenger = new Messenger(incomingHandler);
     }
 
@@ -197,9 +207,12 @@ class DataKitAPIExecute {
     private void startRemoteService() throws DataKitNotFoundException {
         Intent intent = new Intent();
         intent.setClassName(Constants.PACKAGE_NAME, Constants.SERVICE_NAME);
+
         this.connection = new RemoteServiceConnection();
+
         intent.putExtra("name", context.getPackageName());
         intent.putExtra("messenger", this.replyMessenger);
+
         if (!context.bindService(intent, this.connection, Context.BIND_AUTO_CREATE)) {
             disconnect();
             throw new DataKitNotFoundException(new Status(Status.ERROR_BOUND));
@@ -232,9 +245,8 @@ class DataKitAPIExecute {
         try {
             while (isDisconnecting) {
                 try {
-                    Thread.sleep(1000);
-                } catch (Exception ignored) {
-                }
+                    Thread.sleep(THREAD_SLEEP_MILLI);
+                } catch (Exception ignored) {}
             }
             this.onConnectionListener = onConnectionListener;
             ds_idOnReceiveListenerHashMap.clear();
@@ -248,7 +260,7 @@ class DataKitAPIExecute {
     }
 
     /**
-     *
+     * Locks the thread.
      */
     void lock() {
         try {
@@ -259,10 +271,9 @@ class DataKitAPIExecute {
     }
 
     /**
-     *
+     * Unlocks the thread.
      */
-    void unlock() {
-    }
+    void unlock() {}
 
     /**
      * Disconnects the caller from <code>DataKit</code>.
@@ -289,17 +300,21 @@ class DataKitAPIExecute {
         isDisconnecting = true;
         sessionId = -1;
         ds_idOnReceiveListenerHashMap.clear();
+
         if (threadRemoteListener != null && threadRemoteListener.isAlive())
             threadRemoteListener.quitSafely();
+
         if (threadRemoteListener != null && incomingHandler != null)
             incomingHandler.removeCallbacks(threadRemoteListener);
+
         threadRemoteListener = null;
         incomingHandler = null;
+
         try {
             context.unbindService(connection);
-            Thread.sleep(1000);
-        } catch (Exception ignored) {
-        }
+            Thread.sleep(THREAD_SLEEP_MILLI);
+        } catch (Exception ignored) {}
+
         isDisconnecting = false;
     }
 
@@ -312,7 +327,6 @@ class DataKitAPIExecute {
      * @throws RemoteException Thrown when the message is not sent successfully
      */
     private void prepareAndSend(Bundle bundle, int messageType) throws RemoteException {
-
         Message message = Message.obtain(null, 0, 0, 0);
         message.what = messageType;
         message.arg1 = sessionId;
@@ -323,8 +337,10 @@ class DataKitAPIExecute {
 
 
     /**
-     * @param dataSourceBuilder Builder object of the data source to register
-     * @return
+     * Registers the desired <code>DataSourceClient</code> with <code>DataKit</code>.
+     *
+     * @param dataSourceBuilder Builder object of the data source to register.
+     * @return The registered <code>DataSourceClient</code>.
      * @throws DataKitException
      */
     public PendingResult<DataSourceClient> register(final DataSourceBuilder dataSourceBuilder) throws DataKitException {
@@ -425,10 +441,12 @@ class DataKitAPIExecute {
             subscribeData = null;
             lock();
             ds_idOnReceiveListenerHashMap.put(dataSourceClient.getDs_id(), onReceiveListener);
+
             Bundle bundle = new Bundle();
             bundle.putInt(Constants.RC_DSID, dataSourceClient.getDs_id());
             bundle.putString(Constants.PACKAGE_NAME, context.getPackageName());
             prepareAndSend(bundle, MessageType.SUBSCRIBE);
+
             semaphoreReceive.tryAcquire(WAIT_TIME, TimeUnit.MILLISECONDS);
         } catch (Exception e) {
             Log.e(TAG, "Subscribe error..." + dataSourceClient.getDs_id());
@@ -488,11 +506,13 @@ class DataKitAPIExecute {
                 try {
                     queryData = null;
                     lock();
+
                     Bundle bundle = new Bundle();
                     bundle.putInt(Constants.RC_DSID, dataSourceClient.getDs_id());
                     bundle.putLong(Constants.RC_STARTTIMESTAMP, starttimestamp);
                     bundle.putLong(Constants.RC_ENDTIMESTAMP, endtimestamp);
                     prepareAndSend(bundle, MessageType.QUERY);
+
                     semaphoreReceive.tryAcquire(WAIT_TIME, TimeUnit.MILLISECONDS);
                 } catch (Exception e) {
                     queryData = null;
@@ -521,10 +541,12 @@ class DataKitAPIExecute {
                 try {
                     queryData = null;
                     lock();
+
                     Bundle bundle = new Bundle();
                     bundle.putInt(Constants.RC_DSID, dataSourceClient.getDs_id());
                     bundle.putInt(Constants.RC_LAST_N_SAMPLE, last_n_sample);
                     prepareAndSend(bundle, MessageType.QUERY);
+
                     semaphoreReceive.tryAcquire(WAIT_TIME, TimeUnit.MILLISECONDS);
                 } catch (Exception e) {
                     queryData = null;
@@ -554,13 +576,14 @@ class DataKitAPIExecute {
                 try {
                     queryPrimaryKeyData = null;
                     lock();
+
                     Bundle bundle = new Bundle();
                     bundle.putInt(Constants.RC_DSID, dataSourceClient.getDs_id());
                     bundle.putLong(Constants.RC_LAST_KEY, lastSyncedValue);
                     bundle.putInt(Constants.RC_LIMIT, limit);
                     prepareAndSend(bundle, MessageType.QUERYPRIMARYKEY);
-                    semaphoreReceive.tryAcquire(WAIT_TIME, TimeUnit.MILLISECONDS);
 
+                    semaphoreReceive.tryAcquire(WAIT_TIME, TimeUnit.MILLISECONDS);
                 } catch (Exception e) {
                     queryPrimaryKeyData = null;
                 } finally {
@@ -584,8 +607,10 @@ class DataKitAPIExecute {
                 try {
                     querySizeData = null;
                     lock();
+
                     Bundle bundle = new Bundle();
                     prepareAndSend(bundle, MessageType.QUERYSIZE);
+
                     semaphoreReceive.tryAcquire(WAIT_TIME, TimeUnit.MILLISECONDS);
                 } catch (Exception e) {
                     querySizeData = null;
@@ -670,6 +695,7 @@ class DataKitAPIExecute {
     private DataSource prepareDataSource(DataSourceBuilder dataSourceBuilder) {
         String versionName = null;
         int versionNumber = 0;
+
         try {
             PackageInfo pInfo = context.getPackageManager().getPackageInfo(context.getPackageName(), 0);
             versionName = pInfo.versionName;
@@ -677,12 +703,15 @@ class DataKitAPIExecute {
         } catch (PackageManager.NameNotFoundException e) {
             e.printStackTrace();
         }
+
         ApplicationBuilder applicationBuilder;
+
         if (dataSourceBuilder.build().getApplication() == null)
             applicationBuilder = new ApplicationBuilder();
 
         else
             applicationBuilder = new ApplicationBuilder(dataSourceBuilder.build().getApplication());
+
         Application application = applicationBuilder.setId(context.getPackageName())
                                                     .setMetadata(METADATA.VERSION_NAME, versionName)
                                                     .setMetadata(METADATA.VERSION_NUMBER, String.valueOf(versionNumber))
@@ -738,7 +767,27 @@ class DataKitAPIExecute {
          * Determines what code to execute based on the incoming message's type.
          *
          * <p>
-         *     TODO: Enumerate and explain each case.
+         *     The message types and their implications are as follows:
+         *     <ul>
+         *         <ul>Break without setting variables:
+         *             <li><code>INTERNAL_ERROR</code></li>
+         *             <li><code>INSERT</code></li>
+         *             <li><code>INSERT_HIGH_FREQUENCY</code></li>
+         *         </ul>
+         *         <ul>Set their corresponding variables to the appropriate <code>DataType</code>,
+         *         <code>Status</code>, or null.
+         *             <li><code>REGISTER</code> -- <code>registerData</code></li>
+         *             <li><code>UNREGISTER</code> -- <code>unregisterData</code></li>
+         *             <li><code>SUBSCRIBE</code> -- <code>subscribeData</code></li>
+         *             <li><code>UNSUBSCRIBE</code> -- <code>unsubscribeData</code></li>
+         *             <li><code>FIND</code> -- <code>findData</code></li>
+         *             <li><code>QUERY</code> -- <code>queryData</code></li>
+         *             <li><code>QUERYSIZE</code> -- <code>querySizeData</code></li>
+         *             <li><code>QUERYPRIMARYKEY</code> -- <code>queryPrimaryKey</code></li>
+         *         </ul>
+         *         <code>SUBSCRIBED_DATA</code> populates <code>ds_idOnReceiveListenerHashMap</code>
+         *         with all of the currently subscribed <code>DataTypes</code>.
+         *     </ul>
          * </p>
          *
          * @param msg Received message.
@@ -753,79 +802,105 @@ class DataKitAPIExecute {
             switch (msg.what) {
                 case MessageType.INTERNAL_ERROR:
                     break;
+
                 case MessageType.REGISTER:
                     msg.getData().setClassLoader(DataSourceClient.class.getClassLoader());
-                    if (curSessionId != sessionId) registerData = null;
+                    if (curSessionId != sessionId)
+                        registerData = null;
                     else
                         registerData = msg.getData().getParcelable(DataSourceClient.class.getSimpleName());
+
                     semaphoreReceive.release();
                     break;
+
                 case MessageType.UNREGISTER:
                     msg.getData().setClassLoader(Status.class.getClassLoader());
-                    if (curSessionId != sessionId) unregisterData = null;
+                    if (curSessionId != sessionId)
+                        unregisterData = null;
                     else
                         unregisterData = msg.getData().getParcelable(Status.class.getSimpleName());
+
                     semaphoreReceive.release();
                     break;
+
                 case MessageType.SUBSCRIBE:
                     msg.getData().setClassLoader(DataType.class.getClassLoader());
-                    if (curSessionId != sessionId) subscribeData = null;
+                    if (curSessionId != sessionId)
+                        subscribeData = null;
                     else
                         subscribeData = msg.getData().getParcelable(Status.class.getSimpleName());
+
                     semaphoreReceive.release();
                     break;
+
                 case MessageType.UNSUBSCRIBE:
                     msg.getData().setClassLoader(Status.class.getClassLoader());
-                    if (curSessionId != sessionId) unsubscribeData = null;
+                    if (curSessionId != sessionId)
+                        unsubscribeData = null;
                     else
                         unsubscribeData = msg.getData().getParcelable(Status.class.getSimpleName());
+
                     semaphoreReceive.release();
                     break;
+
                 case MessageType.FIND:
                     msg.getData().setClassLoader(DataSourceClient.class.getClassLoader());
-                    if (curSessionId != sessionId) findData = null;
+                    if (curSessionId != sessionId)
+                        findData = null;
                     else
                         findData = msg.getData().getParcelableArrayList(DataSourceClient.class.getSimpleName());
+
                     semaphoreReceive.release();
                     break;
+
                 case MessageType.INSERT:
                     break;
+
                 case MessageType.INSERT_HIGH_FREQUENCY:
                     break;
+
                 case MessageType.QUERY:
                     msg.getData().setClassLoader(DataType.class.getClassLoader());
-                    if (curSessionId != sessionId) queryData = null;
+                    if (curSessionId != sessionId)
+                        queryData = null;
                     else
                         queryData = msg.getData().getParcelableArrayList(DataType.class.getSimpleName());
+
                     semaphoreReceive.release();
                     break;
+
                 case MessageType.QUERYSIZE:
                     msg.getData().setClassLoader(DataType.class.getClassLoader());
-                    if (curSessionId != sessionId) querySizeData = null;
+                    if (curSessionId != sessionId)
+                        querySizeData = null;
                     else
                         querySizeData = msg.getData().getParcelable(DataTypeLong.class.getSimpleName());
 
                     semaphoreReceive.release();
                     break;
+
                 case MessageType.QUERYPRIMARYKEY:
                     msg.getData().setClassLoader(RowObject.class.getClassLoader());
-                    if (curSessionId != sessionId) queryPrimaryKeyData = null;
+                    if (curSessionId != sessionId)
+                        queryPrimaryKeyData = null;
                     else
                         queryPrimaryKeyData = msg.getData().getParcelableArrayList(RowObject.class.getSimpleName());
+
                     semaphoreReceive.release();
                     break;
+
                 case MessageType.SUBSCRIBED_DATA:
                     try {
                         msg.getData().setClassLoader(DataType[].class.getClassLoader());
                         Parcelable[] parcelables = msg.getData().getParcelableArray(DataType.class.getSimpleName());
                         assert parcelables != null;
                         int ds_id = msg.getData().getInt(Constants.RC_DSID, -1);
+
                         if (sessionId != -1 && ds_id != -1 && ds_idOnReceiveListenerHashMap.containsKey(ds_id)) {
                             for (Parcelable parcelable : parcelables)
                                 ds_idOnReceiveListenerHashMap.get(ds_id).onReceived((DataType) parcelable);
                         }
-                    } catch (Exception ignored) {
-                    }
+                    } catch (Exception ignored) {}
                     break;
             }
         }
