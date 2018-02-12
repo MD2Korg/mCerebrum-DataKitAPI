@@ -71,7 +71,7 @@ public class DataSourceType {
     /** Pace sensor <p><code>"PACE"</code></p> */
     public static final String PACE = "PACE";
 
-    /** Motion type interface <p><code>"MOTION_TYPE"</code></p> */
+    /** Motion type inference <p><code>"MOTION_TYPE"</code></p> */
     public static final String MOTION_TYPE = "MOTION_TYPE";
 
     /** Ultraviolet radiation sensor <p><code>"ULTRA_VIOLET_RADIATION"</code></p> */

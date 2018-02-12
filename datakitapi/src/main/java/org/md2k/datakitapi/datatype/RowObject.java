@@ -53,6 +53,11 @@ public class RowObject implements Parcelable{
 
     /**
      * Constructor
+     */
+    public RowObject(){}
+
+    /**
+     * Constructor
      *
      * @param aLong The <code>rowKey</code> used to identify the <code>RowObject</code>
      * @param dt The <code>DataType</code> object for this <code>RowObject</code>

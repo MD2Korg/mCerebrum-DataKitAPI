@@ -42,6 +42,11 @@ public class DataTypeFloat extends  DataType implements Parcelable{
 
     /**
      * Constructor
+     */
+    public DataTypeFloat(){}
+
+    /**
+     * Constructor
      *
      * @param timestamp The timestamp for when the data was collected.
      * @param sample The data point sampled from the data source.
