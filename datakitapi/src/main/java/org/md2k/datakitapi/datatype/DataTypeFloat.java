@@ -1,11 +1,6 @@
-package org.md2k.datakitapi.datatype;
-
-import android.os.Parcel;
-import android.os.Parcelable;
-
 /*
- * Copyright (c) 2015, The University of Memphis, MD2K Center
- * - Syed Monowar Hossain <monowar.hossain@gmail.com>
+ * Copyright (c) 2018, The University of Memphis, MD2K Center of Excellence
+ *
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -29,44 +24,100 @@ import android.os.Parcelable;
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+
+package org.md2k.datakitapi.datatype;
+
+import android.os.Parcel;
+import android.os.Parcelable;
+
+/**
+ * This class creates <code>DataType</code> objects for samples that have a float data type.
+ */
 public class DataTypeFloat extends  DataType implements Parcelable{
+
+    /**
+     * The data point collected from the data source.
+     */
     float sample;
 
-    public DataTypeFloat(long timestamp, float sample) {
-        super(timestamp);
-        this.sample=sample;
-    }
+    /**
+     * Constructor
+     */
     public DataTypeFloat(){}
 
+    /**
+     * Constructor
+     *
+     * @param timestamp The timestamp for when the data was collected.
+     * @param sample The data point sampled from the data source.
+     */
+    public DataTypeFloat(long timestamp, float sample) {
+        super(timestamp);
+        this.sample = sample;
+    }
+
+    /**
+     * Constructs a <code>DataTypeFloat</code> object from a <code>Parcel</code>.
+     *
+     * @param in Parceled <code>DataTypeFloat</code> object.
+     */
     protected DataTypeFloat(Parcel in) {
         super(in);
         sample = in.readFloat();
     }
 
+    /**
+     * Writes the <code>DataTypeFloat</code> to a parcel.
+     *
+     * @param dest  The parcel to which the application should be written.
+     * @param flags Additional flags about how the object should be written.
+     */
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         super.writeToParcel(dest, flags);
         dest.writeFloat(sample);
     }
 
+    /**
+     * @return Always returns 0.
+     */
     @Override
     public int describeContents() {
         return 0;
     }
 
+    /**
+     * @return The the value of the sample.
+     */
+    public float getSample(){
+        return sample;
+    }
+
+    /**
+     * <code>Creator</code> for <code>DataTypeFloat</code> objects.
+     */
     public static final Creator<DataTypeFloat> CREATOR = new Creator<DataTypeFloat>() {
+
+        /**
+         * Creates a new <code>DataTypeFloat</code> object from a <code>Parcel</code>.
+         *
+         * @param in The parcel holding the data type.
+         * @return The constructed <code>DataTypeFloat</code> object
+         */
         @Override
         public DataTypeFloat createFromParcel(Parcel in) {
             return new DataTypeFloat(in);
         }
 
+        /**
+         * Creates a new array of the specified size for <code>DataTypeFloat</code> objects.
+         *
+         * @param size The size of the new <code>DataTypeFloat</code> array.
+         * @return The <code>DataTypeFloat</code> array.
+         */
         @Override
         public DataTypeFloat[] newArray(int size) {
             return new DataTypeFloat[size];
         }
     };
-
-    public float getSample(){
-        return sample;
-    }
 }

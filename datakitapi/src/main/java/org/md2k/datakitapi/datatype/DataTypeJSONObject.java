@@ -1,14 +1,6 @@
-package org.md2k.datakitapi.datatype;
-
-import android.os.Parcel;
-import android.os.Parcelable;
-
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
-
 /*
- * Copyright (c) 2016, The University of Memphis, MD2K Center
- * - Timothy Hnat <twhnat@memphis.edu>
+ * Copyright (c) 2018, The University of Memphis, MD2K Center of Excellence
+ *
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -32,45 +24,103 @@ import com.google.gson.JsonParser;
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-public class DataTypeJSONObject extends DataType implements Parcelable {
-    public static final Creator<DataTypeJSONObject> CREATOR = new Creator<DataTypeJSONObject>() {
-        @Override
-        public DataTypeJSONObject createFromParcel(Parcel in) {
-            return new DataTypeJSONObject(in);
-        }
 
-        @Override
-        public DataTypeJSONObject[] newArray(int size) {
-            return new DataTypeJSONObject[size];
-        }
-    };
+package org.md2k.datakitapi.datatype;
+
+import android.os.Parcel;
+import android.os.Parcelable;
+
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+
+/**
+ * This class creates <code>DataType</code> objects for samples that have a JSON Object data type.
+ */
+public class DataTypeJSONObject extends DataType implements Parcelable {
+
+    /**
+     * The data point collected from the data source.
+     */
     String sample;
 
+    /**
+     * Constructor
+     */
+    public DataTypeJSONObject(){}
+
+    /**
+     * Constructor
+     *
+     * @param timestamp The timestamp for when the data was collected.
+     * @param sample The data point sampled from the data source.
+     */
     public DataTypeJSONObject(long timestamp, JsonObject sample) {
         super(timestamp);
         this.sample = sample.toString();
     }
 
-    public DataTypeJSONObject() {
-    }
-
+    /**
+     * Constructs a <code>DataTypeJSONObject</code> object from a <code>Parcel</code>.
+     *
+     * @param in Parceled <code>DataTypeJSONObject</code> object.
+     */
     protected DataTypeJSONObject(Parcel in) {
         super(in);
         sample = in.readString();
     }
 
+    /**
+     * Writes the <code>DataTypeJSONObject</code> to a parcel.
+     *
+     * @param dest  The parcel to which the application should be written.
+     * @param flags Additional flags about how the object should be written.
+     */
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         super.writeToParcel(dest, flags);
         dest.writeString(sample);
     }
 
+    /**
+     * @return Always returns 0.
+     */
     @Override
     public int describeContents() {
         return 0;
     }
 
+    /**
+     * @return The the value of the sample.
+     */
     public JsonObject getSample() {
         return new JsonParser().parse(sample).getAsJsonObject();
     }
+
+    /**
+     * <code>Creator</code> for <code>DataTypeJSONObject</code> objects.
+     */
+    public static final Creator<DataTypeJSONObject> CREATOR = new Creator<DataTypeJSONObject>() {
+
+        /**
+         * Creates a new <code>DataTypeJSONObject</code> object from a <code>Parcel</code>.
+         *
+         * @param in The parcel holding the data type.
+         * @return The constructed <code>DataTypeJSONObject</code> object
+         */
+        @Override
+        public DataTypeJSONObject createFromParcel(Parcel in) {
+            return new DataTypeJSONObject(in);
+        }
+
+        /**
+         * Creates a new array of the specified size for <code>DataTypeJSONObject</code> objects.
+         *
+         * @param size The size of the new <code>DataTypeJSONObject</code> array.
+         * @return The <code>DataTypeJSONObject</code> array.
+         */
+        @Override
+        public DataTypeJSONObject[] newArray(int size) {
+            return new DataTypeJSONObject[size];
+        }
+    };
 }

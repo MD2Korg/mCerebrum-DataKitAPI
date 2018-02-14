@@ -1,19 +1,6 @@
-package org.md2k.datakitapi.source.datasource;
-
-import android.util.Log;
-
-import org.md2k.datakitapi.source.application.Application;
-import org.md2k.datakitapi.source.platform.Platform;
-import org.md2k.datakitapi.source.platformapp.PlatformApp;
-import org.md2k.datakitapi.source.AbstractObjectBuilder;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-
 /*
- * Copyright (c) 2015, The University of Memphis, MD2K Center
- * - Syed Monowar Hossain <monowar.hossain@gmail.com>
+ * Copyright (c) 2018, The University of Memphis, MD2K Center of Excellence
+ *
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -37,79 +24,178 @@ import java.util.Map;
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+
+package org.md2k.datakitapi.source.datasource;
+
+import android.util.Log;
+
+import org.md2k.datakitapi.source.application.Application;
+import org.md2k.datakitapi.source.platform.Platform;
+import org.md2k.datakitapi.source.platformapp.PlatformApp;
+import org.md2k.datakitapi.source.AbstractObjectBuilder;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+
+/**
+ * Builder class for <code>DataSource</code> objects
+ */
 public class DataSourceBuilder extends AbstractObjectBuilder {
+
+    /** Platform application the data source collects data from. */
     public Platform platform = null;
+
+    /**  */
     public PlatformApp platformApp = null;
+
+    /** Android application */
     public Application application = null;
+
+    /** Whether the data source is persistent. */
     public boolean persistent = true;
+
+    /** List of data descriptors as sets of tuples
+     *
+     * <p>
+     *     The tuples describe the individual values of the data points.
+     * </p>
+     */
     public ArrayList<HashMap<String,String>> dataDescriptors=null;
 
-    public DataSourceBuilder setType(String type) {
-        super.setType(type);
-        return this;
-    }
 
-    public DataSourceBuilder setId(String id) {
-        super.setId(id);
-        return this;
-    }
+    /**
+     * Constructor
+     */
+    public DataSourceBuilder() {}
 
-    public DataSourceBuilder setMetadata(String key, String value) {
-        super.setMetadata(key, value);
-        return this;
-    }
-
-    public DataSourceBuilder setMetadata(HashMap<String, String> metadata) {
-        super.setMetadata(metadata);
-        return this;
-    }
-
-    public DataSourceBuilder setPlatform(Platform platform) {
-        this.platform = platform;
-        return this;
-    }
-
-    public DataSourceBuilder setPlatformApp(PlatformApp platformApp) {
-        this.platformApp = platformApp;
-        return this;
-    }
-
-    public DataSourceBuilder setApplication(Application application) {
-        this.application = application;
-        return this;
-    }
-
-    public DataSourceBuilder setPersistent(boolean persistent) {
-        this.persistent = persistent;
-        return this;
-    }
-    public DataSourceBuilder setDataDescriptors(ArrayList<HashMap<String,String>> dataDescriptors){
-        this.dataDescriptors=dataDescriptors;
-        return this;
-    }
-
-    public DataSource build() {
-        return new DataSource(this);
-    }
-
-    public DataSourceBuilder() {
-    }
-
+    /**
+     * Constructs a new <code>DataSourceBuilder</code> from a <code>DataSource</code> object.
+     *
+     * @param dataSource The object to build from.
+     */
     public DataSourceBuilder(DataSource dataSource) {
-        this.metadata=new HashMap<>();
-        if(dataSource.getMetadata()!=null) {
+        this.metadata = new HashMap<>();
+        if(dataSource.getMetadata()!= null) {
             for (Map.Entry<String, String> entry : dataSource.getMetadata().entrySet()) {
                 this.metadata.put(entry.getKey(), entry.getValue());
             }
         }
-
         this.type = dataSource.getType();
         this.id = dataSource.getId();
         this.platform = dataSource.getPlatform();
         this.platformApp = dataSource.getPlatformApp();
         this.application = dataSource.getApplication();
         this.persistent = dataSource.isPersistent();
-        this.dataDescriptors=dataSource.getDataDescriptors();
+        this.dataDescriptors = dataSource.getDataDescriptors();
     }
 
+    /**
+     * Sets the type of the <code>DataSourceBuilder</code>.
+     *
+     * @param type Type of the desired object.
+     * @return The changed builder object.
+     */
+    public DataSourceBuilder setType(String type) {
+        super.setType(type);
+        return this;
+    }
+
+    /**
+     * Sets the Id of the <code>DataSourceBuilder</code>.
+     *
+     * @param id Id of the desired object.
+     * @return The changed builder object.
+     */
+    public DataSourceBuilder setId(String id) {
+        super.setId(id);
+        return this;
+    }
+
+    /**
+     * Sets the metadata of the <code>DataSourceBuilder</code>.
+     *
+     * @param key   Key of the key, value pair associated with the metadata.
+     * @param value Value of the key, value pair associated with the metadata.
+     * @return The changed builder object.
+     */
+    public DataSourceBuilder setMetadata(String key, String value) {
+        super.setMetadata(key, value);
+        return this;
+    }
+
+    /**
+     * Sets the metadata hashMap of the <code>DataSourceBuilder</code>.
+     *
+     * @param metadata The metadata as a HashMap.
+     * @return The changed builder object.
+     */
+    public DataSourceBuilder setMetadata(HashMap<String, String> metadata) {
+        super.setMetadata(metadata);
+        return this;
+    }
+
+    /**
+     * Sets the <code>Platform</code> of the <code>DataSourceBuilder</code>.
+     *
+     * @param platform The platform the data source collects data from.
+     * @return The changed builder object.
+     */
+    public DataSourceBuilder setPlatform(Platform platform) {
+        this.platform = platform;
+        return this;
+    }
+
+    /**
+     * Sets the <code>PlatformApp</code> of the <code>DataSourceBuilder</code>.
+     *
+     * @param platformApp
+     * @return The changed builder object.
+     */
+    public DataSourceBuilder setPlatformApp(PlatformApp platformApp) {
+        this.platformApp = platformApp;
+        return this;
+    }
+
+    /**
+     * Sets the <code>Application</code> of the <code>DataSourceBuilder</code>.
+     *
+     * @param application
+     * @return The changed builder object.
+     */
+    public DataSourceBuilder setApplication(Application application) {
+        this.application = application;
+        return this;
+    }
+
+    /**
+     * Sets the <code>Persistent</code> of the <code>DataSourceBuilder</code>.
+     *
+     * @param persistent Whether the data source is persistent or not.
+     * @return The changed builder object.
+     */
+    public DataSourceBuilder setPersistent(boolean persistent) {
+        this.persistent = persistent;
+        return this;
+    }
+
+    /**
+     * Sets the <code>DataDescriptors</code> of the <code>DataSourceBuilder</code>.
+     *
+     * @param dataDescriptors
+     * @return The changed builder object.
+     */
+    public DataSourceBuilder setDataDescriptors(ArrayList<HashMap<String,String>> dataDescriptors){
+        this.dataDescriptors = dataDescriptors;
+        return this;
+    }
+
+    /**
+     * Builds a new <code>DataSource</code> object from the specifications of this builder object.
+     *
+     * @return The completed <code>DataSource</code> object.
+     */
+    public DataSource build() {
+        return new DataSource(this);
+    }
 }

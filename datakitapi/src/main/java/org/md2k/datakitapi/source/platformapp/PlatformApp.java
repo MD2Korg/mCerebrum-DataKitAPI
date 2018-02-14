@@ -1,15 +1,6 @@
-package org.md2k.datakitapi.source.platformapp;
-
-import android.os.Parcel;
-import android.os.Parcelable;
-
-import com.bluelinelabs.logansquare.annotation.JsonObject;
-
-import org.md2k.datakitapi.source.AbstractObject;
-
 /*
- * Copyright (c) 2015, The University of Memphis, MD2K Center
- * - Syed Monowar Hossain <monowar.hossain@gmail.com>
+ * Copyright (c) 2018, The University of Memphis, MD2K Center of Excellence
+ *
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -33,38 +24,93 @@ import org.md2k.datakitapi.source.AbstractObject;
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+package org.md2k.datakitapi.source.platformapp;
+
+import android.os.Parcel;
+import android.os.Parcelable;
+
+import com.bluelinelabs.logansquare.annotation.JsonObject;
+
+import org.md2k.datakitapi.source.AbstractObject;
+
+/**
+ * This class creates <code>PlatformApp</code> objects with information about wearable device
+ * applications used as data sources.
+ */
 @JsonObject(fieldDetectionPolicy = JsonObject.FieldDetectionPolicy.NONPRIVATE_FIELDS)
 public class PlatformApp extends AbstractObject implements Parcelable{
-    public static final Creator<PlatformApp> CREATOR = new Creator<PlatformApp>() {
-        @Override
-        public PlatformApp createFromParcel(Parcel in) {
-            return new PlatformApp(in);
-        }
+    /**
+     * Constructor
+     */
+    public PlatformApp(){}
 
-        @Override
-        public PlatformApp[] newArray(int size) {
-            return new PlatformApp[size];
-        }
-    };
+    /**
+     * Constructor
+     *
+     * <p>
+     *     This constructor is called from the <code>PlatformAppBuilder</code> class using the
+     *     <code>build()</code> method.
+     * </p>
+     *
+     * @param platformAppBuilder The builder object for this data source.
+     */
     PlatformApp(PlatformAppBuilder platformAppBuilder){
         super(platformAppBuilder);
     }
 
-    public PlatformApp(){
-
-    }
-
+    /**
+     * Creates an <code>PlatformApp</code> object from a <code>Parcel</code>.
+     *
+     * @param in Parceled <code>PlatformApp</code> data
+     */
     protected PlatformApp(Parcel in) {
         super(in);
     }
 
+    /**
+     * Writes the <code>PlatformApp</code> object to a <code>parcel</code>.
+     *
+     * @param dest  The parcel to which the application should be written.
+     * @param flags Additional flags about how the object should be written.
+     */
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         super.writeToParcel(dest, flags);
     }
 
+    /**
+     * @return Always returns 0.
+     */
     @Override
     public int describeContents() {
         return 0;
     }
+
+    /**
+     * <code>Creator</code> for <code>PlatformApp</code> objects.
+     */
+    public static final Creator<PlatformApp> CREATOR = new Creator<PlatformApp>() {
+
+        /**
+         * Creates a new <code>DataSource</code> object from a <code>Parcel</code>.
+         *
+         * @param in The parcel holding the application.
+         * @return The reconstructed <code>DataSource</code> object.
+         */
+        @Override
+        public PlatformApp createFromParcel(Parcel in) {
+            return new PlatformApp(in);
+        }
+
+        /**
+         * Creates a new array of the specified size for <code>DataSource</code> objects.
+         *
+         * @param size The size of the new <code>DataSource</code> array.
+         * @return The <code>DataSource</code> array.
+         */
+        @Override
+        public PlatformApp[] newArray(int size) {
+            return new PlatformApp[size];
+        }
+    };
 }

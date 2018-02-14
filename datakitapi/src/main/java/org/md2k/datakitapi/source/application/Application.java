@@ -1,15 +1,6 @@
-package org.md2k.datakitapi.source.application;
-
-import android.os.Parcel;
-import android.os.Parcelable;
-
-import com.bluelinelabs.logansquare.annotation.JsonObject;
-
-import org.md2k.datakitapi.source.AbstractObject;
-
 /*
- * Copyright (c) 2015, The University of Memphis, MD2K Center
- * - Syed Monowar Hossain <monowar.hossain@gmail.com>
+ * Copyright (c) 2018, The University of Memphis, MD2K Center of Excellence
+ *
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -33,38 +24,93 @@ import org.md2k.datakitapi.source.AbstractObject;
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+
+package org.md2k.datakitapi.source.application;
+
+import android.os.Parcel;
+import android.os.Parcelable;
+
+import com.bluelinelabs.logansquare.annotation.JsonObject;
+
+import org.md2k.datakitapi.source.AbstractObject;
+
+/**
+ * This class creates application objects.
+ */
 @JsonObject(fieldDetectionPolicy = JsonObject.FieldDetectionPolicy.NONPRIVATE_FIELDS)
 public class Application extends AbstractObject implements Parcelable {
-    public static final Creator<Application> CREATOR = new Creator<Application>() {
-        @Override
-        public Application createFromParcel(Parcel in) {
-            return new Application(in);
-        }
+    /**
+     * Constructor
+     */
+    public Application(){}
 
-        @Override
-        public Application[] newArray(int size) {
-            return new Application[size];
-        }
-    };
+    /**
+     * Constructor
+     *
+     * <p>
+     *     This constructor is called from the <code>ApplicationBuilder</code> class using the
+     *     <code>build()</code> method.
+     * </p>
+     *
+     * @param applicationBuilder The builder object for the application.
+     */
     Application(ApplicationBuilder applicationBuilder) {
         super(applicationBuilder);
     }
 
-    public Application(){
-
-    }
-
+    /**
+     * Creates an <code>Application</code> object from a <code>Parcel</code>.
+     *
+     * @param in Parceled application data
+     */
     protected Application(Parcel in) {
         super(in);
     }
 
+    /**
+     * Writes the application to a parcel.
+     *
+     * @param dest The parcel to which the application should be written.
+     * @param flags Additional flags about how the object should be written.
+     */
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         super.writeToParcel(dest, flags);
     }
 
+    /**
+     * @return Always returns 0.
+     */
     @Override
     public int describeContents() {
         return 0;
     }
+
+    /**
+     * <code>Creator</code> for <code>Application</code> objects.
+     */
+    public static final Creator<Application> CREATOR = new Creator<Application>() {
+
+        /**
+         * Creates a new <code>Application</code> object from a <code>Parcel</code>.
+         *
+         * @param in The parcel holding the application.
+         * @return The reconstructed <code>Application</code> object.
+         */
+        @Override
+        public Application createFromParcel(Parcel in) {
+            return new Application(in);
+        }
+
+        /**
+         * Creates a new array of the specified size for <code>Application</code> objects.
+         *
+         * @param size The size of the new <code>Application</code> array.
+         * @return The <code>Application</code> array.
+         */
+        @Override
+        public Application[] newArray(int size) {
+            return new Application[size];
+        }
+    };
 }

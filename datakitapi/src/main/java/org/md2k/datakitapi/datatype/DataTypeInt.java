@@ -1,12 +1,6 @@
-package org.md2k.datakitapi.datatype;
-
-import android.os.Parcel;
-import android.os.Parcelable;
-
-
 /*
- * Copyright (c) 2015, The University of Memphis, MD2K Center
- * - Syed Monowar Hossain <monowar.hossain@gmail.com>
+ * Copyright (c) 2018, The University of Memphis, MD2K Center of Excellence
+ *
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -30,44 +24,100 @@ import android.os.Parcelable;
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+
+package org.md2k.datakitapi.datatype;
+
+import android.os.Parcel;
+import android.os.Parcelable;
+
+/**
+ * This class creates <code>DataType</code> objects for samples that have an integer data type.
+ */
 public class DataTypeInt extends  DataType implements Parcelable{
+
+    /**
+     * The data point collected from the data source.
+     */
     int sample;
 
+    /**
+     * Constructor
+     */
+    public DataTypeInt(){}
+
+    /**
+     * Constructor
+     *
+     * @param timestamp The timestamp for when the data was collected.
+     * @param sample The data point sampled from the data source.
+     */
     public DataTypeInt(long timestamp, int sample) {
         super(timestamp);
         this.sample=sample;
     }
-    public DataTypeInt(){}
 
+    /**
+     * Constructs a <code>DataTypeInt</code> object from a <code>Parcel</code>.
+     *
+     * @param in Parceled <code>DataTypeInt</code> object.
+     */
     protected DataTypeInt(Parcel in) {
         super(in);
         sample = in.readInt();
     }
 
+    /**
+     * Writes the <code>DataTypeInt</code> to a parcel.
+     *
+     * @param dest  The parcel to which the application should be written.
+     * @param flags Additional flags about how the object should be written.
+     */
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         super.writeToParcel(dest, flags);
         dest.writeInt(sample);
     }
 
+    /**
+     * @return Always returns 0.
+     */
     @Override
     public int describeContents() {
         return 0;
     }
 
+    /**
+     * @return The the value of the sample.
+     */
+    public int getSample(){
+        return sample;
+    }
+
+    /**
+     * <code>Creator</code> for <code>DataTypeInt</code> objects.
+     */
     public static final Creator<DataTypeInt> CREATOR = new Creator<DataTypeInt>() {
+
+        /**
+         * Creates a new <code>DataTypeInt</code> object from a <code>Parcel</code>.
+         *
+         * @param in The parcel holding the data type.
+         * @return The constructed <code>DataTypeInt</code> object
+         */
         @Override
         public DataTypeInt createFromParcel(Parcel in) {
             return new DataTypeInt(in);
         }
 
+        /**
+         * Creates a new array of the specified size for <code>DataTypeInt</code> objects.
+         *
+         * @param size The size of the new <code>DataTypeInt</code> array.
+         * @return The <code>DataTypeInt</code> array.
+         */
         @Override
         public DataTypeInt[] newArray(int size) {
             return new DataTypeInt[size];
         }
     };
-
-    public int getSample(){
-        return sample;
-    }
 }

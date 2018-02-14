@@ -1,11 +1,6 @@
-package org.md2k.datakitapi.datatype;
-
-import android.os.Parcel;
-import android.os.Parcelable;
-
 /*
- * Copyright (c) 2015, The University of Memphis, MD2K Center
- * - Syed Monowar Hossain <monowar.hossain@gmail.com>
+ * Copyright (c) 2018, The University of Memphis, MD2K Center of Excellence
+ *
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -29,44 +24,100 @@ import android.os.Parcelable;
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+
+package org.md2k.datakitapi.datatype;
+
+import android.os.Parcel;
+import android.os.Parcelable;
+
+/**
+ * This class creates <code>DataType</code> objects for samples that have a long data type.
+ */
 public class DataTypeLong extends  DataType implements Parcelable{
+
+    /**
+     * The data point collected from the data source.
+     */
     long sample;
 
-    public DataTypeLong(long timestamp, long sample) {
-        super(timestamp);
-        this.sample=sample;
-    }
+    /**
+     * Constructor
+     */
     public DataTypeLong(){}
 
+    /**
+     * Constructor
+     *
+     * @param timestamp The timestamp for when the data was collected.
+     * @param sample The data point sampled from the data source.
+     */
+    public DataTypeLong(long timestamp, long sample) {
+        super(timestamp);
+        this.sample = sample;
+    }
+
+    /**
+     * Constructs a <code>DataTypeLong</code> object from a <code>Parcel</code>.
+     *
+     * @param in Parceled <code>DataTypeLong</code> object.
+     */
     protected DataTypeLong(Parcel in) {
         super(in);
         sample = in.readLong();
     }
 
+    /**
+     * Writes the <code>DataTypeLong</code> to a parcel.
+     *
+     * @param dest  The parcel to which the application should be written.
+     * @param flags Additional flags about how the object should be written.
+     */
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         super.writeToParcel(dest, flags);
         dest.writeLong(sample);
     }
 
+    /**
+     * @return Always returns 0.
+     */
     @Override
     public int describeContents() {
         return 0;
     }
 
+    /**
+     * @return The the value of the sample.
+     */
+    public long getSample(){
+        return sample;
+    }
+
+    /**
+     * <code>Creator</code> for <code>DataTypeLong</code> objects.
+     */
     public static final Creator<DataTypeLong> CREATOR = new Creator<DataTypeLong>() {
+
+        /**
+         * Creates a new <code>DataTypeLong</code> object from a <code>Parcel</code>.
+         *
+         * @param in The parcel holding the data type.
+         * @return The constructed <code>DataTypeLong</code> object
+         */
         @Override
         public DataTypeLong createFromParcel(Parcel in) {
             return new DataTypeLong(in);
         }
 
+        /**
+         * Creates a new array of the specified size for <code>DataTypeLong</code> objects.
+         *
+         * @param size The size of the new <code>DataTypeLong</code> array.
+         * @return The <code>DataTypeLong</code> array.
+         */
         @Override
         public DataTypeLong[] newArray(int size) {
             return new DataTypeLong[size];
         }
     };
-
-    public long getSample(){
-        return sample;
-    }
 }

@@ -1,14 +1,6 @@
-package org.md2k.datakitapi.source.platform;
-
-import org.md2k.datakitapi.source.AbstractObjectBuilder;
-
-import java.util.HashMap;
-import java.util.Map;
-
-
 /*
- * Copyright (c) 2015, The University of Memphis, MD2K Center
- * - Syed Monowar Hossain <monowar.hossain@gmail.com>
+ * Copyright (c) 2018, The University of Memphis, MD2K Center of Excellence
+ *
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -32,29 +24,29 @@ import java.util.Map;
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+
+package org.md2k.datakitapi.source.platform;
+
+import org.md2k.datakitapi.source.AbstractObjectBuilder;
+
+import java.util.HashMap;
+import java.util.Map;
+
+/**
+ * Builder class for platform objects.
+ */
 public class PlatformBuilder extends AbstractObjectBuilder{
-    public PlatformBuilder setType(String type) {
-        super.setType(type);
-        return this;
-    }
 
-    public PlatformBuilder setId(String id) {
-        super.setId(id);
-        return this;
-    }
+    /**
+     * Constructor
+     */
+    public PlatformBuilder() {}
 
-    public PlatformBuilder setMetadata(String key, String value) {
-        super.setMetadata(key, value);
-        return this;
-    }
-
-    public Platform build() {
-        return new Platform(this);
-    }
-
-    public PlatformBuilder() {
-    }
-
+    /**
+     * Constructs a builder object from an existing platform object.
+     *
+     * @param platform The object to build from.
+     */
     public PlatformBuilder(Platform platform) {
         this.metadata=new HashMap<>();
         if(platform.getMetadata()!=null) {
@@ -66,4 +58,44 @@ public class PlatformBuilder extends AbstractObjectBuilder{
         this.id = platform.getId();
     }
 
+    /**
+     * Sets the type of the builder object.
+     *
+     * @param type Type of the desired object.
+     * @return The changed builder object.
+     */
+    public PlatformBuilder setType(String type) {
+        super.setType(type);
+        return this;
+    }
+
+    /**
+     * Sets the id of the builder object.
+     *
+     * @param id Id of the desired object.
+     * @return The changed builder object.
+     */
+    public PlatformBuilder setId(String id) {
+        super.setId(id);
+        return this;
+    }
+
+    /**
+     * Sets the metadata of the builder object
+     *
+     * @param key   Key of the key, value pair associated with the metadata.
+     * @param value Value of the key, value pair associated with the metadata.
+     * @return The changed builder object.
+     */
+    public PlatformBuilder setMetadata(String key, String value) {
+        super.setMetadata(key, value);
+        return this;
+    }
+
+    /**
+     * Creates a platform object using the specifications of this builder object.
+     *
+     * @return The completed platform object.
+     */
+    public Platform build() { return new Platform(this); }
 }

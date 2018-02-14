@@ -1,14 +1,6 @@
-package org.md2k.datakitapi.datatype;
-
-import android.os.Parcel;
-import android.os.Parcelable;
-
-import com.google.gson.JsonArray;
-import com.google.gson.JsonParser;
-
 /*
- * Copyright (c) 2015, The University of Memphis, MD2K Center
- * - Syed Monowar Hossain <monowar.hossain@gmail.com>
+ * Copyright (c) 2018, The University of Memphis, MD2K Center of Excellence
+ *
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -32,45 +24,103 @@ import com.google.gson.JsonParser;
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-public class DataTypeJSONObjectArray extends DataType implements Parcelable {
-    public static final Creator<DataTypeJSONObjectArray> CREATOR = new Creator<DataTypeJSONObjectArray>() {
-        @Override
-        public DataTypeJSONObjectArray createFromParcel(Parcel in) {
-            return new DataTypeJSONObjectArray(in);
-        }
 
-        @Override
-        public DataTypeJSONObjectArray[] newArray(int size) {
-            return new DataTypeJSONObjectArray[size];
-        }
-    };
+package org.md2k.datakitapi.datatype;
+
+import android.os.Parcel;
+import android.os.Parcelable;
+
+import com.google.gson.JsonArray;
+import com.google.gson.JsonParser;
+
+/**
+ * This class creates <code>DataType</code> objects for samples that have JSON Object data types in an array.
+ */
+public class DataTypeJSONObjectArray extends DataType implements Parcelable {
+
+    /**
+     * The data point collected from the data source.
+     */
     JsonArray sample;
 
+    /**
+     * Constructor
+     */
+    public DataTypeJSONObjectArray(){}
+
+    /**
+     * Constructor
+     *
+     * @param timestamp The timestamp for when the data was collected.
+     * @param sample The data point sampled from the data source.
+     */
     public DataTypeJSONObjectArray(long timestamp, JsonArray sample) {
         super(timestamp);
         this.sample = sample;
     }
 
-    public DataTypeJSONObjectArray() {
-    }
-
+    /**
+     * Constructs a <code>DataTypeJSONObjectArray</code> object from a <code>Parcel</code>.
+     *
+     * @param in Parceled <code>DataTypeJSONObjectArray</code> object.
+     */
     protected DataTypeJSONObjectArray(Parcel in) {
         super(in);
         sample = new JsonParser().parse(in.readString()).getAsJsonArray();
     }
 
+    /**
+     * Writes the <code>DataTypeJSONObjectArray</code> to a parcel.
+     *
+     * @param dest  The parcel to which the application should be written.
+     * @param flags Additional flags about how the object should be written.
+     */
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         super.writeToParcel(dest, flags);
         dest.writeString(sample.toString());
     }
 
+    /**
+     * @return Always returns 0.
+     */
     @Override
     public int describeContents() {
         return 0;
     }
 
+    /**
+     * @return The the value of the sample.
+     */
     public JsonArray getSample() {
         return sample;
     }
+
+    /**
+     * <code>Creator</code> for <code>DataTypeJSONObjectArray</code> objects.
+     */
+    public static final Creator<DataTypeJSONObjectArray> CREATOR = new Creator<DataTypeJSONObjectArray>() {
+
+        /**
+         * Creates a new <code>DataTypeJSONObjectArray</code> object from a <code>Parcel</code>.
+         *
+         * @param in The parcel holding the data type.
+         * @return The constructed <code>DataTypeJSONObjectArray</code> object
+         */
+        @Override
+        public DataTypeJSONObjectArray createFromParcel(Parcel in) {
+            return new DataTypeJSONObjectArray(in);
+        }
+
+        /**
+         * Creates a new array of the specified size for <code>DataTypeJSONObjectArray</code> objects.
+         *
+         * @param size The size of the new <code>DataTypeJSONObjectArray</code> array.
+         * @return The <code>DataTypeJSONObjectArray</code> array.
+         */
+        @Override
+        public DataTypeJSONObjectArray[] newArray(int size) {
+            return new DataTypeJSONObjectArray[size];
+        }
+    };
 }

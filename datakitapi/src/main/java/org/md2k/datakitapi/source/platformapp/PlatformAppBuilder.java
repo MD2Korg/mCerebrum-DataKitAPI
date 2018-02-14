@@ -1,10 +1,6 @@
-package org.md2k.datakitapi.source.platformapp;
-
-import org.md2k.datakitapi.source.AbstractObjectBuilder;
-
 /*
- * Copyright (c) 2015, The University of Memphis, MD2K Center
- * - Syed Monowar Hossain <monowar.hossain@gmail.com>
+ * Copyright (c) 2018, The University of Memphis, MD2K Center of Excellence
+ *
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -28,32 +24,71 @@ import org.md2k.datakitapi.source.AbstractObjectBuilder;
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+
+package org.md2k.datakitapi.source.platformapp;
+
+import org.md2k.datakitapi.source.AbstractObjectBuilder;
+
+/**
+ * Builder class for <code>platformApp</code> objects.
+ */
 public class PlatformAppBuilder extends AbstractObjectBuilder{
-    public PlatformAppBuilder setType(String type) {
-        super.setType(type);
-        return this;
-    }
+    /**
+     * Constructor
+     */
+    public PlatformAppBuilder() {}
 
-    public PlatformAppBuilder setId(String id) {
-        super.setId(id);
-        return this;
-    }
-
-    public PlatformAppBuilder setMetadata(String key, String value) {
-        super.setMetadata(key, value);
-        return this;
-    }
-
-    public PlatformApp build() {
-        return new PlatformApp(this);
-    }
-    public PlatformAppBuilder() {
-    }
-
+    /**
+     * Constructs a builder object from an existing platform object.
+     *
+     * @param platformApp The object to build from.
+     */
     public PlatformAppBuilder(PlatformApp platformApp) {
         this.metadata = platformApp.getMetadata();
         this.type = platformApp.getType();
         this.id = platformApp.getId();
     }
 
+    /**
+     * Sets the type of the builder object.
+     *
+     * @param type Type of the desired object.
+     * @return The changed builder object.
+     */
+    public PlatformAppBuilder setType(String type) {
+        super.setType(type);
+        return this;
+    }
+
+    /**
+     * Sets the id of the builder object.
+     *
+     * @param id Id of the desired object.
+     * @return The changed builder object.
+     */
+    public PlatformAppBuilder setId(String id) {
+        super.setId(id);
+        return this;
+    }
+
+    /**
+     * Sets the metadata of the builder object
+     *
+     * @param key   Key of the key, value pair associated with the metadata.
+     * @param value Value of the key, value pair associated with the metadata.
+     * @return The changed builder object.
+     */
+    public PlatformAppBuilder setMetadata(String key, String value) {
+        super.setMetadata(key, value);
+        return this;
+    }
+
+    /**
+     * Creates a <code>PlatformApp</code> object using the specifications of this builder object.
+     *
+     * @return The completed <code>PlatformApp</code> object.
+     */
+    public PlatformApp build() {
+        return new PlatformApp(this);
+    }
 }

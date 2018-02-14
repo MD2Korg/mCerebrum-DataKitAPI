@@ -1,11 +1,6 @@
-package org.md2k.datakitapi.source.application;
-
-import org.md2k.datakitapi.source.AbstractObjectBuilder;
-
-
 /*
- * Copyright (c) 2015, The University of Memphis, MD2K Center
- * - Syed Monowar Hossain <monowar.hossain@gmail.com>
+ * Copyright (c) 2018, The University of Memphis, MD2K Center of Excellence
+ *
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -29,29 +24,70 @@ import org.md2k.datakitapi.source.AbstractObjectBuilder;
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+
+package org.md2k.datakitapi.source.application;
+
+import org.md2k.datakitapi.source.AbstractObjectBuilder;
+
+/**
+ * Builder class for <code>Application</code> objects.
+ */
 public class ApplicationBuilder extends AbstractObjectBuilder {
+    /**
+     * Constructor
+     */
+    public ApplicationBuilder(){}
+
+    /**
+     * Constructs a new <code>ApplicationBuilder</code> from an <code>Application</code>.
+     *
+     * @param application The application to be built
+     */
+    public ApplicationBuilder(Application application){
+        this.metadata = application.getMetadata();
+        this.type = application.getType();
+        this.id = application.getId();
+    }
+
+    /**
+     * Sets the type of the <code>ApplicationBuilder</code>.
+     *
+     * @param type The type of the application.
+     * @return The <code>ApplicationBuilder</code> object with the new type.
+     */
     public ApplicationBuilder setType(String type) {
         super.setType(type);
         return this;
     }
 
+    /**
+     * Sets the id of the <code>ApplicationBuilder</code>.
+     *
+     * @param id The id of the application
+     * @return The <code>ApplicationBuilder</code> object with the new id.
+     */
     public ApplicationBuilder setId(String id) {
         super.setId(id);
         return this;
     }
 
+    /**
+     * Sets the metadata of the <code>ApplicationBuilder</code>.
+     *
+     * @param key The key to the metadata.
+     * @param value The value of the metadata.
+     * @return The <code>ApplicationBuilder</code> object with the new metadata.
+     */
     public ApplicationBuilder setMetadata(String key, String value) {
         super.setMetadata(key, value);
         return this;
     }
-    public ApplicationBuilder(){
-    }
-    public ApplicationBuilder(Application application){
-        this.metadata=application.getMetadata();
-        this.type=application.getType();
-        this.id=application.getId();
-    }
 
+    /**
+     * Returns a new <code>Application</code> object constructed from the calling <code>ApplicationBuilder</code>.
+     *
+     * @return The new <code>Application</code> object.
+     */
     public Application build() {
         return new Application(this);
     }

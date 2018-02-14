@@ -1,11 +1,6 @@
-package org.md2k.datakitapi.datatype;
-
-import android.os.Parcel;
-import android.os.Parcelable;
-
 /*
- * Copyright (c) 2015, The University of Memphis, MD2K Center
- * - Syed Monowar Hossain <monowar.hossain@gmail.com>
+ * Copyright (c) 2018, The University of Memphis, MD2K Center of Excellence
+ *
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -29,44 +24,100 @@ import android.os.Parcelable;
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+
+package org.md2k.datakitapi.datatype;
+
+import android.os.Parcel;
+import android.os.Parcelable;
+
+/**
+ * This class creates <code>DataType</code> objects for samples that have boolean data types in an array.
+ */
 public class DataTypeBooleanArray extends DataType implements Parcelable {
+
+    /**
+     * The data point collected from the data source.
+     */
     boolean[] sample;
 
+    /**
+     * Constructor
+     */
+    public DataTypeBooleanArray(){}
+
+    /**
+     * Constructor
+     *
+     * @param timestamp The timestamp for when the data was collected.
+     * @param sample The data point sampled from the data source.
+     */
     public DataTypeBooleanArray(long timestamp, boolean[] sample) {
         super(timestamp);
         this.sample = sample;
     }
-    public DataTypeBooleanArray(){}
 
+    /**
+     * Constructs a <code>DataTypeBooleanArray</code> object from a <code>Parcel</code>.
+     *
+     * @param in Parceled <code>DataTypeBooleanArray</code> object.
+     */
     protected DataTypeBooleanArray(Parcel in) {
         super(in);
         sample = in.createBooleanArray();
     }
 
+    /**
+     * Writes the <code>DataTypeBooleanArray</code> to a parcel.
+     *
+     * @param dest  The parcel to which the application should be written.
+     * @param flags Additional flags about how the object should be written.
+     */
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         super.writeToParcel(dest, flags);
         dest.writeBooleanArray(sample);
     }
 
+    /**
+     * @return Always returns 0.
+     */
     @Override
     public int describeContents() {
         return 0;
     }
 
+    /**
+     * @return The the value of the sample.
+     */
+    public boolean[] getSample() {
+        return sample;
+    }
+
+    /**
+     * <code>Creator</code> for <code>DataTypeBooleanArray</code> objects.
+     */
     public static final Creator<DataTypeBooleanArray> CREATOR = new Creator<DataTypeBooleanArray>() {
+
+        /**
+         * Creates a new <code>DataTypeBooleanArray</code> object from a <code>Parcel</code>.
+         *
+         * @param in The parcel holding the data type.
+         * @return The constructed <code>DataTypeBooleanArray</code> object
+         */
         @Override
         public DataTypeBooleanArray createFromParcel(Parcel in) {
             return new DataTypeBooleanArray(in);
         }
 
+        /**
+         * Creates a new array of the specified size for <code>DataTypeBooleanArray</code> objects.
+         *
+         * @param size The size of the new <code>DataTypeBooleanArray</code> array.
+         * @return The <code>DataTypeBooleanArray</code> array.
+         */
         @Override
         public DataTypeBooleanArray[] newArray(int size) {
             return new DataTypeBooleanArray[size];
         }
     };
-
-    public boolean[] getSample() {
-        return sample;
-    }
 }

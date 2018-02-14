@@ -1,8 +1,6 @@
-package org.md2k.datakitapi.source.datasource;
-
 /*
- * Copyright (c) 2015, The University of Memphis, MD2K Center
- * - Syed Monowar Hossain <monowar.hossain@gmail.com>
+ * Copyright (c) 2018, The University of Memphis, MD2K Center of Excellence
+ *
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -26,9 +24,28 @@ package org.md2k.datakitapi.source.datasource;
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+
+package org.md2k.datakitapi.source.datasource;
+
+/**
+ * Provides constants indicating the id of the data source.
+ *
+ * <p>
+ *     These include:
+ *     <ul>
+ *         <li>Smoking</li>
+ *         <li>Eating</li>
+ *         <li>Self Reported</li>
+ *     </ul>
+ * </p>
+ */
 public class DataSourceId {
+    /** Default is <code>"SMOKING"</code>. */
     public static final String SMOKING = "SMOKING";
+
+    /** Default is <code>"EATING"</code>. */
     public static final String EATING = "EATING";
 
+    /** Default is <code>"SELF_REPORT"</code>. */
     public static final String SELF_REPORT = "SELF_REPORT";
 }

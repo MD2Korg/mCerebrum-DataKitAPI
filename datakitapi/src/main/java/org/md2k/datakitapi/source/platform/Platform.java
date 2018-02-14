@@ -1,15 +1,6 @@
-package org.md2k.datakitapi.source.platform;
-
-import android.os.Parcel;
-import android.os.Parcelable;
-
-import com.bluelinelabs.logansquare.annotation.JsonObject;
-
-import org.md2k.datakitapi.source.AbstractObject;
-
 /*
- * Copyright (c) 2015, The University of Memphis, MD2K Center
- * - Syed Monowar Hossain <monowar.hossain@gmail.com>
+ * Copyright (c) 2018, The University of Memphis, MD2K Center of Excellence
+ *
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -33,38 +24,94 @@ import org.md2k.datakitapi.source.AbstractObject;
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+
+package org.md2k.datakitapi.source.platform;
+
+import android.os.Parcel;
+import android.os.Parcelable;
+
+import com.bluelinelabs.logansquare.annotation.JsonObject;
+
+import org.md2k.datakitapi.source.AbstractObject;
+
+/**
+ * Creates a platform object that contains information about the device, or platform, on which the
+ * data was collected.
+ */
 @JsonObject(fieldDetectionPolicy = JsonObject.FieldDetectionPolicy.NONPRIVATE_FIELDS)
 public class Platform extends AbstractObject implements Parcelable {
-    public static final Creator<Platform> CREATOR = new Creator<Platform>() {
-        @Override
-        public Platform createFromParcel(Parcel in) {
-            return new Platform(in);
-        }
+    /**
+     * Constructor
+     */
+    public Platform(){}
 
-        @Override
-        public Platform[] newArray(int size) {
-            return new Platform[size];
-        }
-    };
-
+    /**
+     * Constructor
+     *
+     * <p>
+     *     This constructor is called from the <code>PlatformBuilder</code> class using the
+     *     <code>build()</code> method.
+     * </p>
+     *
+     * @param platformBuilder The builder object for the Platform.
+     */
     Platform(PlatformBuilder platformBuilder) {
         super(platformBuilder);
     }
-    public Platform(){
 
-    }
-
+    /**
+     * Creates an <code>Platform</code> object from a <code>Parcel</code>.
+     *
+     * @param in Parceled platform data
+     */
     protected Platform(Parcel in) {
         super(in);
     }
 
+    /**
+     * Writes the platform to a parcel.
+     *
+     * @param dest The parcel to which the platform should be written.
+     * @param flags Additional flags about how the object should be written.
+     */
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         super.writeToParcel(dest, flags);
     }
 
+    /**
+     * @return Always returns 0.
+     */
     @Override
     public int describeContents() {
         return 0;
     }
+
+    /**
+     * <code>Creator</code> for <code>Platform</code> objects.
+     */
+    public static final Creator<Platform> CREATOR = new Creator<Platform>() {
+
+        /**
+         * Creates a new <code>Platform</code> object from a <code>Parcel</code>.
+         *
+         * @param in The parcel holding the Platform.
+         * @return The reconstructed <code>Platform</code> object.
+         */
+        @Override
+        public Platform createFromParcel(Parcel in) {
+            return new Platform(in);
+        }
+
+        /**
+         * Creates a new array of the specified size for <code>Platform</code> objects.
+         *
+         * @param size The size of the new <code>Platform</code> array.
+         * @return The <code>Platform</code> array.
+         */
+        @Override
+        public Platform[] newArray(int size) {
+            return new Platform[size];
+        }
+    };
 }

@@ -1,8 +1,6 @@
-package org.md2k.datakitapi.datatype;
-
 /*
- * Copyright (c) 2016, The University of Memphis, MD2K Center
- * - Timothy W. Hnat <twhnat@memphis.edu>
+ * Copyright (c) 2018, The University of Memphis, MD2K Center of Excellence
+ *
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -27,6 +25,8 @@ package org.md2k.datakitapi.datatype;
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+package org.md2k.datakitapi.datatype;
+
 import android.os.Parcel;
 import android.os.Parcelable;
 
@@ -35,31 +35,77 @@ import com.google.gson.JsonElement;
 
 import org.json.JSONObject;
 
-public class RowObject implements Parcelable{
-    public static final Creator<RowObject> CREATOR = new Creator<RowObject>() {
-        @Override
-        public RowObject createFromParcel(Parcel in) {
-            return new RowObject(in);
-        }
 
-        @Override
-        public RowObject[] newArray(int size) {
-            return new RowObject[size];
-        }
-    };
+/**
+ * Object representing a row from the <code>DataKit</code>database.
+ */
+public class RowObject implements Parcelable{
+
+    /**
+     * The <code>DataType</code> object for this <code>RowObject</code>.
+     */
     public DataType data;
+
+    /**
+     * The key used to identify this <code>RowObject</code>.
+     */
     public long rowKey;
 
+    /**
+     * Constructor
+     */
+    public RowObject(){}
+
+    /**
+     * Constructor
+     *
+     * @param aLong The <code>rowKey</code> used to identify the <code>RowObject</code>
+     * @param dt The <code>DataType</code> object for this <code>RowObject</code>
+     */
     public RowObject(long aLong, DataType dt) {
         rowKey = aLong;
         data = dt;
     }
-    
+
+    /**
+     * Constructs a <code>RowObject</code> object from a <code>Parcel</code>.
+     *
+     * @param in Parceled <code>RowObject</code> object.
+     */
     protected RowObject(Parcel in) {
         data = in.readParcelable(DataType.class.getClassLoader());
         rowKey = in.readLong();
     }
 
+    /**
+     * Writes the <code>RowObject</code> and it's key to a parcel.
+     *
+     * @param dest  The parcel to which the application should be written.
+     * @param flags Additional flags about how the object should be written.
+     */
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeParcelable(data, flags);
+        dest.writeLong(rowKey);
+    }
+
+    /**
+     * @return Always returns 0.
+     */
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    /**
+     * Creates <code>DataType</code> arrays based on the data type of the input.
+     *
+     * <p>
+     *     For example: <code>DataTypeBoolean</code> objects return a <code>DataTypeBooleanArray</code> object.
+     * </p>
+     *
+     * @return The resulting <code>DataType</code> object.
+     */
     public DataType toArrayForm() {
         if (this.data instanceof DataTypeBoolean) {
             return new DataTypeBooleanArray(this.data.getDateTime(), new boolean[]{((DataTypeBoolean) this.data).getSample()});
@@ -91,17 +137,11 @@ public class RowObject implements Parcelable{
         return this.data;
     }
 
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        dest.writeParcelable(data, flags);
-        dest.writeLong(rowKey);
-    }
-
+    /**
+     * Returns the calling <code>RowObject</code> as a string
+     *
+     * @return The resulting string.
+     */
     public String csvString() {
         String result = String.valueOf(this.data.getDateTime());
         result += "," + String.valueOf(this.data.offset);
@@ -178,8 +218,34 @@ public class RowObject implements Parcelable{
                 result += "," + i.toString();
             }
         }
-
         return result;
-
     }
+
+    /**
+     * <code>Creator</code> for <code>RowObject</code> objects.
+     */
+    public static final Creator<RowObject> CREATOR = new Creator<RowObject>() {
+
+        /**
+         * Creates a new <code>RowObject</code> object from a <code>Parcel</code>.
+         *
+         * @param in The parcel holding the data type.
+         * @return The constructed <code>RowObject</code> object
+         */
+        @Override
+        public RowObject createFromParcel(Parcel in) {
+            return new RowObject(in);
+        }
+
+        /**
+         * Creates a new array of the specified size for <code>RowObject</code> objects.
+         *
+         * @param size The size of the new <code>RowObject</code> array.
+         * @return The <code>RowObject</code> array.
+         */
+        @Override
+        public RowObject[] newArray(int size) {
+            return new RowObject[size];
+        }
+    };
 }

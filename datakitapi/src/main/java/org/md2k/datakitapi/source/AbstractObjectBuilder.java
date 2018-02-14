@@ -1,11 +1,6 @@
-package org.md2k.datakitapi.source;
-
-
-import java.util.HashMap;
-
 /*
- * Copyright (c) 2015, The University of Memphis, MD2K Center
- * - Syed Monowar Hossain <monowar.hossain@gmail.com>
+ * Copyright (c) 2018, The University of Memphis, MD2K Center of Excellence
+ *
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -29,13 +24,62 @@ import java.util.HashMap;
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-public abstract class AbstractObjectBuilder {
-    protected String type=null;
-    protected String id=null;
-    protected HashMap<String,String> metadata=new HashMap<>();
-    public AbstractObjectBuilder setType(String type){this.type = type; return this; }
-    public AbstractObjectBuilder setId(String id){this.id = id; return this; }
-    public AbstractObjectBuilder setMetadata(String key, String value){this.metadata.put(key,value); return this; }
-    public AbstractObjectBuilder setMetadata(HashMap<String,String> metadata){this.metadata=metadata; return this; }
 
+package org.md2k.datakitapi.source;
+
+import java.util.HashMap;
+
+/**
+ * Superclass for the <code>PlatformAppBuilder</code>, <code>PlatformBuilder</code>,
+ * <code>DataSourceBuilder</code>, and <code>ApplicationBuilder</code> classes.
+ */
+public abstract class AbstractObjectBuilder {
+
+    /** Desired <code>AbstractObject</code> type. */
+    protected String type = null;
+
+    /** Desired <code>AbstractObject</code> id. */
+    protected String id = null;
+
+    /** HashMap of the object's metadata. */
+    protected HashMap<String,String> metadata = new HashMap<>();
+
+    /**
+     * Sets the <code>type</code> field of the builder object and then returns the object.
+     *
+     * @param type Type of the desired object
+     * @return The changed builder object
+     */
+    public AbstractObjectBuilder setType(String type){this.type = type; return this; }
+
+    /**
+     * Sets the <code>id</code> field of the builder object and then returns the object.
+     *
+     * @param id Id of the desired object.
+     * @return The changed builder object.
+     */
+    public AbstractObjectBuilder setId(String id){this.id = id; return this; }
+
+    /**
+     * Sets the <code>metadata</code> field of the builder object and then returns the object.
+     *
+     * @param key Key of the key, value pair associated with the metadata.
+     * @param value Value of the key, value pair associated with the metadata.
+     * @return The changed builder object.
+     */
+    public AbstractObjectBuilder setMetadata(String key, String value){
+        this.metadata.put(key,value);
+        return this;
+    }
+
+    /**
+     * Sets the <code>metadata</code> field of the builder object and then returns the object.
+     *
+     * @param metadata The metadata as a HashMap.
+     * @return The changed builder object.
+     */
+    public AbstractObjectBuilder setMetadata(HashMap<String,String> metadata){
+        this.metadata = metadata;
+        return this;
+    }
 }
