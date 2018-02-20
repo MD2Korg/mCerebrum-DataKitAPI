@@ -86,4 +86,7 @@ public class PlatformType {
 
     /** Default is <code>"BEASON"</code>. */
     public static final String BEACON="BEACON";
+
+    public static final String MOTION_SENSE_HRV_PLUS = "MOTION_SENSE_HRV_PLUS";
+
 }

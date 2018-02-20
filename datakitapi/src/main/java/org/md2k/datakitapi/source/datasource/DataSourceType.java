@@ -376,4 +376,10 @@ public class DataSourceType {
 
     /** Label <p><code>"LABEL</code></p><p> For data integration from Cornell </p> */
     public static String LABEL = "LABEL";
+
+    public static final String MAGNETOMETER = "MAGNETOMETER";
+    public static final String QUATERNION = "QUATERNION";
+    public static final String MAGNETOMETER_SENSITIVITY = "MAGNETOMETER_SENSITIVITY";
+    public static final String ORALB_BRUSHING_TIME = "ORALB_BRUSHING_TIME";
+    public static final String ORALB_BRUSH_ACCELEROMETER = "ORALB_BRUSH_ACCELEROMETER";
 }
