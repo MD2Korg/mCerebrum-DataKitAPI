@@ -373,6 +373,14 @@ public class DataSourceType {
 
     /** Call duration <p><code>"CU_CALL_DURATION"</code></p><p> For data integration from Cornell </p> */
     public static final String CU_CALL_DURATION = "CU_CALL_DURATION";
+    public static final String EYE_MOVEMENT_UP = "EYE_MOVEMENT_UP";
+    public static final String EYE_MOVEMENT_DOWN = "EYE_MOVEMENT_DOWN";
+    public static final String EYE_MOVEMENT_LEFT = "EYE_MOVEMENT_LEFT";
+    public static final String EYE_MOVEMENT_RIGHT = "EYE_MOVEMENT_RIGHT";
+    public static final String BLINK_SPEED = "BLINK_SPEED";
+    public static final String BLINK_STRENGTH = "BLINK_STRENGTH";
+    public static final String POWER_LEFT = "POWER_LEFT";
+    public static final String FIT_ERROR = "FIT_ERROR";
 
     /** Label <p><code>"LABEL</code></p><p> For data integration from Cornell </p> */
     public static String LABEL = "LABEL";
@@ -382,4 +390,5 @@ public class DataSourceType {
     public static final String MAGNETOMETER_SENSITIVITY = "MAGNETOMETER_SENSITIVITY";
     public static final String ORALB_BRUSHING_TIME = "ORALB_BRUSHING_TIME";
     public static final String ORALB_BRUSH_ACCELEROMETER = "ORALB_BRUSH_ACCELEROMETER";
+    public static final String ORALB_SESSION = "ORALB_SESSION";
 }
