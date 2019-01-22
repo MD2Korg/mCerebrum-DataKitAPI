@@ -88,5 +88,6 @@ public class PlatformType {
     public static final String BEACON="BEACON";
 
     public static final String MOTION_SENSE_HRV_PLUS = "MOTION_SENSE_HRV_PLUS";
+    public static final String MOTION_SENSE_HRV_GEN2 = "MOTION_SENSE_HRV_GEN2";
 
 }

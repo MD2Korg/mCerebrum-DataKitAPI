@@ -142,7 +142,7 @@ class DataKitAPIExecute {
      *     Default is 30,000 milliseconds.
      * </p>
      */
-    private static final long WAIT_TIME = 30000;
+    private static final long WAIT_TIME = 10000;
 
     /** Whether <code>DataKit</code> is being disconnected or not. */
     private boolean isDisconnecting;
