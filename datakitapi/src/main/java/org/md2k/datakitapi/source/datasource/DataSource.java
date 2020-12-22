@@ -44,7 +44,6 @@ import java.util.HashMap;
  * Creates <code>DataSource</code> objects containing information about the platform and application
  * the data was collected from.
  */
-@JsonObject(fieldDetectionPolicy = JsonObject.FieldDetectionPolicy.NONPRIVATE_FIELDS)
 public class DataSource extends AbstractObject implements Parcelable {
 
     private Platform platform = null;
