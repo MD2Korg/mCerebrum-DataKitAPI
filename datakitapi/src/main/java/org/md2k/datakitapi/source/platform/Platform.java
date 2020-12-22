@@ -38,7 +38,6 @@ import org.md2k.datakitapi.source.AbstractObject;
  * Creates a platform object that contains information about the device, or platform, on which the
  * data was collected.
  */
-@JsonObject(fieldDetectionPolicy = JsonObject.FieldDetectionPolicy.NONPRIVATE_FIELDS)
 public class Platform extends AbstractObject implements Parcelable {
     /**
      * Constructor

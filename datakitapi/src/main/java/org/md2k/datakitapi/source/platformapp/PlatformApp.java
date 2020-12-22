@@ -37,7 +37,6 @@ import org.md2k.datakitapi.source.AbstractObject;
  * This class creates <code>PlatformApp</code> objects with information about wearable device
  * applications used as data sources.
  */
-@JsonObject(fieldDetectionPolicy = JsonObject.FieldDetectionPolicy.NONPRIVATE_FIELDS)
 public class PlatformApp extends AbstractObject implements Parcelable{
     /**
      * Constructor

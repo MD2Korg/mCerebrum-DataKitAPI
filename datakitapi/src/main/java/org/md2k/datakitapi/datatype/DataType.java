@@ -37,7 +37,6 @@ import org.md2k.datakitapi.time.DateTime;
 /**
  * This class provides the methods that all <code>DataType</code> objects use.
  */
-@JsonObject(fieldDetectionPolicy = JsonObject.FieldDetectionPolicy.NONPRIVATE_FIELDS)
 public class DataType implements Parcelable{
 
     /** The timestamp for when the data was collected */

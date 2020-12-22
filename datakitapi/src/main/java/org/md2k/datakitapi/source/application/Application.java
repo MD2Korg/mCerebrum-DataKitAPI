@@ -37,7 +37,6 @@ import org.md2k.datakitapi.source.AbstractObject;
 /**
  * This class creates application objects.
  */
-@JsonObject(fieldDetectionPolicy = JsonObject.FieldDetectionPolicy.NONPRIVATE_FIELDS)
 public class Application extends AbstractObject implements Parcelable {
     /**
      * Constructor

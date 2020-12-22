@@ -390,5 +390,6 @@ public class DataSourceType {
     public static final String MAGNETOMETER_SENSITIVITY = "MAGNETOMETER_SENSITIVITY";
     public static final String ORALB_BRUSHING_TIME = "ORALB_BRUSHING_TIME";
     public static final String ORALB_BRUSH_ACCELEROMETER = "ORALB_BRUSH_ACCELEROMETER";
+    public static final String ORALB_BRUSH_GYROSCOPE = "ORALB_BRUSH_GYROSCOPE";
     public static final String ORALB_SESSION = "ORALB_SESSION";
 }
